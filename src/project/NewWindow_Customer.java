@@ -375,7 +375,6 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 		if (e.getSource() == button) {
 			frame.dispose();
 			Carcar window = new Carcar(this.userDto);
-			Carcar.generateButton(window.getFrame(), window.getRegisteredResorts());
 		} else if (e.getSource() == button1) {
 			frame.dispose();
 			Barili window = new Barili(this.userDto);
