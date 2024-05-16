@@ -13,11 +13,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 public class NewWindow_Admin implements ActionListener{
 	
 	JFrame frame = new JFrame("Admin");
@@ -32,16 +32,10 @@ public class NewWindow_Admin implements ActionListener{
 	NewWindow_Admin(){
 		
 		try {
-		    String url = "jdbc:mysql://localhost:3306/";
-		    String dbName = "admin_resorts";
-		    String driver = "com.mysql.cj.jdbc.Driver";
-		    String userName = "root";
-		    String password = "";
-		    Class.forName(driver);
-		    conn = DriverManager.getConnection(url + dbName, userName, password);
+		    conn = DbConnection.getConnection();
 
 		    // Prepare the statement for inserting data into the database
-		    psInsert = conn.prepareStatement("INSERT INTO resorts (resort_name) VALUES (?)");
+		    psInsert = conn.prepareStatement("INSERT INTO resort (name, town_id, user_id) VALUES (?, ?, ?)");
 		    stmt = conn.createStatement();
 		} catch (Exception e) {
 		    e.printStackTrace();
@@ -162,16 +156,9 @@ public class NewWindow_Admin implements ActionListener{
 
 	        // Database connection setup
 	        try {
-	            String url = "jdbc:mysql://localhost:3306/";
-	            String dbName = "admin account";
-	            String driver = "com.mysql.cj.jdbc.Driver";
-	            String userName = "root";
-	            String password = "";
-	            Class.forName(driver);
-	            conn = DriverManager.getConnection(url + dbName, userName, password);
-	            
+	            conn = DbConnection.getConnection();	            
 
-	            psInsert = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)");
+	            psInsert = conn.prepareStatement("INSERT INTO user (username, password, user_type_id) VALUES (?, ?, ?)");
 	            stmt = conn.createStatement();
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -188,12 +175,13 @@ public class NewWindow_Admin implements ActionListener{
 	            String username = usernameField.getText();
 	            String password = new String(passwordField.getPassword());
 	            try {
-	                String sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
+	                String sql = "SELECT * FROM user WHERE username = '" + username + "' AND password = '" + password + "' AND user_type_id = 2";
 	                ResultSet rs = stmt.executeQuery(sql);
 	                if (rs.next()) {
+	                	User user = new User(rs.getLong("id"), rs.getString("username"), rs.getInt("user_type_id"));
 	                    JOptionPane.showMessageDialog(this, "Login successful!", "Login", JOptionPane.INFORMATION_MESSAGE);
 	                    loginSuccessful = true;
-						menuAdmin menuAdmin = new menuAdmin();
+						menuAdmin menuAdmin = new menuAdmin(user);
 	                     frame.dispose();
 	                    
 	                } else {
@@ -278,15 +266,9 @@ public class NewWindow_Admin implements ActionListener{
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	        try {
-	            String url = "jdbc:mysql://localhost:3306/";
-	            String dbName = "admin account";
-	            String driver = "com.mysql.cj.jdbc.Driver";
-	            String userName = "root";
-	            String password = "";
-	            Class.forName(driver);
-	            conn = DriverManager.getConnection(url + dbName, userName, password);
+	            conn = DbConnection.getConnection();
 
-	            psInsert = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)");
+	            psInsert = conn.prepareStatement("INSERT INTO user (username, password, user_type_id) VALUES (?, ?, ?)");
 	            stmt = conn.createStatement();
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -303,7 +285,7 @@ public class NewWindow_Admin implements ActionListener{
 	            String username = usernameField.getText();
 	            String password = new String(passwordField.getPassword());
 	            try {
-	                String checkUsernameQuery = "SELECT * FROM users WHERE username = ?";
+	                String checkUsernameQuery = "SELECT * FROM user WHERE username = ?";
 	                PreparedStatement checkUsernameStatement = conn.prepareStatement(checkUsernameQuery);
 	                checkUsernameStatement.setString(1, username);
 	                ResultSet rs = checkUsernameStatement.executeQuery();
@@ -314,6 +296,7 @@ public class NewWindow_Admin implements ActionListener{
 
 	                psInsert.setString(1, username);
 	                psInsert.setString(2, password);
+	                psInsert.setInt(3, 2);
 	                int rowsAffected = psInsert.executeUpdate();
 	                if (rowsAffected > 0) {
 	                    JOptionPane.showMessageDialog(this, "Account created successfully!", "Sign Up", JOptionPane.INFORMATION_MESSAGE);
@@ -331,23 +314,22 @@ public class NewWindow_Admin implements ActionListener{
 	
 	 }
 	 public class townRegister implements ActionListener{
-		 
+		 private final User user;
 		 JFrame frame = new JFrame ("Select Town to Register");
 		 JLabel label = new JLabel ("Welcome Admin!");
 		 JLabel label1 = new JLabel("Please select town to register");
 		 JLabel label2 = new JLabel("Enter name of the resort");
-		 JRadioButton button = new JRadioButton("Carcar");
-		 JRadioButton button1 = new JRadioButton("Barili");
-		 JRadioButton button2 = new JRadioButton("Moalboal");
-		 JRadioButton button3 = new JRadioButton("Alcoy");
-		 JRadioButton button4 = new JRadioButton("SanTander");
-		 JRadioButton button5 = new JRadioButton("Oslob");
+		 JRadioButton button = new JRadioButton("Carcar"); // id: 3
+		 JRadioButton button1 = new JRadioButton("Barili"); // id: 2
+		 JRadioButton button2 = new JRadioButton("Moalboal"); // id: 4
+		 JRadioButton button3 = new JRadioButton("Alcoy"); // id: 1
+		 JRadioButton button4 = new JRadioButton("SanTander"); // id: 6
+		 JRadioButton button5 = new JRadioButton("Oslob"); // id: 5
 		 JTextField field = new JTextField();
 		 JButton display = new JButton("Display");
 		 public String resortName;
-		 townRegister(){
-			 
-			 
+		 townRegister(User user){
+			 this.user = user;			 
 			 
 			 ImageIcon background = new ImageIcon("beach3.jpg");
 			 Image backgroundImage = background.getImage().getScaledInstance(500, 550, Image.SCALE_DEFAULT);
@@ -437,44 +419,60 @@ public class NewWindow_Admin implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == display) {
-				resortName = field.getText();	       
+				resortName = field.getText();	
+				int resortId = 0;
 						try {
 		            // Insert resort name into the database
+		            if (button.isSelected()) {
+		            	resortId = 3;
+		            } else if (button1.isSelected()) {
+		            	resortId = 2;
+		            } else if (button2.isSelected()) {	
+		            	resortId = 4;
+		            } else if (button3.isSelected()) {
+		            	resortId = 1;
+		            } else if (button4.isSelected()) {
+		            	resortId = 6;
+		            } else if (button5.isSelected()) {	
+		            	resortId = 5;
+		            }
 		            psInsert.setString(1, resortName);
+	            	psInsert.setInt(2, resortId);
+	            	psInsert.setLong(3, user.getId());
 		            psInsert.executeUpdate();
 		        } catch (SQLException ex) {
 		            ex.printStackTrace();
 		        }
 						System.out.println(resortName);
-		        if (button.isSelected()) {
+		        if (resortId == 3) {
 		        	JOptionPane.showMessageDialog(null,"Information successfully added.","Success",JOptionPane.INFORMATION_MESSAGE);
 		        	frame.dispose();
-		        	Carcar carcar = new Carcar(resortName);
-		        	Carcar.generateButton(carcar.getFrame(), resortName);
-		        } else if (button1.isSelected()) {
+		        	Carcar carcar = new Carcar(this.user, resortName);
+//		        	Carcar.generateButton(carcar.getFrame(), resortName);
+		        } else if (resortId == 2) {
 		        	JOptionPane.showMessageDialog(null,"Information successfully added.","Success",JOptionPane.INFORMATION_MESSAGE);
 		        	frame.dispose();
-		        	Barili barili = new Barili();
-		        	Barili.generateButton(barili.getFrame(), resortName);
-		        } else if (button2.isSelected()) {	
+		        	Barili barili = new Barili(this.user, resortName);
+//		        	Barili.generateButton(barili.getFrame(), resortName);
+		        } else if (resortId == 4) {	
 		        	JOptionPane.showMessageDialog(null,"Information successfully added.","Success",JOptionPane.INFORMATION_MESSAGE);
 		        	frame.dispose();
-		        	Moalboal moalboal = new Moalboal();
+		        	Moalboal moalboal = new Moalboal(this.user);
 		        	Moalboal.generateButton(moalboal.getFrame(), resortName);
-		        } else if (button3.isSelected()) {	
+		        } else if (resortId == 1) {	
 			        JOptionPane.showMessageDialog(null,"Information successfully added.","Success",JOptionPane.INFORMATION_MESSAGE);
 			        frame.dispose();
-			        Alcoy alcoy = new Alcoy();
+			        Alcoy alcoy = new Alcoy(this.user);
 			        Alcoy.generateButton(alcoy.getFrame(), resortName);
-		        } else if (button4.isSelected()) {
+		        } else if (resortId == 6) {
 		        	JOptionPane.showMessageDialog(null,"Information successfully added.","Success",JOptionPane.INFORMATION_MESSAGE);
 			        frame.dispose();
-			        SanTander santander = new SanTander();
+			        SanTander santander = new SanTander(this.user);
 			        SanTander.generateButton(santander.getFrame(), resortName); 
-		        } else if (button5.isSelected()) {
+		        } else if (resortId == 5) {
 		        	JOptionPane.showMessageDialog(null,"Information successfully added.","Success",JOptionPane.INFORMATION_MESSAGE);
 			        frame.dispose();
-			        Oslob oslob = new Oslob();
+			        Oslob oslob = new Oslob(this.user);
 			        //Oslob.generateButton(oslob.getFrame(), resortName); 
 		        }
 		        
@@ -488,12 +486,14 @@ public class NewWindow_Admin implements ActionListener{
 			
 	 }
 	 class menuAdmin implements ActionListener{
+		 private final User user;
 		 JFrame frame = new JFrame("Menu");
 		 JButton button = new JButton("Register resort");
 		 JButton button1 = new JButton("View registered resort");
 		 JButton button2 = new JButton("EXIT");
 		 
-		 menuAdmin(){
+		 menuAdmin(User user){
+			 this.user = user;
 			 
 			 ImageIcon icon = new ImageIcon("beach2.png");
 			 
@@ -532,10 +532,10 @@ public class NewWindow_Admin implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==button) { //For the Log in menu
 				frame.dispose();
-				townRegister townregister = new townRegister();
+				townRegister townregister = new townRegister(this.user);
 			}else if (e.getSource()==button1) { //For the sign up menu
 				 try {
-	                    String[] registeredResorts = getRegisteredResorts();
+	                    java.util.List<String> registeredResorts = getRegisteredResorts();
 	                    viewResort viewResortFrame = new viewResort(registeredResorts);
 	                } catch (SQLException ex) {
 	                    ex.printStackTrace();
@@ -544,29 +544,26 @@ public class NewWindow_Admin implements ActionListener{
 				frame.dispose();
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			}
-		}	
+		}
+		
+		 private java.util.List<String> getRegisteredResorts() throws SQLException {
+		        java.util.List<String> resorts = new ArrayList<>();
+		        PreparedStatement stmt = conn.prepareStatement("SELECT name FROM resort WHERE user_id = ?");
+		        stmt.setLong(1, this.user.getId());
+		        ResultSet rs = stmt.executeQuery();
+		        
+		        while (rs.next()) {
+		            resorts.add(rs.getString("name"));
+		        }
+		        return resorts;
+		    }
 		
 	 }
-	 private String[] getRegisteredResorts() throws SQLException {
-	        String[] resorts = null;
-	        ResultSet rs = stmt.executeQuery("SELECT resort_name FROM resorts");
-	        rs.last();
-	        int numRows = rs.getRow();
-	        rs.beforeFirst();
-
-	        resorts = new String[numRows];
-	        int i = 0;
-	        while (rs.next()) {
-	            resorts[i] = rs.getString("resort_name");
-	            i++;
-	        }
-	        return resorts;
-	    }
 	 class viewResort {
 	        JFrame frame = new JFrame("View Resort");
 
-	        viewResort(String[] registeredResorts) {
-	            frame.setLayout(new GridLayout(registeredResorts.length, 1));
+	        viewResort(java.util.List<String> registeredResorts) {
+	            frame.setLayout(new GridLayout(registeredResorts.size(), 1));
 
 	            for (String resortName : registeredResorts) {
 	                JLabel resortLabel = new JLabel(resortName);

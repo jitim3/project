@@ -3,7 +3,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.io.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -136,15 +138,9 @@ class databaseSignup extends JFrame implements ActionListener { // Sign up Menu
     	frame.setResizable(false);
 
         try {
-            String url = "jdbc:mysql://localhost:3306/";
-            String dbName = "projdatabase";
-            String driver = "com.mysql.cj.jdbc.Driver";
-            String userName = "root";
-            String password = "";
-            Class.forName(driver);
-            conn = DriverManager.getConnection(url + dbName, userName, password);
+            conn = DbConnection.getConnection();
 
-            psInsert = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)");
+            psInsert = conn.prepareStatement("INSERT INTO user (username, password, user_type_id) VALUES (?, ?, ?)");
             stmt = conn.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,7 +155,7 @@ class databaseSignup extends JFrame implements ActionListener { // Sign up Menu
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             try {
-                String checkUsernameQuery = "SELECT * FROM users WHERE username = ?";
+                String checkUsernameQuery = "SELECT * FROM user WHERE username = ?";
                 PreparedStatement checkUsernameStatement = conn.prepareStatement(checkUsernameQuery);
                 checkUsernameStatement.setString(1, username);
                 ResultSet rs = checkUsernameStatement.executeQuery();
@@ -170,6 +166,7 @@ class databaseSignup extends JFrame implements ActionListener { // Sign up Menu
 
                 psInsert.setString(1, username);
                 psInsert.setString(2, password);
+                psInsert.setInt(3, 3);
                 int rowsAffected = psInsert.executeUpdate();
                 if (rowsAffected > 0) {
                     JOptionPane.showMessageDialog(this, "Account created successfully!", "Sign Up", JOptionPane.INFORMATION_MESSAGE);
@@ -186,7 +183,7 @@ class databaseSignup extends JFrame implements ActionListener { // Sign up Menu
 }
 		
 class databaseLogin extends JFrame implements ActionListener {
-	
+	private User user;
 	private JFrame frame;
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -256,7 +253,7 @@ class databaseLogin extends JFrame implements ActionListener {
         okButton.addActionListener(e -> {
             successFrame.dispose(); // Close the success frame
             frame.dispose(); // Close the login frame
-            townsFrame = new Towns(); // Open the Towns frame
+            townsFrame = new Towns(this.user); // Open the Towns frame
         });
         successFrame.add(okButton);
         successFrame.setSize(400, 200);
@@ -267,15 +264,9 @@ class databaseLogin extends JFrame implements ActionListener {
 
         // Database connection setup
         try {
-            String url = "jdbc:mysql://localhost:3306/";
-            String dbName = "projdatabase";
-            String driver = "com.mysql.cj.jdbc.Driver";
-            String userName = "root";
-            String password = "";
-            Class.forName(driver);
-            conn = DriverManager.getConnection(url + dbName, userName, password);
+            conn = DbConnection.getConnection();
 
-            psInsert = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)");
+            psInsert = conn.prepareStatement("INSERT INTO user (username, password, user_type_id) VALUES (?, ?, ?)");
             stmt = conn.createStatement();
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,13 +282,15 @@ class databaseLogin extends JFrame implements ActionListener {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             try {
-                String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+                String sql = "SELECT * FROM user WHERE username = ? AND password = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, username);
                 ps.setString(2, password);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
+                	user = new User(rs.getLong("id"), rs.getString("username"), rs.getInt("user_type_id"));
                     successFrame.setVisible(true); // Show the success frame
+                    frame.dispose();
                 } else {
                 	 
                     JOptionPane.showMessageDialog(this, "Invalid username or password. Please try again.", "Login Error", JOptionPane.ERROR_MESSAGE);
@@ -319,19 +312,19 @@ class databaseLogin extends JFrame implements ActionListener {
 }
 
   class Towns extends JFrame implements ActionListener { // Prompts after user log in
-	 
+	  private final User user;
 	 JFrame frame = new JFrame("Where to?");
 	 JLabel label = new JLabel("TOWN");
-	 JButton button = new JButton("Carcar"); //CARCAR BUTTON
-	 JButton button1 = new JButton("Barili");//Barili BUTTON
-	 JButton button2 = new JButton("Moalboal");//Moalboal BUTTON
-	 JButton button3 = new JButton("Alcoy");//Alcoy BUTTON	
-	 JButton button4 = new JButton("SanTander");//SAN TANDER BUTTON
-	 JButton button5 = new JButton("Oslob");//OSLOB BUTTON
+	 JButton button = new JButton("Carcar"); //CARCAR BUTTON id: 3
+	 JButton button1 = new JButton("Barili");//Barili BUTTON id: 2
+	 JButton button2 = new JButton("Moalboal");//Moalboal BUTTON id: 4
+	 JButton button3 = new JButton("Alcoy");//Alcoy BUTTON id: 1
+	 JButton button4 = new JButton("SanTander");//SAN TANDER BUTTON id: 6
+	 JButton button5 = new JButton("Oslob");//OSLOB BUTTON id: 5
 	 JButton button6 = new JButton("EXIT");//EXIT BUTTON
 	 //
-	 Towns(){
-		 
+	 Towns(User user) {
+		 this.user = user;
 		 //Set logo to the frame
 		 ImageIcon icon = new ImageIcon("beach2.png");
 		 
@@ -404,24 +397,25 @@ class databaseLogin extends JFrame implements ActionListener {
 	 public void actionPerformed(ActionEvent e) {
 		 if(e.getSource()==button) {
 			 frame.dispose();
-			 Carcar window = new Carcar(resortName);
+			 Carcar window = new Carcar(this.user);
+			 Carcar.generateButton(window.getFrame(), window.getRegisteredResorts());
 		 }else if (e.getSource()==button1) {
 			 frame.dispose();
-			 Barili window = new Barili();
+			 Barili window = new Barili(this.user);
 		 }else if (e.getSource()==button2) {
 			 frame.dispose();
-			 Moalboal window = new Moalboal();
+			 Moalboal window = new Moalboal(this.user);
 		 }else if (e.getSource()==button3) {
 			 frame.dispose();
-			 Alcoy window = new Alcoy();
+			 Alcoy window = new Alcoy(this.user);
 
 		 }else if (e.getSource()==button4) {
 			 frame.dispose();
-			 SanTander window = new SanTander();
+			 SanTander window = new SanTander(this.user);
 		 }
 		 else if (e.getSource()==button5){
 			frame.dispose();
-			Oslob window = new Oslob();
+			Oslob window = new Oslob(this.user);
 			 
 		 }else {
 			 frame.dispose();
@@ -430,14 +424,23 @@ class databaseLogin extends JFrame implements ActionListener {
 		 
 	 }
 	 public static class Carcar implements ActionListener{ //CARCAR FRAME
-		 
+		 private User user;
 		 JFrame frame = new JFrame("Carcar");
 		 public JButton back = new JButton("Back");
 		 
+		 public Carcar(User user) {
+			 this(user, null);
+		 }
 		
-		  public Carcar(String resortName){
+		  public Carcar(User user, String resortName){
+			  this.user = user;
 			//this.resortName = resortName;
-			generateButton(frame, resortName);
+			  if (resortName == null || resortName.trim().isEmpty()) {
+				  Set<String> resortNames = this.getRegisteredResorts();
+				  generateButton(frame, resortNames);
+			  } else {
+				  generateButton(frame, Collections.singleton(resortName));
+			  }
 			frame.setLocationRelativeTo(null);
 			
 			back.setBounds(370,420,100,25);
@@ -471,38 +474,83 @@ class databaseLogin extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==back) {
 				frame.dispose();
-				new Towns();
+				new Towns(this.user);
 			}
 			
 		}
 
 
-		public static void generateButton(JFrame frame, String resortName) {
-		
-	        JButton resortButton = new JButton(resortName);
+		public static void generateButton(JFrame frame, Set<String> resortNames) {		
+	        
 	        ImageIcon background = new ImageIcon("beach3.jpg");
 	        Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
 	        JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 	        backgroundLabel.setBounds(0, 0, 500, 600);
 
-	        resortButton.setBounds(50,65,400,75);
-	        resortButton.setOpaque(false);
-	        resortButton.setFocusable(false);
-
-	        frame.getContentPane().add(resortButton);
-	        frame.add(resortButton);
+			int y = 65;
+			for (String resortName : resortNames) {
+				JButton resortButton  = new JButton(resortName);
+				resortButton.setBounds(50, y, 400, 75);
+				resortButton.setOpaque(false);
+				resortButton.setFocusable(false);
+		        frame.getContentPane().add(resortButton);
+		        frame.add(resortButton);
+		        
+		        y = y + 85;
+			}
+	        
 	        frame.setLayout(null);
 	        frame.revalidate();
 	        frame.repaint();
 	        frame.setVisible(true);
 	    }
+		
+		private Set<String> getRegisteredResorts() {
+	        Set<String> resorts = new HashSet<>();
+	        
+	        try {
+	        	Connection conn = DbConnection.getConnection();
+	        	PreparedStatement stmt;
+	        	String query = "SELECT name FROM resort WHERE town_id = ?";
+	        	if (this.user != null && this.user.getUserTypeId() == 2) {
+	        		query += " AND user_id = ?";
+		        	stmt = conn.prepareStatement(query);
+		            stmt.setInt(1, 3);
+		            stmt.setLong(2,  this.user.getId());
+	        	} else {
+		        	stmt = conn.prepareStatement(query);
+		            stmt.setInt(1, 3);
+	        	}
+	        	System.out.println(query);
+		        ResultSet rs = stmt.executeQuery();
+		        while (rs.next()) {
+		            resorts.add(rs.getString("name"));
+		        }
+	        } catch(SQLException exception) {
+	        	exception.printStackTrace();
+	        }
+	        
+	        return resorts;
+	    }
 	}
 	
 	 public static class Barili implements ActionListener{
+		 private final User user;
 		 JFrame frame = new JFrame("Barili");
 		 JButton button = new JButton("Back");
 		 
-		 Barili(){
+		 Barili(User user) {
+			 this(user, null);
+		 }
+		 
+		 Barili(User user, String resortName){
+			 this.user = user;
+			 if (resortName == null || resortName.trim().isEmpty()) {
+				  Set<String> resortNames = this.getRegisteredResorts();
+				  generateButton(frame, resortNames);
+			  } else {
+				  generateButton(frame, Collections.singleton(resortName));
+			  }
 			 
 			button.setBounds(370,420,100,25);
 			button.setFocusable(false);
@@ -533,38 +581,71 @@ class databaseLogin extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==button) {
 			frame.dispose();
-			Towns window = new Towns();
+			Towns window = new Towns(this.user);
 			
 		}
 	 }
-		public static void generateButton(JFrame frame,String resortName) {
+		public static void generateButton(JFrame frame, Set<String> resortNames) {
 			
 			ImageIcon background = new ImageIcon("beach3.jpg");
 			Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
 			JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 			backgroundLabel.setBounds(0, 0, 500, 600);
 			
-			JButton resortButton = new JButton(resortName);
-	        resortButton.setBounds(50,65,400,75);
-	        resortButton.setOpaque(false);
-	        resortButton.setFocusable(false);
-	        frame.setContentPane(backgroundLabel);
-	        frame.getContentPane().add(resortButton);
-	        frame.add(resortButton);
+			int y = 65;
+			for (String resortName : resortNames) {
+				JButton resortButton  = new JButton(resortName);
+				resortButton.setBounds(50, y, 400, 75);
+				resortButton.setOpaque(false);
+				resortButton.setFocusable(false);
+		        frame.getContentPane().add(resortButton);
+		        frame.add(resortButton);
+		        
+		        y = y + 85;
+			}
+	        
 	        frame.setLayout(null);
 	        frame.revalidate();
 	        frame.repaint();
 	        frame.setVisible(true);
-
-			
 		}
+		
+		private Set<String> getRegisteredResorts() {
+	        Set<String> resorts = new HashSet<>();
+	        
+	        try {
+	        	Connection conn = DbConnection.getConnection();
+	        	PreparedStatement stmt;
+	        	String query = "SELECT name FROM resort WHERE town_id = ?";
+	        	if (this.user != null && this.user.getUserTypeId() == 2) {
+	        		query += " AND user_id = ?";
+		        	stmt = conn.prepareStatement(query);
+		            stmt.setInt(1, 2);
+		            stmt.setLong(2, this.user.getId());
+	        	} else {
+		        	stmt = conn.prepareStatement(query);
+		            stmt.setInt(1, 2);
+	        	}
+
+		        ResultSet rs = stmt.executeQuery();
+		        while (rs.next()) {
+		            resorts.add(rs.getString("name"));
+		        }
+	        } catch(SQLException exception) {
+	        	exception.printStackTrace();
+	        }
+	        
+	        return resorts;
+	    }
 		
 	}
 	 public static class Moalboal implements ActionListener{
+		 private final User user;
 		 JFrame frame = new JFrame("Moalboal");
 		 JButton button = new JButton("Back");
 		 
-		 Moalboal(){
+		 Moalboal(User user){
+			 this.user = user;
 			button.setBounds(370,420,100,25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -593,7 +674,7 @@ class databaseLogin extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==button) {
 				frame.dispose();
-				Towns window = new Towns();
+				Towns window = new Towns(this.user);
 		}
 		 
 		 
@@ -621,10 +702,12 @@ class databaseLogin extends JFrame implements ActionListener {
 		}
 	}
 	 public static class Alcoy implements ActionListener{
+		 private final User user;
 		 JFrame frame = new JFrame("Alcoy");
 		 JButton button = new JButton("Back");
 	
-		 Alcoy(){
+		 Alcoy(User user){
+			 this.user = user;
 			button.setBounds(370,420,100,25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -653,7 +736,7 @@ class databaseLogin extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==button) {
 				frame.dispose();
-				Towns window = new Towns();
+				Towns window = new Towns(this.user);
 			
 		 }
 		}
@@ -680,10 +763,12 @@ class databaseLogin extends JFrame implements ActionListener {
 		}
 	 }
 	 public static class SanTander implements ActionListener{
+		 private final User user;
 		 JFrame frame = new JFrame("San Tander");
 		 JButton button = new JButton("Back");
 	
-		SanTander(){
+		SanTander(User user){
+			 this.user = user;
 			button.setBounds(370,420,100,25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -711,7 +796,7 @@ class databaseLogin extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==button) {
 				frame.dispose();
-				Towns window = new Towns();
+				Towns window = new Towns(this.user);
 			
 		 }
 		}
@@ -738,10 +823,12 @@ class databaseLogin extends JFrame implements ActionListener {
 		}
 	 }
 	 public static class Oslob implements ActionListener{
+		 private final User user;
 		 JFrame frame = new JFrame("Oslob");
 		 JButton button = new JButton("Back");
 	
-		 Oslob(){
+		 Oslob(User user){
+			 this.user = user;
 			button.setBounds(370,420,100,25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -769,7 +856,7 @@ class databaseLogin extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(e.getSource()==button) {
 			frame.dispose();
-			Towns window = new Towns();
+			Towns window = new Towns(this.user);
 			
 			}
 		}
