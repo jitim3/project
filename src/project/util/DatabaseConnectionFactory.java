@@ -1,10 +1,10 @@
-package project;
+package project.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DbConnection {
+public class DatabaseConnectionFactory {
 	private static Connection connection = null;	 
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	private static final String URL = "jdbc:mysql://localhost:3306";
@@ -13,7 +13,7 @@ public class DbConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "";
     
-    private DbConnection() {}
+    private DatabaseConnectionFactory() {}
     
     public static Connection getConnection() {
 		if (connection == null) {
