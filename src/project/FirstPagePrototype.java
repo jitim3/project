@@ -1,12 +1,11 @@
 package project;
-import javax.swing.*;
-import java.awt.*;
+
+import java.awt.EventQueue;
+
 public class FirstPagePrototype {
 
-		public static void main(String[] args) {
-			
-			LaunchPage launchpage = new LaunchPage();
-
-		}
-
+	public static void main(String[] args) {		
+		EventQueue.invokeLater(LaunchPage::new);
 	}
+
+}
