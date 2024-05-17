@@ -2,17 +2,19 @@ package project.dto;
 
 import java.time.Instant;
 
+import project.dao.entity.UserType;
+
 public class UserDto {
 	private final Long id;
 	private final String username;
-	private final int userTypeId;
+	private final UserType userType;
 	private final Instant createdAt;
 	private final Instant updatedAt;
 	
-	public UserDto(Long id, String username, int userTypeId, Instant createdAt, Instant updatedAt) {
+	public UserDto(Long id, String username, UserType userType, Instant createdAt, Instant updatedAt) {
 		this.id = id;
 		this.username = username;
-		this.userTypeId = userTypeId;
+		this.userType = userType;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
@@ -25,8 +27,8 @@ public class UserDto {
 		return username;
 	}
 
-	public int getUserTypeId() {
-		return userTypeId;
+	public UserType getUserType() {
+		return userType;
 	}
 
 	public Instant getCreatedAt() {

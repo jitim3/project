@@ -6,6 +6,7 @@ import java.util.Optional;
 import project.dao.UserDao;
 import project.dao.entity.User;
 import project.dao.impl.DefaultUserDao;
+import project.dto.CreateUserDto;
 import project.dto.UserDto;
 import project.service.UserService;
 
@@ -22,6 +23,12 @@ public class DefaultUserService implements UserService {
 	}
 
 	@Override
+	public Optional<UserDto> getUserByUsernameAndPassword(String username, String password) {
+		return this.userDao.getUserByUsernameAndPassword(username, password)
+				.map(this::mapToUserDto);
+	}
+
+	@Override
 	public Optional<UserDto> getAdmin(String username, String password) {
 		return this.userDao.getAdmin(username, password)
 				.map(this::mapToUserDto);
@@ -35,13 +42,13 @@ public class DefaultUserService implements UserService {
 
 	@Override
 	public boolean createUser(String username, String password, int userTypeId) {
-		User newUser = new User(null, username, password, userTypeId, Instant.now(), null);
+		CreateUserDto createUserDto = new CreateUserDto(username, password, userTypeId, Instant.now());
 		
-		return this.userDao.createUser(newUser);
+		return this.userDao.createUser(createUserDto);
 	}
 	
 	private UserDto mapToUserDto(User user) {
-		return new UserDto(user.getId(), user.getUsername(), user.getUserTypeId(), user.getCreatedAt(), user.getUpdatedAt());
+		return new UserDto(user.getId(), user.getUsername(), user.getUserType(), user.getCreatedAt(), user.getUpdatedAt());
 	}
 
 }
