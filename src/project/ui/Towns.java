@@ -223,7 +223,7 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 					stmt = conn.prepareStatement(query);
 					stmt.setInt(1, 3);
 				}
-				System.out.println(query);
+
 				ResultSet rs = stmt.executeQuery();
 				while (rs.next()) {
 					resorts.add(rs.getString("name"));
@@ -540,7 +540,7 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 					stmt = conn.prepareStatement(query);
 					stmt.setInt(1, 1);
 				}
-				System.out.println(query);
+
 				ResultSet rs = stmt.executeQuery();
 				while (rs.next()) {
 					resorts.add(rs.getString("name"));
@@ -644,7 +644,7 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 					stmt = conn.prepareStatement(query);
 					stmt.setInt(1, 5);
 				}
-				System.out.println(query);
+
 				ResultSet rs = stmt.executeQuery();
 				while (rs.next()) {
 					resorts.add(rs.getString("name"));
@@ -748,7 +748,7 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 					stmt = conn.prepareStatement(query);
 					stmt.setInt(1, 6);
 				}
-				System.out.println(query);
+
 				ResultSet rs = stmt.executeQuery();
 				while (rs.next()) {
 					resorts.add(rs.getString("name"));
