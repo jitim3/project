@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS room (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
-	CONSTRAINT fk_room_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
+	CONSTRAINT fk_room_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id),
+	CONSTRAINT fk_room_room_availability_type_id FOREIGN KEY (room_availability_type_id) REFERENCES room_availability_type (id)
 );	
 	
