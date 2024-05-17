@@ -34,6 +34,7 @@ import project.Towns.SanTander;
 import project.dto.UserDto;
 import project.service.UserService;
 import project.service.impl.DefaultUserService;
+import project.ui.ResortInfo;
 import project.util.DatabaseConnectionFactory;
 import project.util.UserType;
 
@@ -429,10 +430,16 @@ public class NewWindow_Admin implements ActionListener {
 				if (resortId == 3) {
 					JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
+					int choice = JOptionPane.showConfirmDialog(null, "Do you want to proceed to Register Information Fill up?", "Confirmation", JOptionPane.YES_NO_OPTION);
+		        	frame.dispose();
+		        	if (choice == JOptionPane.YES_OPTION) {
+		        		ResortInfo frame = new ResortInfo();
+		            } else {
+					ResortInfo resortinfo = new ResortInfo();
 					frame.dispose();
 					Carcar carcar = new Carcar(this.userDto, resortName);
 //		        	Carcar.generateButton(carcar.getFrame(), resortName);
-				} else if (resortId == 2) {
+				}} else if (resortId == 2) {
 					JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					frame.dispose();
@@ -442,25 +449,24 @@ public class NewWindow_Admin implements ActionListener {
 					JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					frame.dispose();
-					Moalboal moalboal = new Moalboal(this.userDto);
-					Moalboal.generateButton(moalboal.getFrame(), resortName);
+					Moalboal moalboal = new Moalboal(this.userDto, resortName);	
 				} else if (resortId == 1) {
 					JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					frame.dispose();
-					Alcoy alcoy = new Alcoy(this.userDto);
-					Alcoy.generateButton(alcoy.getFrame(), resortName);
+					Alcoy alcoy = new Alcoy(this.userDto, resortName);
+//					Alcoy.generateButton(alcoy.getFrame(), resortName);
 				} else if (resortId == 6) {
 					JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					frame.dispose();
-					SanTander santander = new SanTander(this.userDto);
-					SanTander.generateButton(santander.getFrame(), resortName);
+					SanTander santander = new SanTander(this.userDto, resortName);
+//					SanTander.generateButton(santander.getFrame(), resortName);
 				} else if (resortId == 5) {
 					JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
 							JOptionPane.INFORMATION_MESSAGE);
 					frame.dispose();
-					Oslob oslob = new Oslob(this.userDto);
+					Oslob oslob = new Oslob(this.userDto, resortName);
 					// Oslob.generateButton(oslob.getFrame(), resortName);
 				}
 
@@ -558,5 +564,10 @@ public class NewWindow_Admin implements ActionListener {
 			frame.setResizable(false);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
+		
+		
 	}
+	
+	
+	
 }

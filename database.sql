@@ -47,6 +47,15 @@ INSERT INTO town (id, name) VALUES(6, 'SanTander');
 CREATE TABLE IF NOT EXISTS resort (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
+	description TEXT,
+	location VARCHAR(255) NOT NULL,
+	how_to_get_there TEXT,
+	resort_fee DECIMAL(19,2) NOT NULL,
+	cottage_fee DECIMAL(19,2) NOT NULL,
+	pool_fee DECIMAL(19,2) NOT NULL,
+	resort_image VARCHAR (255) NOT NULL,
+	pool_image VARCHAR (255) NOT NULL,
+	cottage_image VARCHAR (255) NOT NULL,
 	town_id INT NOT NULL,
 	user_id BIGINT NOT NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,3 +65,33 @@ CREATE TABLE IF NOT EXISTS resort (
     CONSTRAINT fk_resort_town_id FOREIGN KEY (town_id) REFERENCES town (id),
     CONSTRAINT fk_resort_user_id FOREIGN KEY (user_id) REFERENCES user (id)
 );
+CREATE TABLE IF NOT EXISTS room_availability_type (
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(255) NOT NULL,
+	description VARCHAR(255) NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT uq_room_availability_type_name UNIQUE (name)
+);
+
+INSERT INTO room_availability_type (id, name, description) VALUES (1, 'DAY_USE','Day Use');
+INSERT INTO room_availability_type (id, name, description) VALUES (2, 'NIGHT_USE','Night Use');
+INSERT INTO room_availability_type (id, name, description) VALUES (3, 'DAY_AND_NIGHT_USE','Day and Night Use');
+	
+CREATE TABLE IF NOT EXISTS room (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	resort_id BIGINT NOT NULL,
+	room_availability_type_id INT NOT NULL,
+	room_type ENUM('Normal','Family') NOT NULL,
+	num_of_pax INT NOT NULL,
+	rate_per_night DECIMAL(19,2) NOT NULL,
+	description TEXT,
+	room_image1 VARCHAR (255) NOT NULL,
+	room_image2 VARCHAR (255) NOT NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT fk_room_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
+);	
+	

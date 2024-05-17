@@ -170,16 +170,18 @@ class DatabaseSignup extends JFrame implements ActionListener { // Sign up Menu
 				return;
 			}
 
-			Optional<UserDto> userDOptional = this.userService.getCustomer(username, password);
-			userDOptional.ifPresentOrElse(userDto -> {
+			boolean created = this.userService.createUser(username, password, UserType.CUSTOMER.id());
+			if(created) {
 				JOptionPane.showMessageDialog(this, "Account created successfully!", "Sign Up",
 						JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 				new DatabaseLogin(this.userService);
-			}, () -> JOptionPane.showMessageDialog(this, "Failed to create account. Please try again.", "Sign Up Error",
-					JOptionPane.ERROR_MESSAGE));
+			} else { 
+				JOptionPane.showMessageDialog(this, "Failed to create account. Please try again.", "Sign Up Error",	JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
+
 }
 
 class DatabaseLogin extends JFrame implements ActionListener {
@@ -391,7 +393,6 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 		} else if (e.getSource() == button5) {
 			frame.dispose();
 			Oslob window = new Oslob(this.userDto);
-
 		} else {
 			frame.dispose();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -618,9 +619,19 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 		private final UserDto userDto;
 		JFrame frame = new JFrame("Moalboal");
 		JButton button = new JButton("Back");
-
+		
 		Moalboal(UserDto userDto) {
+			this(userDto, null);
+		}
+		
+		Moalboal(UserDto userDto, String resortName) {
 			this.userDto = userDto;
+			if (resortName == null || resortName.trim().isEmpty()) {
+				Set<String> resortNames = this.getRegisteredResorts();
+				generateButton(frame, resortNames);
+			} else {
+				generateButton(frame, Collections.singleton(resortName));
+			}
 			button.setBounds(370, 420, 100, 25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -654,26 +665,57 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 			}
 
 		}
-
-		public static void generateButton(JFrame frame, String resortName) {
+		public static void generateButton(JFrame frame, Set<String> resortNames) {
 
 			ImageIcon background = new ImageIcon("beach3.jpg");
 			Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
 			JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 			backgroundLabel.setBounds(0, 0, 500, 600);
 
-			JButton resortButton = new JButton(resortName);
-			resortButton.setBounds(50, 65, 400, 75);
-			resortButton.setOpaque(false);
-			resortButton.setFocusable(false);
-			frame.setContentPane(backgroundLabel);
-			frame.getContentPane().add(resortButton);
-			frame.add(resortButton);
+			int y = 65;
+			for (String resortName : resortNames) {
+				JButton resortButton = new JButton(resortName);
+				resortButton.setBounds(50, y, 400, 75);
+				resortButton.setOpaque(false);
+				resortButton.setFocusable(false);
+				frame.getContentPane().add(resortButton);
+				frame.add(resortButton);
+
+				y = y + 85;
+			}
+
 			frame.setLayout(null);
 			frame.revalidate();
 			frame.repaint();
 			frame.setVisible(true);
+		}
 
+		private Set<String> getRegisteredResorts() {
+			Set<String> resorts = new HashSet<>();
+
+			try {
+				Connection conn = DatabaseConnectionFactory.getConnection();
+				PreparedStatement stmt;
+				String query = "SELECT name FROM resort WHERE town_id = ?";
+				if (this.userDto != null && this.userDto.getUserTypeId() == UserType.ADMIN.id()) {
+					query += " AND user_id = ?";
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 4);
+					stmt.setLong(2, this.userDto.getId());
+				} else {
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 4);
+				}
+
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					resorts.add(rs.getString("name"));
+				}
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
+
+			return resorts;
 		}
 	}
 
@@ -681,9 +723,19 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 		private final UserDto userDto;
 		JFrame frame = new JFrame("Alcoy");
 		JButton button = new JButton("Back");
-
+		
 		Alcoy(UserDto userDto) {
+			this(userDto, null);
+		}
+		
+		Alcoy(UserDto userDto, String resortName) {
 			this.userDto = userDto;
+			if (resortName == null || resortName.trim().isEmpty()) {
+				Set<String> resortNames = this.getRegisteredResorts();
+				generateButton(frame, resortNames);
+			} else {
+				generateButton(frame, Collections.singleton(resortName));
+			}
 			button.setBounds(370, 420, 100, 25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -718,25 +770,57 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 			}
 		}
 
-		public static void generateButton(JFrame frame, String resortName) {
+		public static void generateButton(JFrame frame, Set<String> resortNames) {
 
 			ImageIcon background = new ImageIcon("beach3.jpg");
 			Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
 			JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 			backgroundLabel.setBounds(0, 0, 500, 600);
 
-			JButton resortButton = new JButton(resortName);
-			resortButton.setBounds(50, 65, 400, 75);
-			resortButton.setOpaque(false);
-			resortButton.setFocusable(false);
-			frame.setContentPane(backgroundLabel);
-			frame.getContentPane().add(resortButton);
-			frame.add(resortButton);
+			int y = 65;
+			for (String resortName : resortNames) {
+				JButton resortButton = new JButton(resortName);
+				resortButton.setBounds(50, y, 400, 75);
+				resortButton.setOpaque(false);
+				resortButton.setFocusable(false);
+				frame.getContentPane().add(resortButton);
+				frame.add(resortButton);
+
+				y = y + 85;
+			}
+
 			frame.setLayout(null);
 			frame.revalidate();
 			frame.repaint();
 			frame.setVisible(true);
+		}
 
+		private Set<String> getRegisteredResorts() {
+			Set<String> resorts = new HashSet<>();
+
+			try {
+				Connection conn = DatabaseConnectionFactory.getConnection();
+				PreparedStatement stmt;
+				String query = "SELECT name FROM resort WHERE town_id = ?";
+				if (this.userDto != null && this.userDto.getUserTypeId() == UserType.ADMIN.id()) {
+					query += " AND user_id = ?";
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 1);
+					stmt.setLong(2, this.userDto.getId());
+				} else {
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 1);
+				}
+				System.out.println(query);
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					resorts.add(rs.getString("name"));
+				}
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
+
+			return resorts;
 		}
 	}
 
@@ -744,9 +828,19 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 		private final UserDto userDto;
 		JFrame frame = new JFrame("San Tander");
 		JButton button = new JButton("Back");
-
+		
 		SanTander(UserDto userDto) {
+			this(userDto, null);
+		}
+		
+		SanTander(UserDto userDto, String resortName) {
 			this.userDto = userDto;
+			if (resortName == null || resortName.trim().isEmpty()) {
+				Set<String> resortNames = this.getRegisteredResorts();
+				generateButton(frame, resortNames);
+			} else {
+				generateButton(frame, Collections.singleton(resortName));
+			}
 			button.setBounds(370, 420, 100, 25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -780,25 +874,57 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 			}
 		}
 
-		public static void generateButton(JFrame frame, String resortName) {
+		public static void generateButton(JFrame frame, Set<String> resortNames) {
 
 			ImageIcon background = new ImageIcon("beach3.jpg");
 			Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
 			JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 			backgroundLabel.setBounds(0, 0, 500, 600);
 
-			JButton resortButton = new JButton(resortName);
-			resortButton.setBounds(50, 65, 400, 75);
-			resortButton.setOpaque(false);
-			resortButton.setFocusable(false);
-			frame.setContentPane(backgroundLabel);
-			frame.getContentPane().add(resortButton);
-			frame.add(resortButton);
+			int y = 65;
+			for (String resortName : resortNames) {
+				JButton resortButton = new JButton(resortName);
+				resortButton.setBounds(50, y, 400, 75);
+				resortButton.setOpaque(false);
+				resortButton.setFocusable(false);
+				frame.getContentPane().add(resortButton);
+				frame.add(resortButton);
+
+				y = y + 85;
+			}
+
 			frame.setLayout(null);
 			frame.revalidate();
 			frame.repaint();
 			frame.setVisible(true);
+		}
 
+		private Set<String> getRegisteredResorts() {
+			Set<String> resorts = new HashSet<>();
+
+			try {
+				Connection conn = DatabaseConnectionFactory.getConnection();
+				PreparedStatement stmt;
+				String query = "SELECT name FROM resort WHERE town_id = ?";
+				if (this.userDto != null && this.userDto.getUserTypeId() == UserType.ADMIN.id()) {
+					query += " AND user_id = ?";
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 5);
+					stmt.setLong(2, this.userDto.getId());
+				} else {
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 5);
+				}
+				System.out.println(query);
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					resorts.add(rs.getString("name"));
+				}
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
+
+			return resorts;
 		}
 	}
 
@@ -806,9 +932,19 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 		private final UserDto userDto;
 		JFrame frame = new JFrame("Oslob");
 		JButton button = new JButton("Back");
-
+		
 		Oslob(UserDto userDto) {
+			this(userDto, null);
+		}
+		
+		Oslob(UserDto userDto, String resortName) {
 			this.userDto = userDto;
+			if (resortName == null || resortName.trim().isEmpty()) {
+				Set<String> resortNames = this.getRegisteredResorts();
+				generateButton(frame, resortNames);
+			} else {
+				generateButton(frame, Collections.singleton(resortName));
+			}
 			button.setBounds(370, 420, 100, 25);
 			button.setFocusable(false);
 			button.addActionListener(this);
@@ -842,26 +978,57 @@ class Towns extends JFrame implements ActionListener { // Prompts after user log
 			}
 		}
 
-		public static void generateButton(JFrame frame, String resortName) {
+		public static void generateButton(JFrame frame, Set<String> resortNames) {
 
 			ImageIcon background = new ImageIcon("beach3.jpg");
 			Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
 			JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 			backgroundLabel.setBounds(0, 0, 500, 600);
 
-			JButton resortButton = new JButton(resortName);
-			resortButton.setBounds(50, 65, 400, 75);
-			resortButton.setOpaque(false);
-			resortButton.setFocusable(false);
+			int y = 65;
+			for (String resortName : resortNames) {
+				JButton resortButton = new JButton(resortName);
+				resortButton.setBounds(50, y, 400, 75);
+				resortButton.setOpaque(false);
+				resortButton.setFocusable(false);
+				frame.getContentPane().add(resortButton);
+				frame.add(resortButton);
 
-			frame.setContentPane(backgroundLabel);
-			frame.getContentPane().add(resortButton);
-			frame.add(resortButton);
+				y = y + 85;
+			}
+
 			frame.setLayout(null);
 			frame.revalidate();
 			frame.repaint();
 			frame.setVisible(true);
+		}
 
+		private Set<String> getRegisteredResorts() {
+			Set<String> resorts = new HashSet<>();
+
+			try {
+				Connection conn = DatabaseConnectionFactory.getConnection();
+				PreparedStatement stmt;
+				String query = "SELECT name FROM resort WHERE town_id = ?";
+				if (this.userDto != null && this.userDto.getUserTypeId() == UserType.ADMIN.id()) {
+					query += " AND user_id = ?";
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 6);
+					stmt.setLong(2, this.userDto.getId());
+				} else {
+					stmt = conn.prepareStatement(query);
+					stmt.setInt(1, 6);
+				}
+				System.out.println(query);
+				ResultSet rs = stmt.executeQuery();
+				while (rs.next()) {
+					resorts.add(rs.getString("name"));
+				}
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
+
+			return resorts;
 		}
 	}
 
