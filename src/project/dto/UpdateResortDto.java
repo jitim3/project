@@ -1,12 +1,10 @@
-package project.dao.entity;
+package project.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 
-public record Resort(
+public record UpdateResortDto(
 		long id, 
-		String name, 
 		String description, 
 		String location, 
 		String howToGetThere,
@@ -15,10 +13,6 @@ public record Resort(
 		BigDecimal poolFee, 
 		String resortImage, 
 		String poolImage,
-		String cottageImage, 
-		List<Room> rooms,
-		Long userId, 
-		int townId, 
-		Instant createdAt, 
+		String cottageImage,
 		Instant updatedAt) {
 }
