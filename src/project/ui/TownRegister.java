@@ -140,6 +140,7 @@ public class TownRegister implements ActionListener {
 					PreparedStatement psInsert = conn.prepareStatement("INSERT INTO resort (name, town_id, user_id) VALUES (?, ?, ?)")) {
 				// Insert resort name into the database
 				if (button.isSelected()) {
+					
 					resortId = 3;
 				} else if (button1.isSelected()) {
 					resortId = 2;
