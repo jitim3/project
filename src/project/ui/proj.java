@@ -1,4 +1,4 @@
-package project;
+package project.ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

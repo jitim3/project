@@ -1,4 +1,4 @@
-package project;
+package project.ui;
 
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -19,7 +19,7 @@ public class LaunchPage implements ActionListener {
 	JButton button1 = new JButton("Admin");
 	JButton button2 = new JButton("Super Admin");
 
-	LaunchPage() {
+	public LaunchPage() {
 
 		button.setBounds(75, 50, 200, 40);
 		button.setFocusable(false);

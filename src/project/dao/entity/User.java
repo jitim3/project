@@ -6,15 +6,15 @@ public class User {
 	private final Long id;
 	private final String username;
 	private final String password;
-	private final int userTypeId;
+	private final UserType userType;
 	private final Instant createdAt;
 	private final Instant updatedAt;
 	
-	public User(Long id, String username, String password, int userTypeId, Instant createdAt, Instant updatedAt) {
+	public User(Long id, String username, String password, UserType userType, Instant createdAt, Instant updatedAt) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-		this.userTypeId = userTypeId;
+		this.userType = userType;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
@@ -31,8 +31,8 @@ public class User {
 		return password;
 	}
 
-	public int getUserTypeId() {
-		return userTypeId;
+	public UserType getUserType() {
+		return userType;
 	}
 
 	public Instant getCreatedAt() {
