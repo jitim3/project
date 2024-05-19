@@ -198,7 +198,7 @@ public class DefaultResortDao implements ResortDao {
 				rs.getString("resort_image"), 
 				rs.getString("pool_image"), 
 				rs.getString("cottage_image"), 
-				rs.getLong("use_id"), 
+				rs.getLong("user_id"), 
 				rs.getInt("town_id"),
 				createdAt != null ? createdAt.toInstant() : null,
 				updatedAt != null ? updatedAt.toInstant() : null
