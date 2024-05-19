@@ -258,6 +258,7 @@ class DatabaseLogin extends JFrame implements ActionListener {
 		successFrame.setLocationRelativeTo(null);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Exit")) {
 			System.exit(0);
@@ -270,8 +271,7 @@ class DatabaseLogin extends JFrame implements ActionListener {
 				successFrame.setVisible(true); // Show the success frame
 				frame.dispose();
 			}, () -> {
-				JOptionPane.showMessageDialog(this, "Invalid username or password. Please try again.", "Login Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Invalid username or password. Please try again.", "Login Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			});
 		}

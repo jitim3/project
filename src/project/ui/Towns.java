@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import project.dto.UserDto;
+import project.service.ResortService;
+import project.service.impl.DefaultResortService;
 import project.ui.town.Alcoy;
 import project.ui.town.Barili;
 import project.ui.town.Carcar;
@@ -20,6 +22,7 @@ import project.ui.town.SanTander;
 
 public class Towns extends JFrame implements ActionListener { // Prompts after user log in
 	private final UserDto userDto;
+	private final ResortService resortService;
 	JFrame frame = new JFrame("Where to?");
 	JLabel label = new JLabel("TOWN");
 	JButton button = new JButton("Carcar"); // CARCAR BUTTON id: 3
@@ -33,6 +36,7 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 
 	public Towns(UserDto userDto) {
 		this.userDto = userDto;
+		this.resortService = new DefaultResortService();
 		// Set logo to the frame
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -69,10 +73,6 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 		button5.setFocusable(false);
 		button5.addActionListener(this);
 
-		button5.setBounds(250, 300, 150, 40);
-		button5.setFocusable(false);
-		button5.addActionListener(this);
-
 		button6.setBounds(160, 370, 150, 40);
 		button6.setFocusable(false);
 		button6.addActionListener(this);
@@ -97,25 +97,26 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 		return frame;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == button) {
 			frame.dispose();
-			Carcar window = new Carcar(this.userDto);
+			Carcar window = new Carcar(this.userDto, frame);
 		} else if (e.getSource() == button1) {
 			frame.dispose();
-			Barili window = new Barili(this.userDto);
+			Barili window = new Barili(this.userDto, frame);
 		} else if (e.getSource() == button2) {
 			frame.dispose();
-			Moalboal window = new Moalboal(this.userDto);
+			Moalboal window = new Moalboal(this.userDto, frame);
 		} else if (e.getSource() == button3) {
 			frame.dispose();
-			Alcoy window = new Alcoy(this.userDto);
+			Alcoy window = new Alcoy(this.userDto, frame);
 		} else if (e.getSource() == button4) {
 			frame.dispose();
-			SanTander window = new SanTander(this.userDto);
+			SanTander window = new SanTander(this.userDto, frame);
 		} else if (e.getSource() == button5) {
 			frame.dispose();
-			Oslob window = new Oslob(this.userDto);
+			Oslob window = new Oslob(this.userDto, frame);
 		} else {
 			frame.dispose();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

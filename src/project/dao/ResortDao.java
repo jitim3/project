@@ -14,6 +14,8 @@ public interface ResortDao {
 
 	List<Resort> getResortsByUserId(long userId);
 
+	List<Resort> getResortsByTownId(int townId);
+
 	List<Resort> getResortsByUserIdAndTownId(long userId, int townId);
 
 	Long createResort(CreateResortDto createResortDto);

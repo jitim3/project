@@ -37,7 +37,7 @@ public class DefaultResortService extends TownMapper implements ResortService {
 	}
 
 	@Override
-	public Optional<ResortDto> getResortById(int id) {
+	public Optional<ResortDto> getResortById(long id) {
 		 return this.resortDao.getResortById(id)
 				 .map(resort -> {
 					 int townId = resort.townId();
@@ -50,6 +50,19 @@ public class DefaultResortService extends TownMapper implements ResortService {
 	@Override
 	public List<ResortDto> getResortsByUserId(long userId) {
 		List<Resort> resorts = this.resortDao.getResortsByUserId(userId);
+		
+		return resorts.stream()
+				.map(resort -> {
+					 Optional<Town> townOptional = this.townDao.getTownById(resort.townId());
+					 List<Room> rooms = this.roomDao.getRoomByResortId(resort.id());
+					 return this.mapToResortDto(resort, rooms, townOptional.orElse(null));
+				})
+				.toList();
+	}
+
+	@Override
+	public List<ResortDto> getResortsByTownId(int townId) {
+		List<Resort> resorts = this.resortDao.getResortsByTownId(townId);
 		
 		return resorts.stream()
 				.map(resort -> {
