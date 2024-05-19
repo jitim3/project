@@ -69,7 +69,7 @@ public class DefaultRoomDao implements RoomDao {
 				LOGGER.log(Level.INFO, "No room with ID " + id + " found");
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return Optional.empty();
@@ -77,7 +77,7 @@ public class DefaultRoomDao implements RoomDao {
 
 	@Override
 	public List<Room> getRoomByResortId(long resortId) {
-		final List<Room> rooms = new ArrayList<Room>();
+		final List<Room> rooms = new ArrayList<>();
 		
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_ROOM_BY_RESORT_ID)) {
 			int i = 1;
@@ -124,7 +124,7 @@ public class DefaultRoomDao implements RoomDao {
 			    }
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return null;
@@ -149,7 +149,7 @@ public class DefaultRoomDao implements RoomDao {
 			
 			return this.getRoomById(roomId).orElse(null);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return null;

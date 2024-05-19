@@ -3,23 +3,21 @@ package project.ui;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import project.dto.ResortDto;
 import project.dto.UserDto;
-import project.util.DatabaseConnectionFactory;
+import project.service.ResortService;
+import project.service.impl.DefaultResortService;
 
 public class MenuAdmin implements ActionListener {
 	private final UserDto userDto;
-	private final Connection conn;
+	private final ResortService resortService;
 	JFrame frame = new JFrame("Menu");
 	JButton button = new JButton("Register resort");
 	JButton button1 = new JButton("View registered resort");
@@ -27,7 +25,7 @@ public class MenuAdmin implements ActionListener {
 
 	public MenuAdmin(UserDto userDto) {
 		this.userDto = userDto;
-		this.conn = DatabaseConnectionFactory.getConnection();
+		this.resortService = new DefaultResortService();
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -64,30 +62,13 @@ public class MenuAdmin implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == button) { // For the Log in menu
 			frame.dispose();
-			new TownRegister(this.userDto);
+			new TownRegister(this.userDto, this.resortService);
 		} else if (e.getSource() == button1) { // For the sign up menu
-			try {
-				java.util.List<String> registeredResorts = getRegisteredResorts();
-				new ViewResort(registeredResorts);
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
+			List<ResortDto> registeredResorts = this.resortService.getResortsByUserId(this.userDto.getId());
+			new ViewResort(registeredResorts);
 		} else {
 			frame.dispose();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 	}
-
-	private java.util.List<String> getRegisteredResorts() throws SQLException {
-		java.util.List<String> resorts = new ArrayList<>();
-		PreparedStatement stmt = conn.prepareStatement("SELECT name FROM resort WHERE user_id = ?");
-		stmt.setLong(1, this.userDto.getId());
-		ResultSet rs = stmt.executeQuery();
-
-		while (rs.next()) {
-			resorts.add(rs.getString("name"));
-		}
-		return resorts;
-	}
-
 }

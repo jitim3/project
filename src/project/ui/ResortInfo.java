@@ -15,10 +15,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class ResortInfo implements ActionListener {
 
@@ -30,7 +32,7 @@ public class ResortInfo implements ActionListener {
 	 JLabel resortName = new JLabel("Name of the resort");
 	 JLabel uploadResort = new JLabel("Upload image of the resort");
 	 JLabel resortLocation = new JLabel("Resort address/Location");
-	 JLabel resortDescription = new JLabel("Resort description");
+	 static JLabel resortDescription = new JLabel("Resort description");
 	 JLabel uploadPool = new JLabel("Upload image of the pool");
 	 JLabel resortHTG = new JLabel ("How to get there?");
 	 JLabel uploadCottage = new JLabel("Upload image of the cottage");
@@ -51,6 +53,8 @@ public class ResortInfo implements ActionListener {
 	 JLabel resortFamilyRoomRate = new JLabel("Room Rate per Night");
 	 JLabel resortFamilyRoomDescription = new JLabel("Room Description");
 	 JLabel resortFamilyRoomUploadImage = new JLabel("Upload images of the room");
+	 private File selectedImageFile; // RESORT DISPLAY
+	 private File selectedImageFile1; // POOL DISPLAY
 	 
 	 
 
@@ -75,7 +79,6 @@ public class ResortInfo implements ActionListener {
 	 JTextField resortEntranceFeeField = new JTextField();
 	 JTextField resortCottageFeeField = new JTextField();
 	 JTextField resortPoolFeeField = new JTextField();
-	 JTextField resortHTGField = new JTextField();
 	 JTextField resortNumPaxField = new JTextField();
 	 JTextField resortRoomRateField = new JTextField();
 	 JTextField resortFamilyPaxInformationField = new JTextField();
@@ -91,6 +94,8 @@ public class ResortInfo implements ActionListener {
 	 JTextArea resortFamilyRoomDescriptionField = new JTextArea(1, 10);
 	 JScrollPane resortFamilyRoomDescriptionScrollPane = new JScrollPane(resortFamilyRoomDescriptionField);
 	 
+	 JTextArea resortHTGField = new JTextArea(1, 10);
+	 JScrollPane resortHTGFieldScrollPane = new JScrollPane(resortHTGField);
 	 
 	 
 	  
@@ -208,9 +213,6 @@ public class ResortInfo implements ActionListener {
 	     resortPoolFeeField.setBounds(295,1328,150,25);
 	     resortPoolFeeField.setPreferredSize(new Dimension(200,175));
 	     
-	     resortHTGField.setBounds(590,525,150,25);
-	     resortHTGField.setPreferredSize(new Dimension(200,175));
-	     
 	     resortNumPaxField.setBounds(245,1527,150,25);
 	     resortNumPaxField.setPreferredSize(new Dimension(200,175));
 	     
@@ -243,8 +245,9 @@ public class ResortInfo implements ActionListener {
 	     resortFamilyRoomDescriptionField.setLineWrap(true);  // Enable line wrapping
 	     resortFamilyRoomDescriptionField.setWrapStyleWord(true);
 	     
-	     
-
+	     resortHTGFieldScrollPane.setBounds(590,525,220,200);
+	     resortHTGField.setLineWrap(true);
+	     resortRoomDescriptionField.setWrapStyleWord(true);
 	     
 	     
 	     //==> FOR BUTTONS
@@ -317,7 +320,7 @@ public class ResortInfo implements ActionListener {
 		 
 		 ImageIcon icon = new ImageIcon("beach2.png");
 		 
-		 ImageIcon background = new ImageIcon("beach3.jpg");
+		 ImageIcon background = new ImageIcon("figma.jpg");
 		 Image backgroundImage = background.getImage().getScaledInstance(900,2580, Image.SCALE_DEFAULT);
 		 JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 		 backgroundLabel.setBounds(0, 0, 900,2580);
@@ -350,7 +353,7 @@ public class ResortInfo implements ActionListener {
 		 panel.add(resortNumPax);
 		 panel.add(resortRoomAvailability);
 		 panel.add(roomAvailability);
-		 panel.add(resortHTGField);
+		 panel.add(resortHTGFieldScrollPane);
 		 panel.add(resortHTG);
 		 panel.add(resortRoomNormal);
 		 panel.add(resortRoomInformation);
@@ -416,14 +419,22 @@ public class ResortInfo implements ActionListener {
 			int returnVal = browseResortImage.showOpenDialog(null);
 			
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-               File selectedFile = browseResortImage.getSelectedFile();
-               String filePath = selectedFile.getAbsolutePath();
-               ImageIcon selectedImage = new ImageIcon(filePath);
+			selectedImageFile = browseResortImage.getSelectedFile();
+               //File selectedFile = browseResortImage.getSelectedFile();
+			if (selectedImageFile != null) {
+                String filePath = selectedImageFile.getAbsolutePath();
+                ImageIcon selectedImage = new ImageIcon(filePath);
+			
+               //String filePath = selectedFile.getAbsolutePath();
+               //ImageIcon selectedImage = new ImageIcon(filePath);
+               
 
                // Resize the image to fit the JLabel
                Image img = selectedImage.getImage().getScaledInstance(selectedImageLabel.getWidth(), selectedImageLabel.getHeight(), Image.SCALE_SMOOTH);
                selectedImageLabel.setIcon(new ImageIcon(img));
+			 }
            }
+			
 			
 			
 		}else if(e.getSource()==browsePool) {
@@ -431,13 +442,16 @@ public class ResortInfo implements ActionListener {
 			int returnVal1 = browsePoolImage.showOpenDialog(null);
 			
 			if (returnVal1 == JFileChooser.APPROVE_OPTION) {
-               File selectedFile = browsePoolImage.getSelectedFile();
-               String filePath = selectedFile.getAbsolutePath();
+			selectedImageFile1 = browsePoolImage.getSelectedFile();
+			
+				if (selectedImageFile1 != null) {
+               String filePath = selectedImageFile1.getAbsolutePath();
                ImageIcon selectedImage = new ImageIcon(filePath);
 
                // Resize the image to fit the JLabel
                Image img = selectedImage.getImage().getScaledInstance(selectedPoolImageLabel.getWidth(), selectedPoolImageLabel.getHeight(), Image.SCALE_SMOOTH);
                selectedPoolImageLabel.setIcon(new ImageIcon(img));
+				}
            }
 		}else if(e.getSource()==browseCottage) {
 			JFileChooser browseCottageImage = new JFileChooser();
@@ -503,53 +517,148 @@ public class ResortInfo implements ActionListener {
 		}
 		else if(e.getSource()==Display) {
 			frame.dispose();
+			String inputframeText = resortNameField.getText();
 			String inputText = resortNameField.getText();
-			displayFrame frame = new displayFrame(inputText);
+			String inputText1 = resortLocationField.getText();
+			String resortDescription = resortDescriptionField.getText();
+			String inputText2 = resortHTGField.getText();
+			displayFrame frame = new displayFrame(inputframeText, inputText,inputText1,selectedImageFile.getAbsolutePath(), selectedImageFile1.getAbsolutePath(),resortDescription,inputText2);
+		
 		}
 }
-	public static class displayFrame{
-		 
-		 JFrame frame = new JFrame();
-		 JLabel resortHeaderLine = new JLabel("RESORT INFORMATION");
-		 
-		 
-		 displayFrame(String inputText){
+		public static class displayFrame implements ActionListener{
 			 
-			 resortHeaderLine.setBounds(50,15,400,80);
-			 resortHeaderLine.setFont(new Font("Bell MT",Font.BOLD,30));
-			 resortHeaderLine.setForeground(Color.black);
+			 JFrame frame;
+			 JButton reservation = new JButton("Make a reservation");
+			 JButton viewReview = new JButton("View Reviews");
+			 JButton transaction = new JButton("Transaction");
+			 JButton exit = new JButton("EXIT");
 			 
-			 JLabel displayLabel = new JLabel(inputText);
-			 displayLabel.setBounds(50, 100, 300, 30);
+			 displayFrame(String inputframeText ,String inputText, String inputText1,String imageResortPath,String imagePoolPath,String resortDescription, String inputText2){
+				 
+				 frame = new JFrame(inputframeText);
+				 
+				 JLabel displayLabel = new JLabel(inputText);                     //RESORT NAME
+				 displayLabel.setBounds(310, 30, 300, 45);
+				 displayLabel.setFont(new Font("Times New Roman",Font.BOLD,30));
+				 displayLabel.setForeground(Color.black);
+				 displayLabel.setOpaque(true);
+			     displayLabel.setBackground(new Color(255, 255, 255, 64));
+			     displayLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			     displayLabel.setVerticalAlignment(SwingConstants.CENTER);
+			     
+			     JLabel locationLabel = new JLabel (inputText1); 				//LOCATION AREA
+			     locationLabel.setBounds(348, 90, 230, 30);
+			     locationLabel.setOpaque(true);
+			     locationLabel.setBackground(new Color(255, 255, 255, 64));
+			     locationLabel.setFont(new Font("Times New Roman",Font.BOLD,15));
+			     locationLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			     locationLabel.setVerticalAlignment(SwingConstants.CENTER);
+			     
+			     JTextArea descriptionArea = new JTextArea(resortDescription); //DESCRIPTION
+			     descriptionArea.setBounds(40, 520, 780, 180);
+			     descriptionArea.setLineWrap(true);
+			     descriptionArea.setWrapStyleWord(true);
+			     descriptionArea.setEditable(false);
+			     descriptionArea.setBackground(new Color(255, 255, 255, 64));
+			     descriptionArea.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+			     
+			     JTextArea htgAreaLabel = new JTextArea(inputText2);
+			     htgAreaLabel.setBounds(40, 710, 780, 180);
+			     htgAreaLabel.setLineWrap(true);
+			     htgAreaLabel.setWrapStyleWord(true);
+			     htgAreaLabel.setEditable(false);
+			     htgAreaLabel.setBackground(new Color(255, 255, 255, 64));
+			     htgAreaLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+			     
+			     
+			     
+			     JLabel imageLabel = new JLabel();								//IMPORT THE RESORT JFILECHOOSER FROM FILL UP FORM
+			     imageLabel.setBounds(40, 225, 350, 250); // Set bounds as per your requirement
+			     ImageIcon imageIcon = new ImageIcon(imageResortPath);
+			     Image img = imageIcon.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+			     imageLabel.setIcon(new ImageIcon(img));
+			     
+			     JLabel imageLabel1= new JLabel();								//IMPORT THE POOL JFILECHOOSER FROM FILL UP FORM
+			     imageLabel1.setBounds(475, 225, 350, 250); // Set bounds as per your requirement
+			     ImageIcon imageIcon1 = new ImageIcon(imagePoolPath);
+			     Image img1 = imageIcon1.getImage().getScaledInstance(imageLabel1.getWidth(), imageLabel1.getHeight(), Image.SCALE_SMOOTH);
+			     imageLabel1.setIcon(new ImageIcon(img1));
+			     
+			     reservation.setBounds(360,940,150,25);
+			     reservation.setFocusable(false);
+			     reservation.addActionListener(this);
+			     reservation.setOpaque(false);
+			     
+			     viewReview.setBounds(360,985,150,25);
+			     viewReview.setFocusable(false);
+			     viewReview.addActionListener(this);
+			     viewReview.setOpaque(false);
+			     
+			     transaction.setBounds(360,1025,150,25);
+			     transaction.setFocusable(false);
+			     transaction.addActionListener(this);
+			     transaction.setOpaque(false);
+			     
+			     exit.setBounds(380,1075,110,25);
+			     exit.setFocusable(false);
+			     exit.addActionListener(this);
+			     exit.setOpaque(false);
+			     
+			     
+			     
+			     
+			     
+			     
+				 ImageIcon icon = new ImageIcon("beach2.png");
+				 
+				 ImageIcon background = new ImageIcon("figma.jpg");
+				 Image backgroundImage = background.getImage().getScaledInstance(900,1180, Image.SCALE_DEFAULT);
+				 JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
+				 backgroundLabel.setBounds(0, 0, 900,1180);
+				 
+				 JPanel panel = new JPanel();
+				 
+				 panel.add(exit);
+				 panel.add(transaction);
+				 panel.add(viewReview);
+				 panel.add(reservation);	
+				 panel.setLayout(null);
+				 panel.add(htgAreaLabel);
+				 panel.add(locationLabel);	//RESORT LOCATION
+			     panel.add(displayLabel); //RESORT NAME
+				 panel.add(imageLabel); //RESORT PICTURE
+				 panel.add(imageLabel1); //POOL PICTURE
+				 panel.add(descriptionArea);//DESCRIPTION AREA
+			     panel.add(backgroundLabel);
+			     panel.setPreferredSize(new Dimension(900, 1180));
+			     
+			     JScrollPane scrollPane = new JScrollPane(panel);
+			     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			     
+			     
+			     frame.setContentPane(scrollPane);
+			     frame.setIconImage(icon.getImage());
+				 frame.setSize(900, 2580);
+				 frame.setVisible(true);
+				 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				 frame.setLocationRelativeTo(null);
+				 frame.setResizable(false);
+			 }
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource()==reservation) {
+					
+				}else if (e.getSource()==viewReview) {
+					
+				}else if (e.getSource()==transaction) {
+					
+				}else if (e.getSource()==exit) {
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				}
+				
+			}
 			 
-			 
-			 ImageIcon icon = new ImageIcon("beach2.png");
-			 
-			 ImageIcon background = new ImageIcon("beach3.jpg");
-			 Image backgroundImage = background.getImage().getScaledInstance(900,2580, Image.SCALE_DEFAULT);
-			 JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-			 backgroundLabel.setBounds(0, 0, 900,2580);
-			 
-			 JPanel panel = new JPanel();
-			 
-			 panel.add(resortHeaderLine);
-		     panel.add(displayLabel); //RESORT NAME
-			 panel.setLayout(null);
-		     panel.add(backgroundLabel);
-		     panel.setPreferredSize(new Dimension(900, 2580));
-		     
-		     JScrollPane scrollPane = new JScrollPane(panel);
-		     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		     
-		     
-		     frame.setContentPane(scrollPane);
-		     frame.setIconImage(icon.getImage());
-			 frame.setSize(900, 2580);
-			 frame.setVisible(true);
-			 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			 frame.setLocationRelativeTo(null);
-			 frame.setResizable(false);
 		 }
-		 
-	 }
 }

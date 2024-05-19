@@ -1,5 +1,7 @@
 package project.dao.impl;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +17,7 @@ import project.util.DatabaseConnectionFactory;
 import project.util.UserTypes;
 
 public class DefaultUserDao implements UserDao {
+	private static final Logger LOGGER = System.getLogger(DefaultUserDao.class.getName());
 	private static final String SQL_SELECT_USER_EXISTS = "SELECT username FROM user WHERE username = ?";
 	private static final String SQL_SELECT_USER_BY_USERNAME_AND_PASSWORD = """
 			SELECT
@@ -51,7 +54,7 @@ public class DefaultUserDao implements UserDao {
 			ResultSet rs = statement.executeQuery();
 			return rs.next();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return true;
@@ -68,7 +71,7 @@ public class DefaultUserDao implements UserDao {
 				return Optional.of(mapToUser(rs));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return Optional.empty();
@@ -86,7 +89,7 @@ public class DefaultUserDao implements UserDao {
 				return Optional.of(mapToUser(rs));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return Optional.empty();
@@ -104,7 +107,7 @@ public class DefaultUserDao implements UserDao {
 				return Optional.of(mapToUser(rs));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return Optional.empty();
@@ -120,7 +123,7 @@ public class DefaultUserDao implements UserDao {
 			statement.setTimestamp(i++, Timestamp.from(createUserDto.createdAt()));
 			return statement.executeUpdate() == 1;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 		}
 
 		return false;

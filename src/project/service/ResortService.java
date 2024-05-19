@@ -1,20 +1,20 @@
-package project.dao;
+package project.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import project.dao.entity.Resort;
 import project.dto.CreateResortDto;
+import project.dto.ResortDto;
 import project.dto.UpdateResortDto;
 
-public interface ResortDao {
+public interface ResortService {
 	boolean isResortExists(String name);
 
-	Optional<Resort> getResortById(long id);
+	Optional<ResortDto> getResortById(int id);
 
-	List<Resort> getResortsByUserId(long userId);
+	List<ResortDto> getResortsByUserId(long userId);
 
-	List<Resort> getResortsByUserIdAndTownId(long userId, int townId);
+	List<ResortDto> getResortsByUserIdAndTownId(long userId, int townId);
 
 	Long createResort(CreateResortDto createResortDto);
 	

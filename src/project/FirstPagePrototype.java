@@ -8,8 +8,8 @@ import project.ui.LoginFrame;
 public class FirstPagePrototype {
 
 	public static void main(String[] args) {		
-//		EventQueue.invokeLater(LaunchPage::new);
-		EventQueue.invokeLater(LoginFrame::new);
+		EventQueue.invokeLater(LaunchPage::new);
+		//EventQueue.invokeLater(LoginFrame::new);
 	}
 
 }
