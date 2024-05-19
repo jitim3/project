@@ -10,9 +10,11 @@ import project.dto.UpdateResortDto;
 public interface ResortService {
 	boolean isResortExists(String name);
 
-	Optional<ResortDto> getResortById(int id);
+	Optional<ResortDto> getResortById(long id);
 
 	List<ResortDto> getResortsByUserId(long userId);
+
+	List<ResortDto> getResortsByTownId(int townId);
 
 	List<ResortDto> getResortsByUserIdAndTownId(long userId, int townId);
 

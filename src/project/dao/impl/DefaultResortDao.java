@@ -28,6 +28,7 @@ public class DefaultResortDao implements ResortDao {
 	private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
 	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORT + " WHERE id = ?";
 	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORT + " WHERE user_id = ?";
+	private static final String SQL_SELECT_RESORT_BY_TOWN_ID = SQL_SELECT_RESORT + " WHERE town_id = ?";
 	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORT + " WHERE user_id = ? AND town_id = ?";
 	private static final String SQL_INSERT_RESORT = """
 			INSERT INTO resort (name, user_id, town_id, created_at)
@@ -101,6 +102,30 @@ public class DefaultResortDao implements ResortDao {
 		
 		if (resorts.isEmpty()) {
 			LOGGER.log(Level.INFO, "No resorts found for user with ID " + userId + " found");
+		}
+
+		return resorts;
+	}
+
+	
+	@Override
+	public List<Resort> getResortsByTownId(int townId) {
+		final List<Resort> resorts = new ArrayList<>();
+		
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_TOWN_ID)) {
+			int i = 1;
+			statement.setInt(i++, townId);
+			try (ResultSet rs = statement.executeQuery()) {
+				while (rs.next()) {
+					resorts.add(mapToResort(rs));
+				}
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.ERROR, e);
+		}
+		
+		if (resorts.isEmpty()) {
+			LOGGER.log(Level.INFO, "No resorts found for town with ID " + townId + " found");
 		}
 
 		return resorts;
