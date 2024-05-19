@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class ResortInfo implements ActionListener {
+	private final long resortId;
 
 	 //==> FRAME
 	 JFrame frame = new JFrame("Fill up");
@@ -109,8 +110,8 @@ public class ResortInfo implements ActionListener {
 	 JButton familyAddImage = new JButton ("Add Image");
 	 JButton familyAddImage1 = new JButton ("Add Image");
 	 
-	 public ResortInfo(){
-		 
+	 public ResortInfo(long resortId){
+		 this.resortId = resortId;
 		 
 		 //==> FOR LABELS
 		 label.setBounds(250,15,400,80);

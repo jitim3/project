@@ -22,15 +22,12 @@ import javax.swing.JTextField;
 import project.dto.CreateResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
-import project.service.TownService;
-import project.service.impl.DefaultTownService;
 import project.ui.town.Carcar;
 import project.ui.town.Town;
 
 public class TownRegister implements ActionListener {
 	private final UserDto userDto;
 	private final ResortService resortService;
-	private final TownService townService;
 	JFrame frame = new JFrame("Select Town to Register");
 	JLabel label = new JLabel("Welcome Admin!");
 	JLabel label1 = new JLabel("Please select town to register");
@@ -42,7 +39,6 @@ public class TownRegister implements ActionListener {
 	TownRegister(final UserDto userDto, final ResortService resortService) {
 		this.userDto = userDto;
 		this.resortService = resortService;
-		this.townService = new DefaultTownService();
 
 		ImageIcon background = new ImageIcon("beach3.jpg");
 		Image backgroundImage = background.getImage().getScaledInstance(500, 550, Image.SCALE_DEFAULT);
@@ -58,12 +54,12 @@ public class TownRegister implements ActionListener {
 		display.addActionListener(this);
 
 //		ButtonGroup group = new ButtonGroup();
-//		group.add(carcar);
-//		group.add(barili);
-//		group.add(moalboal);
-//		group.add(alcoy);
-//		group.add(santander);
-//		group.add(oslob);
+//		group.add(carcarButton);
+//		group.add(bariliButton);
+//		group.add(boalboalButton);
+//		group.add(alcoyButton);
+//		group.add(santanderButton);
+//		group.add(oslobButton);
 
 		label2.setBounds(30, 190, 200, 125);
 		label2.setFont(new Font("+", Font.PLAIN, 12));
@@ -119,9 +115,9 @@ public class TownRegister implements ActionListener {
 				frame.dispose();
 				
 				if (choice == JOptionPane.YES_OPTION) {
-					ResortInfo frame = new ResortInfo();
+					ResortInfo frame = new ResortInfo(resortId);
 				} else {
-					ResortInfo resortinfo = new ResortInfo();
+					ResortInfo resortinfo = new ResortInfo(resortId);
 					frame.dispose();
 					BiFunction<UserDto, String, Town> townToOpen = townHolder.town();
 					Town town = townToOpen.apply(this.userDto, resortName);
