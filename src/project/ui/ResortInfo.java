@@ -79,7 +79,6 @@ public class ResortInfo implements ActionListener {
 	 JTextField resortEntranceFeeField = new JTextField();
 	 JTextField resortCottageFeeField = new JTextField();
 	 JTextField resortPoolFeeField = new JTextField();
-	 JTextField resortHTGField = new JTextField();
 	 JTextField resortNumPaxField = new JTextField();
 	 JTextField resortRoomRateField = new JTextField();
 	 JTextField resortFamilyPaxInformationField = new JTextField();
@@ -95,6 +94,8 @@ public class ResortInfo implements ActionListener {
 	 JTextArea resortFamilyRoomDescriptionField = new JTextArea(1, 10);
 	 JScrollPane resortFamilyRoomDescriptionScrollPane = new JScrollPane(resortFamilyRoomDescriptionField);
 	 
+	 JTextArea resortHTGField = new JTextArea(1, 10);
+	 JScrollPane resortHTGFieldScrollPane = new JScrollPane(resortHTGField);
 	 
 	 
 	  
@@ -212,9 +213,6 @@ public class ResortInfo implements ActionListener {
 	     resortPoolFeeField.setBounds(295,1328,150,25);
 	     resortPoolFeeField.setPreferredSize(new Dimension(200,175));
 	     
-	     resortHTGField.setBounds(590,525,150,25);
-	     resortHTGField.setPreferredSize(new Dimension(200,175));
-	     
 	     resortNumPaxField.setBounds(245,1527,150,25);
 	     resortNumPaxField.setPreferredSize(new Dimension(200,175));
 	     
@@ -247,8 +245,9 @@ public class ResortInfo implements ActionListener {
 	     resortFamilyRoomDescriptionField.setLineWrap(true);  // Enable line wrapping
 	     resortFamilyRoomDescriptionField.setWrapStyleWord(true);
 	     
-	     
-
+	     resortHTGFieldScrollPane.setBounds(590,525,220,200);
+	     resortHTGField.setLineWrap(true);
+	     resortRoomDescriptionField.setWrapStyleWord(true);
 	     
 	     
 	     //==> FOR BUTTONS
@@ -354,7 +353,7 @@ public class ResortInfo implements ActionListener {
 		 panel.add(resortNumPax);
 		 panel.add(resortRoomAvailability);
 		 panel.add(roomAvailability);
-		 panel.add(resortHTGField);
+		 panel.add(resortHTGFieldScrollPane);
 		 panel.add(resortHTG);
 		 panel.add(resortRoomNormal);
 		 panel.add(resortRoomInformation);
@@ -522,15 +521,20 @@ public class ResortInfo implements ActionListener {
 			String inputText = resortNameField.getText();
 			String inputText1 = resortLocationField.getText();
 			String resortDescription = resortDescriptionField.getText();
-			displayFrame frame = new displayFrame(inputframeText, inputText,inputText1,selectedImageFile.getAbsolutePath(), selectedImageFile1.getAbsolutePath(),resortDescription);
+			String inputText2 = resortHTGField.getText();
+			displayFrame frame = new displayFrame(inputframeText, inputText,inputText1,selectedImageFile.getAbsolutePath(), selectedImageFile1.getAbsolutePath(),resortDescription,inputText2);
 		
 		}
 }
-		public static class displayFrame{
+		public static class displayFrame implements ActionListener{
 			 
 			 JFrame frame;
-	
-			 displayFrame(String inputframeText ,String inputText, String inputText1,String imageResortPath,String imagePoolPath,String resortDescription){
+			 JButton reservation = new JButton("Make a reservation");
+			 JButton viewReview = new JButton("View Reviews");
+			 JButton transaction = new JButton("Transaction");
+			 JButton exit = new JButton("EXIT");
+			 
+			 displayFrame(String inputframeText ,String inputText, String inputText1,String imageResortPath,String imagePoolPath,String resortDescription, String inputText2){
 				 
 				 frame = new JFrame(inputframeText);
 				 
@@ -551,13 +555,21 @@ public class ResortInfo implements ActionListener {
 			     locationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			     locationLabel.setVerticalAlignment(SwingConstants.CENTER);
 			     
-			     JTextArea descriptionArea = new JTextArea(resortDescription);
+			     JTextArea descriptionArea = new JTextArea(resortDescription); //DESCRIPTION
 			     descriptionArea.setBounds(40, 520, 780, 180);
 			     descriptionArea.setLineWrap(true);
 			     descriptionArea.setWrapStyleWord(true);
 			     descriptionArea.setEditable(false);
 			     descriptionArea.setBackground(new Color(255, 255, 255, 64));
 			     descriptionArea.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+			     
+			     JTextArea htgAreaLabel = new JTextArea(inputText2);
+			     htgAreaLabel.setBounds(40, 710, 780, 180);
+			     htgAreaLabel.setLineWrap(true);
+			     htgAreaLabel.setWrapStyleWord(true);
+			     htgAreaLabel.setEditable(false);
+			     htgAreaLabel.setBackground(new Color(255, 255, 255, 64));
+			     htgAreaLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 			     
 			     
 			     
@@ -573,6 +585,26 @@ public class ResortInfo implements ActionListener {
 			     Image img1 = imageIcon1.getImage().getScaledInstance(imageLabel1.getWidth(), imageLabel1.getHeight(), Image.SCALE_SMOOTH);
 			     imageLabel1.setIcon(new ImageIcon(img1));
 			     
+			     reservation.setBounds(360,940,150,25);
+			     reservation.setFocusable(false);
+			     reservation.addActionListener(this);
+			     reservation.setOpaque(false);
+			     
+			     viewReview.setBounds(360,985,150,25);
+			     viewReview.setFocusable(false);
+			     viewReview.addActionListener(this);
+			     viewReview.setOpaque(false);
+			     
+			     transaction.setBounds(360,1025,150,25);
+			     transaction.setFocusable(false);
+			     transaction.addActionListener(this);
+			     transaction.setOpaque(false);
+			     
+			     exit.setBounds(380,1075,110,25);
+			     exit.setFocusable(false);
+			     exit.addActionListener(this);
+			     exit.setOpaque(false);
+			     
 			     
 			     
 			     
@@ -581,19 +613,25 @@ public class ResortInfo implements ActionListener {
 				 ImageIcon icon = new ImageIcon("beach2.png");
 				 
 				 ImageIcon background = new ImageIcon("figma.jpg");
-				 Image backgroundImage = background.getImage().getScaledInstance(900,2580, Image.SCALE_DEFAULT);
+				 Image backgroundImage = background.getImage().getScaledInstance(900,1180, Image.SCALE_DEFAULT);
 				 JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-				 backgroundLabel.setBounds(0, 0, 900,2580);
+				 backgroundLabel.setBounds(0, 0, 900,1180);
 				 
 				 JPanel panel = new JPanel();
+				 
+				 panel.add(exit);
+				 panel.add(transaction);
+				 panel.add(viewReview);
+				 panel.add(reservation);	
 				 panel.setLayout(null);
+				 panel.add(htgAreaLabel);
 				 panel.add(locationLabel);	//RESORT LOCATION
 			     panel.add(displayLabel); //RESORT NAME
 				 panel.add(imageLabel); //RESORT PICTURE
 				 panel.add(imageLabel1); //POOL PICTURE
 				 panel.add(descriptionArea);//DESCRIPTION AREA
 			     panel.add(backgroundLabel);
-			     panel.setPreferredSize(new Dimension(900, 2580));
+			     panel.setPreferredSize(new Dimension(900, 1180));
 			     
 			     JScrollPane scrollPane = new JScrollPane(panel);
 			     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -607,6 +645,20 @@ public class ResortInfo implements ActionListener {
 				 frame.setLocationRelativeTo(null);
 				 frame.setResizable(false);
 			 }
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getSource()==reservation) {
+					
+				}else if (e.getSource()==viewReview) {
+					
+				}else if (e.getSource()==transaction) {
+					
+				}else if (e.getSource()==exit) {
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				}
+				
+			}
 			 
 		 }
 }
