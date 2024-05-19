@@ -6,11 +6,11 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,33 +19,30 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import project.dto.CreateResortDto;
 import project.dto.UserDto;
-import project.ui.Towns.Alcoy;
-import project.ui.Towns.Barili;
-import project.ui.Towns.Carcar;
-import project.ui.Towns.Moalboal;
-import project.ui.Towns.Oslob;
-import project.ui.Towns.SanTander;
-import project.util.DatabaseConnectionFactory;
+import project.service.ResortService;
+import project.service.TownService;
+import project.service.impl.DefaultTownService;
+import project.ui.town.Carcar;
+import project.ui.town.Town;
 
 public class TownRegister implements ActionListener {
 	private final UserDto userDto;
+	private final ResortService resortService;
+	private final TownService townService;
 	JFrame frame = new JFrame("Select Town to Register");
 	JLabel label = new JLabel("Welcome Admin!");
 	JLabel label1 = new JLabel("Please select town to register");
 	JLabel label2 = new JLabel("Enter name of the resort");
-	JRadioButton button = new JRadioButton("Carcar"); // id: 3
-	JRadioButton button1 = new JRadioButton("Barili"); // id: 2
-	JRadioButton button2 = new JRadioButton("Moalboal"); // id: 4
-	JRadioButton button3 = new JRadioButton("Alcoy"); // id: 1
-	JRadioButton button4 = new JRadioButton("SanTander"); // id: 6
-	JRadioButton button5 = new JRadioButton("Oslob"); // id: 5
 	JTextField field = new JTextField();
 	JButton display = new JButton("Display");
-	public String resortName;
+	private final List<TownHolder> townHolders;
 
-	TownRegister(UserDto userDto) {
+	TownRegister(final UserDto userDto, final ResortService resortService) {
 		this.userDto = userDto;
+		this.resortService = resortService;
+		this.townService = new DefaultTownService();
 
 		ImageIcon background = new ImageIcon("beach3.jpg");
 		Image backgroundImage = background.getImage().getScaledInstance(500, 550, Image.SCALE_DEFAULT);
@@ -54,47 +51,19 @@ public class TownRegister implements ActionListener {
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
-		button.setBounds(75, 120, 200, 70);
-		button.setFocusable(false);
-		button.addActionListener(this);
-		button.setOpaque(false);
-
-		button1.setBounds(135, 120, 200, 70);
-		button1.setFocusable(false);
-		button1.addActionListener(this);
-		button1.setOpaque(false);
-
-		button2.setBounds(190, 120, 200, 70);
-		button2.setFocusable(false);
-		button2.addActionListener(this);
-		button2.setOpaque(false);
-
-		button3.setBounds(265, 120, 200, 70);
-		button3.setFocusable(false);
-		button3.addActionListener(this);
-		button3.setOpaque(false);
-
-		button4.setBounds(320, 120, 200, 70);
-		button4.setFocusable(false);
-		button4.addActionListener(this);
-		button4.setOpaque(false);
-
-		button5.setBounds(200, 160, 150, 30);
-		button5.setFocusable(false);
-		button5.addActionListener(this);
-		button5.setOpaque(false);
+		this.townHolders = this.townHolders();
 
 		display.setBounds(200, 280, 150, 30);
 		display.setFocusable(false);
 		display.addActionListener(this);
 
-		ButtonGroup group = new ButtonGroup();
-		group.add(button);
-		group.add(button1);
-		group.add(button2);
-		group.add(button3);
-		group.add(button4);
-		group.add(button5);
+//		ButtonGroup group = new ButtonGroup();
+//		group.add(carcar);
+//		group.add(barili);
+//		group.add(moalboal);
+//		group.add(alcoy);
+//		group.add(santander);
+//		group.add(oslob);
 
 		label2.setBounds(30, 190, 200, 125);
 		label2.setFont(new Font("+", Font.PLAIN, 12));
@@ -114,12 +83,15 @@ public class TownRegister implements ActionListener {
 		frame.setLayout(null);
 		frame.add(field);
 		frame.add(display);
-		frame.add(button5);
-		frame.add(button4);
-		frame.add(button3);
-		frame.add(button2);
-		frame.add(button1);
-		frame.add(button);
+//		frame.add(carcarButton);
+//		frame.add(bariliButton);
+//		frame.add(boalboalButton);
+//		frame.add(alcoyButton);
+//		frame.add(santanderButton);
+//		frame.add(oslobButton);
+		this.townHolders.forEach(townHolder -> {
+			frame.add(townHolder.button());
+		});
 		frame.add(label2);
 		frame.add(label);
 		frame.add(label1);
@@ -134,81 +106,86 @@ public class TownRegister implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == display) {
-			resortName = field.getText();
-			int resortId = 0;
-			try (Connection conn = DatabaseConnectionFactory.getConnection();
-					PreparedStatement psInsert = conn.prepareStatement("INSERT INTO resort (name, town_id, user_id) VALUES (?, ?, ?)")) {
-				// Insert resort name into the database
-				if (button.isSelected()) {
-					
-					resortId = 3;
-				} else if (button1.isSelected()) {
-					resortId = 2;
-				} else if (button2.isSelected()) {
-					resortId = 4;
-				} else if (button3.isSelected()) {
-					resortId = 1;
-				} else if (button4.isSelected()) {
-					resortId = 6;
-				} else if (button5.isSelected()) {
-					resortId = 5;
-				}
-
-				psInsert.setString(1, resortName);
-				psInsert.setInt(2, resortId);
-				psInsert.setLong(3, userDto.getId());
-				psInsert.executeUpdate();
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-
-			if (resortId == 3) {
-				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
-						JOptionPane.INFORMATION_MESSAGE);
-				int choice = JOptionPane.showConfirmDialog(null,
-						"Do you want to proceed to Register Information Fill up?", "Confirmation",
-						JOptionPane.YES_NO_OPTION);
+			String resortName = field.getText();
+			Optional<TownHolder> selectedTownHolderOptional = this.townHolders.stream()
+					.filter(townHolder -> townHolder.button().isSelected())
+					.findFirst();
+			selectedTownHolderOptional.ifPresent(townHolder -> {
+				int townId = townHolder.townId();
+				long resortId = this.resortService.createResort(new CreateResortDto(resortName, this.userDto.getId(), townId, Instant.now()));
+				
+				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
+				int choice = JOptionPane.showConfirmDialog(null, "Do you want to proceed to Register Information Fill up?", "Confirmation", JOptionPane.YES_NO_OPTION);
 				frame.dispose();
+				
 				if (choice == JOptionPane.YES_OPTION) {
 					ResortInfo frame = new ResortInfo();
 				} else {
 					ResortInfo resortinfo = new ResortInfo();
 					frame.dispose();
-					Carcar carcar = new Carcar(this.userDto, resortName);
-//		        	Carcar.generateButton(carcar.getFrame(), resortName);
+					BiFunction<UserDto, String, Town> townToOpen = townHolder.town();
+					Town town = townToOpen.apply(this.userDto, resortName);
 				}
-			} else if (resortId == 2) {
-				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
-						JOptionPane.INFORMATION_MESSAGE);
-				frame.dispose();
-				Barili barili = new Barili(this.userDto, resortName);
-//		        	Barili.generateButton(barili.getFrame(), resortName);
-			} else if (resortId == 4) {
-				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
-						JOptionPane.INFORMATION_MESSAGE);
-				frame.dispose();
-				Moalboal moalboal = new Moalboal(this.userDto, resortName);
-			} else if (resortId == 1) {
-				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
-						JOptionPane.INFORMATION_MESSAGE);
-				frame.dispose();
-				Alcoy alcoy = new Alcoy(this.userDto, resortName);
-//					Alcoy.generateButton(alcoy.getFrame(), resortName);
-			} else if (resortId == 6) {
-				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
-						JOptionPane.INFORMATION_MESSAGE);
-				frame.dispose();
-				SanTander santander = new SanTander(this.userDto, resortName);
-//					SanTander.generateButton(santander.getFrame(), resortName);
-			} else if (resortId == 5) {
-				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success",
-						JOptionPane.INFORMATION_MESSAGE);
-				frame.dispose();
-				Oslob oslob = new Oslob(this.userDto, resortName);
-				// Oslob.generateButton(oslob.getFrame(), resortName);
-			}
-
+			});
 		}
 	}
+	
+	private List<TownHolder> townHolders() {
+		JRadioButton carcarButton = new JRadioButton("Carcar"); // id: 1
+		carcarButton.setBounds(75, 120, 200, 70);
+		carcarButton.setFocusable(false);
+		carcarButton.addActionListener(this);
+		carcarButton.setOpaque(false);
+		BiFunction<UserDto, String, Town> carcarTown = (userDto, resortName) -> new Carcar(userDto, resortName);
+		TownHolder carcarTownHolder = new TownHolder(1, carcarButton, carcarTown);
 
+		JRadioButton bariliButton = new JRadioButton("Barili"); // id: 2
+		bariliButton.setBounds(135, 120, 200, 70);
+		bariliButton.setFocusable(false);
+		bariliButton.addActionListener(this);
+		bariliButton.setOpaque(false);
+		BiFunction<UserDto, String, Town> bariliTown = (userDto, resortName) -> new Carcar(userDto, resortName);
+		TownHolder bariliTownHolder = new TownHolder(1, bariliButton, bariliTown);
+
+		JRadioButton moalboalButton = new JRadioButton("Moalboal"); // id: 3
+		moalboalButton.setBounds(190, 120, 200, 70);
+		moalboalButton.setFocusable(false);
+		moalboalButton.addActionListener(this);
+		moalboalButton.setOpaque(false);
+		BiFunction<UserDto, String, Town> moalboalTown = (userDto, resortName) -> new Carcar(userDto, resortName);
+		TownHolder moalboalTownHolder = new TownHolder(1, moalboalButton, moalboalTown);
+		
+		JRadioButton alcoyButton = new JRadioButton("Alcoy"); // id: 4
+		alcoyButton.setBounds(265, 120, 200, 70);
+		alcoyButton.setFocusable(false);
+		alcoyButton.addActionListener(this);
+		alcoyButton.setOpaque(false);
+		BiFunction<UserDto, String, Town> alcoyTown = (userDto, resortName) -> new Carcar(userDto, resortName);
+		TownHolder alcoyTownHolder = new TownHolder(1, alcoyButton, alcoyTown);
+
+		JRadioButton santanderButton = new JRadioButton("SanTander"); // id: 5
+		santanderButton.setBounds(320, 120, 200, 70);
+		santanderButton.setFocusable(false);
+		santanderButton.addActionListener(this);
+		santanderButton.setOpaque(false);
+		BiFunction<UserDto, String, Town> santanderTown = (userDto, resortName) -> new Carcar(userDto, resortName);
+		TownHolder santanderTownHolder = new TownHolder(1, santanderButton, santanderTown);
+
+		JRadioButton oslobButton = new JRadioButton("Oslob"); // id: 6
+		oslobButton.setBounds(200, 160, 150, 30);
+		oslobButton.setFocusable(false);
+		oslobButton.addActionListener(this);
+		oslobButton.setOpaque(false);
+		BiFunction<UserDto, String, Town> oslobTown = (userDto, resortName) -> new Carcar(userDto, resortName);
+		TownHolder oslobTownHolder = new TownHolder(1, oslobButton, oslobTown);
+		
+		return List.of(
+				carcarTownHolder, 
+				bariliTownHolder, 
+				moalboalTownHolder, 
+				alcoyTownHolder, 
+				santanderTownHolder, 
+				oslobTownHolder
+			);
+	}
 }

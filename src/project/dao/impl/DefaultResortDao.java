@@ -13,28 +13,22 @@ import java.util.List;
 import java.util.Optional;
 
 import project.dao.ResortDao;
-import project.dao.RoomDao;
 import project.dao.entity.Resort;
-import project.dao.entity.Room;
 import project.dto.CreateResortDto;
 import project.dto.UpdateResortDto;
 import project.util.DatabaseConnectionFactory;
 
 public class DefaultResortDao implements ResortDao {
 	private static final Logger LOGGER = System.getLogger(DefaultResortDao.class.getName());
+	private static final String SQL_SELECT_RESORT = """
+			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
+			resort_image, pool_image, cottage_image, town_id, user_id, created_at, updated_at 
+			FROM resort
+			""";
 	private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
-	private static final String SQL_SELECT_RESORT_BY_ID = """
-			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
-			resort_image, pool_image, cottage_image, town_id, user_id, created_at, updated_at 
-			FROM resort
-			WHERE id = ?
-			""";
-	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = """
-			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
-			resort_image, pool_image, cottage_image, town_id, user_id, created_at, updated_at 
-			FROM resort
-			WHERE user_id = ? AND town_id = ?
-			""";
+	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORT + " WHERE id = ?";
+	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORT + " WHERE user_id = ?";
+	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORT + " WHERE user_id = ? AND town_id = ?";
 	private static final String SQL_INSERT_RESORT = """
 			INSERT INTO resort (name, user_id, town_id, created_at)
 			VALUES (?, ?, ?, ?)
@@ -45,11 +39,9 @@ public class DefaultResortDao implements ResortDao {
 			WHERE id = ?
 			""";
 	private final Connection connection;
-	private final RoomDao roomDao;
 	
 	public DefaultResortDao() {
 		this.connection = DatabaseConnectionFactory.getConnection();
-		this.roomDao = new DefaultRoomDao();
 	}
 
 	@Override
@@ -72,15 +64,13 @@ public class DefaultResortDao implements ResortDao {
 	}
 
 	@Override
-	public Optional<Resort> getResortById(int id) {
+	public Optional<Resort> getResortById(long id) {
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_ID)) {
 			int i = 1;
-			statement.setInt(i++, id);
+			statement.setLong(i++, id);
 			try (ResultSet rs = statement.executeQuery()) {
 				if (rs.next()) {
-					long resortId = rs.getLong("id");
-					List<Room> rooms = this.roomDao.getRoomByResortId(resortId);
-					return Optional.of(mapToResort(rs, rooms));
+					return Optional.of(mapToResort(rs));
 				} else {
 					LOGGER.log(Level.INFO, "No resort with ID " + id + " found");
 				}
@@ -94,8 +84,31 @@ public class DefaultResortDao implements ResortDao {
 
 	
 	@Override
+	public List<Resort> getResortsByUserId(long userId) {
+		final List<Resort> resorts = new ArrayList<>();
+		
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_USER_ID)) {
+			int i = 1;
+			statement.setLong(i++, userId);
+			try (ResultSet rs = statement.executeQuery()) {
+				while (rs.next()) {
+					resorts.add(mapToResort(rs));
+				}
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.ERROR, e);
+		}
+		
+		if (resorts.isEmpty()) {
+			LOGGER.log(Level.INFO, "No resorts found for user with ID " + userId + " found");
+		}
+
+		return resorts;
+	}
+
+	@Override
 	public List<Resort> getResortsByUserIdAndTownId(long userId, int townId) {
-		final List<Resort> resorts = new ArrayList<Resort>();
+		final List<Resort> resorts = new ArrayList<>();
 		
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID)) {
 			int i = 1;
@@ -103,9 +116,7 @@ public class DefaultResortDao implements ResortDao {
 			statement.setInt(i++, townId);
 			try (ResultSet rs = statement.executeQuery()) {
 				while (rs.next()) {
-					long resortId = rs.getLong("id");
-					List<Room> rooms = this.roomDao.getRoomByResortId(resortId);
-					resorts.add(mapToResort(rs, rooms));
+					resorts.add(mapToResort(rs));
 				}
 			}
 		} catch (SQLException e) {
@@ -171,7 +182,7 @@ public class DefaultResortDao implements ResortDao {
 		return false;
 	}
 
-	private static Resort mapToResort(ResultSet rs, List<Room> rooms) throws SQLException {
+	private static Resort mapToResort(ResultSet rs) throws SQLException {
 		var createdAt = rs.getTimestamp("created_at");
 		var updatedAt = rs.getTimestamp("updated_at");
 		
@@ -187,7 +198,6 @@ public class DefaultResortDao implements ResortDao {
 				rs.getString("resort_image"), 
 				rs.getString("pool_image"), 
 				rs.getString("cottage_image"), 
-				rooms,
 				rs.getLong("use_id"), 
 				rs.getInt("town_id"),
 				createdAt != null ? createdAt.toInstant() : null,

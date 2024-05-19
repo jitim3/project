@@ -37,12 +37,12 @@ CREATE TABLE IF NOT EXISTS town (
 	CONSTRAINT uq_town_name UNIQUE (name)
 );
 
-INSERT INTO town (id, name) VALUES(1, 'Alcoy');
+INSERT INTO town (id, name) VALUES(1, 'Carcar');
 INSERT INTO town (id, name) VALUES(2, 'Barili');
-INSERT INTO town (id, name) VALUES(3, 'Carcar');
-INSERT INTO town (id, name) VALUES(4, 'Moalboal');
-INSERT INTO town (id, name) VALUES(5, 'Oslob');
-INSERT INTO town (id, name) VALUES(6, 'SanTander');
+INSERT INTO town (id, name) VALUES(3, 'Moalboal');
+INSERT INTO town (id, name) VALUES(4, 'Alcoy');
+INSERT INTO town (id, name) VALUES(5, 'SanTander');
+INSERT INTO town (id, name) VALUES(6, 'Oslob');
 
 CREATE TABLE IF NOT EXISTS resort (
 	id BIGINT NOT NULL AUTO_INCREMENT,
@@ -87,12 +87,11 @@ CREATE TABLE IF NOT EXISTS room (
 	num_of_pax INT NOT NULL,
 	rate_per_night DECIMAL(19,2) NOT NULL,
 	description TEXT,
-	room_image1 VARCHAR (255) NOT NULL,
-	room_image2 VARCHAR (255) NOT NULL,
+	room_image1 VARCHAR (255) NULL,
+	room_image2 VARCHAR (255) NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT fk_room_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id),
 	CONSTRAINT fk_room_room_availability_type_id FOREIGN KEY (room_availability_type_id) REFERENCES room_availability_type (id)
-);	
-	
+);
