@@ -29,10 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import project.dto.CreateRoomDto;
-import project.dto.ResortDto;
 import project.dto.UpdateResortDto;
 import project.service.ResortService;
 import project.service.RoomService;
@@ -49,44 +47,44 @@ public class ResortInfo implements ActionListener {
 	private final RoomService roomService;
 
 	// ==> FRAME
-	JFrame frame = new JFrame("Fill up");
+	private final JFrame frame = new JFrame("Fill up");
 	// ==> LABELS
-	JLabel label = new JLabel("Fill up resort information");
-	JLabel resortInformation = new JLabel("RESORT DETAILS INFORMATION");
-	JLabel resortName = new JLabel("Name of the resort");
-	JLabel uploadResort = new JLabel("Upload image of the resort");
-	JLabel resortLocation = new JLabel("Resort address/Location");
-	static JLabel resortDescription = new JLabel("Resort description");
-	JLabel uploadPool = new JLabel("Upload image of the pool");
-	JLabel resortHTG = new JLabel("How to get there?");
-	JLabel uploadCottage = new JLabel("Upload image of the cottage");
-	JLabel resortPriceInformation = new JLabel("RESORT PRICE INFORMATION");
-	JLabel resortEntranceFee = new JLabel("Enter entrance fee of the resort");
-	JLabel resortCottageFee = new JLabel("Enter rental fee of the cottage");
-	JLabel resortPoolFee = new JLabel("Enter pool entrace fee of the resort");
-	JLabel resortRoomInformation = new JLabel("RESORT ROOMS INFORMATION");
-	JLabel resortRoomNormal = new JLabel("Normal Room");
-	JLabel resortPaxInformation = new JLabel("Number of pax");
-	JLabel resortRoomAvailability = new JLabel("Room Availability");
-	JLabel resortNumPax = new JLabel("Number of Pax");
-	JLabel resortRoomRate = new JLabel("Room Rate per Night");
-	JLabel resortRoomDescription = new JLabel("Room Description");
-	JLabel resortRoomUploadImage = new JLabel("Upload images of the room");
-	JLabel resortRoomFamily = new JLabel("Family Room");
-	JLabel resortFamilyPaxInformation = new JLabel("Number of Pax");
-	JLabel resortFamilyRoomRate = new JLabel("Room Rate per Night");
-	JLabel resortFamilyRoomDescription = new JLabel("Room Description");
-	JLabel resortFamilyRoomUploadImage = new JLabel("Upload images of the room");
+	private final JLabel label = new JLabel("Fill up resort information");
+	private final JLabel resortInformation = new JLabel("RESORT DETAILS INFORMATION");
+	private final JLabel resortName = new JLabel("Name of the resort");
+	private final JLabel uploadResort = new JLabel("Upload image of the resort");
+	private final JLabel resortLocation = new JLabel("Resort address/Location");
+	private final static JLabel resortDescription = new JLabel("Resort description");
+	private final JLabel uploadPool = new JLabel("Upload image of the pool");
+	private final JLabel resortHTG = new JLabel("How to get there?");
+	private final JLabel uploadCottage = new JLabel("Upload image of the cottage");
+	private final JLabel resortPriceInformation = new JLabel("RESORT PRICE INFORMATION");
+	private final JLabel resortEntranceFee = new JLabel("Enter entrance fee of the resort");
+	private final JLabel resortCottageFee = new JLabel("Enter rental fee of the cottage");
+	private final JLabel resortPoolFee = new JLabel("Enter pool entrace fee of the resort");
+	private final JLabel resortRoomInformation = new JLabel("RESORT ROOMS INFORMATION");
+	private final JLabel resortRoomNormal = new JLabel("Normal Room");
+	private final JLabel resortPaxInformation = new JLabel("Number of pax");
+	private final JLabel resortRoomAvailability = new JLabel("Room Availability");
+	private final JLabel resortNumPax = new JLabel("Number of Pax");
+	private final JLabel resortRoomRate = new JLabel("Room Rate per Night");
+	private final JLabel resortRoomDescription = new JLabel("Room Description");
+	private final JLabel resortRoomUploadImage = new JLabel("Upload images of the room");
+	private final JLabel resortRoomFamily = new JLabel("Family Room");
+	private final JLabel resortFamilyPaxInformation = new JLabel("Number of Pax");
+	private final JLabel resortFamilyRoomRate = new JLabel("Room Rate per Night");
+	private final JLabel resortFamilyRoomDescription = new JLabel("Room Description");
+	private final JLabel resortFamilyRoomUploadImage = new JLabel("Upload images of the room");
 
-	JLabel resortImageLabel = new JLabel(); // USED FOR UPLOAD RESORT PICTURE
-	JLabel poolImageLabel = new JLabel(); // USED FOR UPLOAD POOL PICTURE
-	JLabel cottageImageLabel = new JLabel(); // USED FOR UPLOAD COTTAGE PICTURE
+	private final JLabel resortImageLabel = new JLabel(); // USED FOR UPLOAD RESORT PICTURE
+	private final JLabel poolImageLabel = new JLabel(); // USED FOR UPLOAD POOL PICTURE
+	private final JLabel cottageImageLabel = new JLabel(); // USED FOR UPLOAD COTTAGE PICTURE
 
-	JLabel normalRoomImage1Label = new JLabel(); // USED FOR UPLOAD ROOM 1st PIC
-	JLabel normalRoomImage2Label = new JLabel(); // USED FOR UPLOAD ROOM 2nd PIC
+	private final JLabel normalRoomImage1Label = new JLabel(); // USED FOR UPLOAD ROOM 1st PIC
+	private final JLabel normalRoomImage2Label = new JLabel(); // USED FOR UPLOAD ROOM 2nd PIC
 
-	JLabel familyRoomImage1Label = new JLabel(); // USED FOR UPLOAD FAMILY ROOM 1st PIC
-	JLabel familyRoomImage2Label = new JLabel(); // USED FOR UPLOAD FAMILY ROOM 2nd PIC
+	private final JLabel familyRoomImage1Label = new JLabel(); // USED FOR UPLOAD FAMILY ROOM 1st PIC
+	private final JLabel familyRoomImage2Label = new JLabel(); // USED FOR UPLOAD FAMILY ROOM 2nd PIC
 
 	// ==>COMBOBOX
 	String roomAvailabilityChoices[] = RoomAvailabilityTypes.names();
@@ -104,27 +102,27 @@ public class ResortInfo implements ActionListener {
 	JTextField familyRoomRatePerNightTextField = new JTextField();
 
 	// JTEXTAREA WITH SCROLLPANES
-	JTextArea resortDescriptionTextArea = new JTextArea(3, 20);
-	JScrollPane resortNameScrollPane = new JScrollPane(resortDescriptionTextArea);
+	private final JTextArea resortDescriptionTextArea = new JTextArea(3, 20);
+	private final JScrollPane resortNameScrollPane = new JScrollPane(resortDescriptionTextArea);
 
-	JTextArea normalRoomDescriptionTextArea = new JTextArea(1, 10);
-	JScrollPane resortRoomDescriptionScrollPane = new JScrollPane(normalRoomDescriptionTextArea);
+	private final JTextArea normalRoomDescriptionTextArea = new JTextArea(1, 10);
+	private final JScrollPane resortRoomDescriptionScrollPane = new JScrollPane(normalRoomDescriptionTextArea);
 
-	JTextArea familyRoomDescriptionTextArea = new JTextArea(1, 10);
-	JScrollPane resortFamilyRoomDescriptionScrollPane = new JScrollPane(familyRoomDescriptionTextArea);
+	private final JTextArea familyRoomDescriptionTextArea = new JTextArea(1, 10);
+	private final JScrollPane resortFamilyRoomDescriptionScrollPane = new JScrollPane(familyRoomDescriptionTextArea);
 
-	JTextArea howToGoTextArea = new JTextArea(1, 10);
-	JScrollPane resortHTGFieldScrollPane = new JScrollPane(howToGoTextArea);
+	private final JTextArea howToGoTextArea = new JTextArea(1, 10);
+	private final JScrollPane resortHTGFieldScrollPane = new JScrollPane(howToGoTextArea);
 
 	// ==> BUTTONS
-	JButton resortImageButton = new JButton("Browse");
-	JButton poolImageButton = new JButton("Browse");
-	JButton cottageImageButton = new JButton("Browse");
-	JButton displayButton = new JButton("Display");
-	JButton normalRoomImage1Button = new JButton("Add Image");
-	JButton normalRoomImage2Button = new JButton("Add Image");
-	JButton familyRoomImage1Button = new JButton("Add Image");
-	JButton familyRoomImage2Button = new JButton("Add Image");
+	private final JButton resortImageButton = new JButton("Browse");
+	private final JButton poolImageButton = new JButton("Browse");
+	private final JButton cottageImageButton = new JButton("Browse");
+	private final JButton displayButton = new JButton("Display");
+	private final JButton normalRoomImage1Button = new JButton("Add Image");
+	private final JButton normalRoomImage2Button = new JButton("Add Image");
+	private final JButton familyRoomImage1Button = new JButton("Add Image");
+	private final JButton familyRoomImage2Button = new JButton("Add Image");
 	
 	private	File resortImageFile;
 	private	File poolImageFile;
@@ -140,7 +138,7 @@ public class ResortInfo implements ActionListener {
 		this.resortService = resortService;
 		this.roomService = new DefaultRoomService();
 
-		resortNameTextField.setText(this.resortNameCreated);
+		this.resortNameTextField.setText(this.resortNameCreated);
 
 		// ==> FOR LABELS
 		label.setBounds(250, 15, 400, 80);
@@ -471,7 +469,6 @@ public class ResortInfo implements ActionListener {
 		 * frame.setLocationRelativeTo(null); frame.setResizable(false);
 		 * frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 */
-
 	}
 
 	@Override
@@ -492,7 +489,6 @@ public class ResortInfo implements ActionListener {
 					resortImageLabel.setIcon(new ImageIcon(image));
 				}
 			}
-			System.out.println(resortImageFile.getName());
 		} else if (e.getSource() == poolImageButton) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -506,7 +502,6 @@ public class ResortInfo implements ActionListener {
 					poolImageLabel.setIcon(new ImageIcon(img));
 				}
 			}
-			System.out.println(poolImageFile.getName());
 		} else if (e.getSource() == cottageImageButton) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -518,7 +513,6 @@ public class ResortInfo implements ActionListener {
 				Image image = imageIcon.getImage().getScaledInstance(cottageImageLabel.getWidth(), cottageImageLabel.getHeight(), Image.SCALE_SMOOTH);
 				cottageImageLabel.setIcon(new ImageIcon(image));
 			}
-			System.out.println(cottageImageFile.getName());
 		} else if (e.getSource() == normalRoomImage1Button) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -529,7 +523,6 @@ public class ResortInfo implements ActionListener {
 				Image image = imageIcon.getImage().getScaledInstance(normalRoomImage1Label.getWidth(), normalRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
 				normalRoomImage1Label.setIcon(new ImageIcon(image));
 			}
-			System.out.println(normalRoomImage1File.getName());
 		} else if (e.getSource() == normalRoomImage2Button) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -540,7 +533,6 @@ public class ResortInfo implements ActionListener {
 				Image image = imageIcon.getImage().getScaledInstance(normalRoomImage2Label.getWidth(), normalRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
 				normalRoomImage2Label.setIcon(new ImageIcon(image));
 			}
-			System.out.println(normalRoomImage2File.getName());
 		} else if (e.getSource() == familyRoomImage1Button) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -551,7 +543,6 @@ public class ResortInfo implements ActionListener {
 				Image image = imageIcon.getImage().getScaledInstance(familyRoomImage1Label.getWidth(), familyRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
 				familyRoomImage1Label.setIcon(new ImageIcon(image));
 			}
-			System.out.println(familyRoomImage1File.getName());
 		} else if (e.getSource() == familyRoomImage2Button) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -562,18 +553,8 @@ public class ResortInfo implements ActionListener {
 				Image image = imageIcon.getImage().getScaledInstance(familyRoomImage2Label.getWidth(), familyRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
 				familyRoomImage2Label.setIcon(new ImageIcon(image));
 			}
-			System.out.println(familyRoomImage2File.getName());
 		} else if (e.getSource() == displayButton) {
 			frame.dispose();
-			
-
-			System.out.println(resortImageFile.getName());
-			System.out.println(poolImageFile.getName());
-			System.out.println(cottageImageFile.getName());
-			System.out.println(normalRoomImage1File.getName());
-			System.out.println(normalRoomImage2File.getName());
-			System.out.println(familyRoomImage2File.getName());
-			System.out.println(familyRoomImage2File.getName());
 			
 			// Update resort
 			String description = resortDescriptionTextArea.getText();
@@ -650,7 +631,7 @@ public class ResortInfo implements ActionListener {
 					cottageImage, 
 					updatedAt
 				);
-			boolean updatedResort = this.resortService.updateResort(updateResortDto);
+			this.resortService.updateResort(updateResortDto);
 
 			// Create rooms
 			String roomAvailabilityTypeName = (String) roomAvailabilityTypeComboBox.getSelectedItem();
@@ -755,137 +736,6 @@ public class ResortInfo implements ActionListener {
 			this.roomService.createRoom(familyRoom);
 
 			DisplayFrame displayFrame = new DisplayFrame(resortService, resortId);
-
 		}
-	}
-
-	public static class DisplayFrame implements ActionListener {
-
-		JFrame frame;
-		JButton reservation = new JButton("Make a reservation");
-		JButton viewReview = new JButton("View Reviews");
-		JButton transaction = new JButton("Transaction");
-		JButton exit = new JButton("EXIT");
-
-		DisplayFrame(ResortService resortService, long resortId) {
-			ResortDto resortDto = resortService.getResortById(resortId).orElse(new ResortDto());
-			frame = new JFrame(resortDto.name());
-
-			JLabel displayLabel = new JLabel(resortDto.name()); // RESORT NAME
-			displayLabel.setBounds(310, 30, 300, 45);
-			displayLabel.setFont(new Font("Times New Roman", Font.BOLD, 30));
-			displayLabel.setForeground(Color.black);
-			displayLabel.setOpaque(true);
-			displayLabel.setBackground(new Color(255, 255, 255, 64));
-			displayLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			displayLabel.setVerticalAlignment(SwingConstants.CENTER);
-
-			JLabel locationLabel = new JLabel(resortDto.name()); // LOCATION AREA
-			locationLabel.setBounds(348, 90, 230, 30);
-			locationLabel.setOpaque(true);
-			locationLabel.setBackground(new Color(255, 255, 255, 64));
-			locationLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
-			locationLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			locationLabel.setVerticalAlignment(SwingConstants.CENTER);
-
-			JTextArea descriptionArea = new JTextArea(resortDto.description()); // DESCRIPTION
-			descriptionArea.setBounds(40, 520, 780, 180);
-			descriptionArea.setLineWrap(true);
-			descriptionArea.setWrapStyleWord(true);
-			descriptionArea.setEditable(false);
-			descriptionArea.setBackground(new Color(255, 255, 255, 64));
-			descriptionArea.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-
-			JTextArea htgAreaLabel = new JTextArea();
-			htgAreaLabel.setBounds(40, 710, 780, 180);
-			htgAreaLabel.setLineWrap(true);
-			htgAreaLabel.setWrapStyleWord(true);
-			htgAreaLabel.setEditable(false);
-			htgAreaLabel.setBackground(new Color(255, 255, 255, 64));
-			htgAreaLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-
-			JLabel imageLabel = new JLabel(); // IMPORT THE RESORT JFILECHOOSER FROM FILL UP FORM
-			imageLabel.setBounds(40, 225, 350, 250); // Set bounds as per your requirement
-			ImageIcon imageIcon = new ImageIcon("");
-			Image img = imageIcon.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(),
-					Image.SCALE_SMOOTH);
-			imageLabel.setIcon(new ImageIcon(img));
-
-			JLabel imageLabel1 = new JLabel(); // IMPORT THE POOL JFILECHOOSER FROM FILL UP FORM
-			imageLabel1.setBounds(475, 225, 350, 250); // Set bounds as per your requirement
-			ImageIcon imageIcon1 = new ImageIcon("");
-			Image img1 = imageIcon1.getImage().getScaledInstance(imageLabel1.getWidth(), imageLabel1.getHeight(),
-					Image.SCALE_SMOOTH);
-			imageLabel1.setIcon(new ImageIcon(img1));
-
-			reservation.setBounds(360, 940, 150, 25);
-			reservation.setFocusable(false);
-			reservation.addActionListener(this);
-			reservation.setOpaque(false);
-
-			viewReview.setBounds(360, 985, 150, 25);
-			viewReview.setFocusable(false);
-			viewReview.addActionListener(this);
-			viewReview.setOpaque(false);
-
-			transaction.setBounds(360, 1025, 150, 25);
-			transaction.setFocusable(false);
-			transaction.addActionListener(this);
-			transaction.setOpaque(false);
-
-			exit.setBounds(380, 1075, 110, 25);
-			exit.setFocusable(false);
-			exit.addActionListener(this);
-			exit.setOpaque(false);
-
-			ImageIcon icon = new ImageIcon("beach2.png");
-
-			ImageIcon background = new ImageIcon("figma.jpg");
-			Image backgroundImage = background.getImage().getScaledInstance(900, 1180, Image.SCALE_DEFAULT);
-			JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-			backgroundLabel.setBounds(0, 0, 900, 1180);
-
-			JPanel panel = new JPanel();
-
-			panel.add(exit);
-			panel.add(transaction);
-			panel.add(viewReview);
-			panel.add(reservation);
-			panel.setLayout(null);
-			panel.add(htgAreaLabel);
-			panel.add(locationLabel); // RESORT LOCATION
-			panel.add(displayLabel); // RESORT NAME
-			panel.add(imageLabel); // RESORT PICTURE
-			panel.add(imageLabel1); // POOL PICTURE
-			panel.add(descriptionArea);// DESCRIPTION AREA
-			panel.add(backgroundLabel);
-			panel.setPreferredSize(new Dimension(900, 1180));
-
-			JScrollPane scrollPane = new JScrollPane(panel);
-			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-			frame.setContentPane(scrollPane);
-			frame.setIconImage(icon.getImage());
-			frame.setSize(900, 2580);
-			frame.setVisible(true);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setLocationRelativeTo(null);
-			frame.setResizable(false);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == reservation) {
-
-			} else if (e.getSource() == viewReview) {
-
-			} else if (e.getSource() == transaction) {
-
-			} else if (e.getSource() == exit) {
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			}
-
-		}
-
 	}
 }
