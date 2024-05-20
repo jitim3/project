@@ -46,4 +46,16 @@ public class AppUtils {
 	        }
 		}
 	}
+	
+	public static Optional<String> imagePath(String filename) {
+		if (filename != null && !filename.isBlank()) {
+			String file = UPLOADED_IMAGE + filename;
+			Path path = Paths.get(file);
+			if (Files.exists(path)) {
+				return Optional.of(file);
+			}
+		}
+		
+		return Optional.empty();
+	}
 }
