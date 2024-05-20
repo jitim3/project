@@ -29,7 +29,7 @@ public class DisplayFrame implements ActionListener {
 	private JButton transactionButton = new JButton("Transaction");
 	private JButton exitButton = new JButton("EXIT");
 
-	DisplayFrame(ResortService resortService, long resortId) {
+	public DisplayFrame(ResortService resortService, long resortId) {
 		this.resortService = resortService;
 		this.resortDto = this.resortService.getResortById(resortId)
 				.orElse(new ResortDto());

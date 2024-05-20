@@ -2,6 +2,7 @@ package project.ui.town;
 
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -13,6 +14,7 @@ import project.dto.ResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.impl.DefaultResortService;
+import project.ui.DisplayFrame;
 import project.ui.Towns;
 import project.util.UserTypes;
 
@@ -86,6 +88,7 @@ public class Carcar implements Town { // CARCAR FRAME
 			resortButton.setBounds(50, y, 400, 75);
 			resortButton.setOpaque(false);
 			resortButton.setFocusable(false);
+			resortButton.addActionListener(e -> new DisplayFrame(this.resortService, resortDto.id()));
 			frame.getContentPane().add(resortButton);
 			frame.add(resortButton);
 
