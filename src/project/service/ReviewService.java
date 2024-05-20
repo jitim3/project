@@ -3,7 +3,6 @@ package project.service;
 import java.util.List;
 import java.util.Optional;
 
-import project.dao.entity.Review;
 import project.dto.CreateReviewDto;
 import project.dto.ReviewDto;
 
