@@ -13,6 +13,7 @@ import project.dto.ResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.impl.DefaultResortService;
+import project.ui.DisplayFrame;
 import project.ui.Towns;
 import project.util.UserTypes;
 
@@ -86,6 +87,7 @@ public class Alcoy implements Town {
 			resortButton.setBounds(50, y, 400, 75);
 			resortButton.setOpaque(false);
 			resortButton.setFocusable(false);
+			resortButton.addActionListener(e -> new DisplayFrame(this.resortService, resortDto.id()));
 			frame.getContentPane().add(resortButton);
 			frame.add(resortButton);
 
