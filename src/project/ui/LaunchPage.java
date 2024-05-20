@@ -13,14 +13,15 @@ import project.service.UserService;
 import project.service.impl.DefaultUserService;
 
 public class LaunchPage implements ActionListener {
-	private final UserService userService = new DefaultUserService();
-	JFrame frame = new JFrame();
-	JButton button = new JButton("Customer");
-	JButton button1 = new JButton("Admin");
-	JButton button2 = new JButton("Super Admin");
+	private final UserService userService;
+	private final JFrame frame = new JFrame();
+	private final JButton button = new JButton("Customer");
+	private final JButton button1 = new JButton("Admin");
+	private final JButton button2 = new JButton("Super Admin");
 
 	public LaunchPage() {
-
+		this.userService = new DefaultUserService();
+		
 		button.setBounds(75, 50, 200, 40);
 		button.setFocusable(false);
 		button.addActionListener(this);
@@ -64,10 +65,10 @@ public class LaunchPage implements ActionListener {
 			NewWindow_Customer window = new NewWindow_Customer(this.userService);
 		} else if (e.getSource() == button1) {
 			frame.dispose();
-			NewWindow_Admin window = new NewWindow_Admin();
+			NewWindow_Admin window = new NewWindow_Admin(this.userService);
 		} else {
 			frame.dispose();
-			NewWindow_SuperAdmin window = new NewWindow_SuperAdmin();
+			NewWindow_SuperAdmin window = new NewWindow_SuperAdmin(this.userService);
 		}
 
 	}

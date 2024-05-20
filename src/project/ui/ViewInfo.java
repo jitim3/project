@@ -3,7 +3,7 @@ package project.ui;
 import javax.swing.JFrame;
 
 public class ViewInfo {
-	JFrame frame = new JFrame("View Information");
+	private final JFrame frame = new JFrame("View Information");
 
 	public ViewInfo() {
 		frame.setSize(250, 250);

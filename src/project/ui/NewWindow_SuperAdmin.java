@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,32 +14,37 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import project.dto.UserDto;
+import project.service.UserService;
+
 public class NewWindow_SuperAdmin implements ActionListener {
-	static char[] pass = { 'a', 'd', 'm', 'i', 'n' };
-	static JPasswordField password = new JPasswordField();
-	JFrame frame = new JFrame("Super Admin");
-	JLabel label = new JLabel("Super Admin");
-	JLabel label1 = new JLabel("Enter Password:");
-	JButton button = new JButton("Enter");
-	JButton button1 = new JButton("Exit");
+	private final UserService userService;
+	private final JPasswordField passwordField = new JPasswordField();
+	private final JFrame frame = new JFrame("Super Admin");
+	private final JLabel superAdminLabel = new JLabel("Super Admin");
+	private final JLabel enterPasswordLabel = new JLabel("Enter Password:");
+	private final JButton enterButton = new JButton("Enter");
+	private final JButton exitButton = new JButton("Exit");
 
-	public NewWindow_SuperAdmin() {
-		button.setBounds(80, 165, 100, 30);
-		button.setFocusable(false);
-		button.addActionListener(this);
+	public NewWindow_SuperAdmin(final UserService userService) {
+		this.userService = userService;
+		
+		enterButton.setBounds(80, 165, 100, 30);
+		enterButton.setFocusable(false);
+		enterButton.addActionListener(this);
 
-		button1.setBounds(200, 165, 100, 30);
-		button1.setFocusable(false);
-		button1.addActionListener(this);
+		exitButton.setBounds(200, 165, 100, 30);
+		exitButton.setFocusable(false);
+		exitButton.addActionListener(this);
 
-		label.setBounds(150, 60, 150, 80);
-		label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		superAdminLabel.setBounds(150, 60, 150, 80);
+		superAdminLabel.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 
-		label1.setBounds(72, 123, 100, 25);
-		label1.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+		enterPasswordLabel.setBounds(72, 123, 100, 25);
+		enterPasswordLabel.setFont(new Font("Times New Roman", Font.PLAIN, 12));
 
-		password.setBounds(155, 123, 100, 25);
-		password.setPreferredSize(new Dimension(100, 70));
+		passwordField.setBounds(155, 123, 100, 25);
+		passwordField.setPreferredSize(new Dimension(100, 70));
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -48,11 +53,11 @@ public class NewWindow_SuperAdmin implements ActionListener {
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 		backgroundLabel.setBounds(0, 0, 400, 350);
 
-		frame.add(button1);
-		frame.add(button);
-		frame.add(password);
-		frame.add(label1);
-		frame.add(label);
+		frame.add(exitButton);
+		frame.add(enterButton);
+		frame.add(passwordField);
+		frame.add(enterPasswordLabel);
+		frame.add(superAdminLabel);
 		frame.add(backgroundLabel);
 		frame.setIconImage(icon.getImage());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,20 +69,18 @@ public class NewWindow_SuperAdmin implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == button) {
-			char[] passwordInfo = password.getPassword();
-			if (Arrays.equals(passwordInfo, pass)) {
+		if (e.getSource() == enterButton) {
+			String password = new String(passwordField.getPassword());
+			Optional<UserDto> userDtOptional = this.userService.getSuperAdmin("sa", password);
+			if (userDtOptional.isPresent()) {
 				JOptionPane.showMessageDialog(null, "Log in Successfully!", "Log in", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 				SuperAdmin_NextPage window = new SuperAdmin_NextPage();
 			} else {
 				JOptionPane.showMessageDialog(null, "Incorrect password!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
-
 		} else {
 			frame.dispose();
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
-
 	}
 }

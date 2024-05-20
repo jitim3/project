@@ -28,6 +28,19 @@ INSERT INTO user (id, username, password, user_type_id) VALUES(1, 'sa', 'sa', 1)
 INSERT INTO user (id, username, password, user_type_id) VALUES(2, 'a', 'a', 2);
 INSERT INTO user (id, username, password, user_type_id) VALUES(3, 'c', 'c', 3);
 
+CREATE TABLE IF NOT EXISTS customer (
+	id BIGINT NOT NULL,
+	first_name VARCHAR(255) NOT NULL,
+	last_name VARCHAR(255) NOT NULL,
+	contact_number VARCHAR(255) NOT NULL,
+	email_address VARCHAR(255) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT uq_customer_email_address UNIQUE (email_address),
+    CONSTRAINT fk_customer_id FOREIGN KEY (id) REFERENCES user (id)
+);
+
 CREATE TABLE IF NOT EXISTS town (
 	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
@@ -68,16 +81,15 @@ CREATE TABLE IF NOT EXISTS resort (
 CREATE TABLE IF NOT EXISTS room_availability_type (
 	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
-	description VARCHAR(255) NOT NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT uq_room_availability_type_name UNIQUE (name)
 );
 
-INSERT INTO room_availability_type (id, name, description) VALUES (1, 'DAY_USE','Day Use');
-INSERT INTO room_availability_type (id, name, description) VALUES (2, 'NIGHT_USE','Night Use');
-INSERT INTO room_availability_type (id, name, description) VALUES (3, 'DAY_AND_NIGHT_USE','Day and Night Use');
+INSERT INTO room_availability_type (id, name) VALUES (1, 'Day Use');
+INSERT INTO room_availability_type (id, name) VALUES (2, 'Night Use');
+INSERT INTO room_availability_type (id, name) VALUES (3, 'Day and Night Use');
 	
 CREATE TABLE IF NOT EXISTS room (
 	id BIGINT NOT NULL AUTO_INCREMENT,
@@ -94,4 +106,16 @@ CREATE TABLE IF NOT EXISTS room (
 	PRIMARY KEY (id),
 	CONSTRAINT fk_room_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id),
 	CONSTRAINT fk_room_room_availability_type_id FOREIGN KEY (room_availability_type_id) REFERENCES room_availability_type (id)
+);
+
+CREATE TABLE IF NOT EXISTS review (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	user_id BIGINT NOT NULL,
+	resort_id BIGINT NOT NULL,
+	comment TEXT,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT fk_review_user_id FOREIGN KEY (user_id) REFERENCES user (id),
+	CONSTRAINT fk_review_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
 );
