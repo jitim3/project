@@ -35,8 +35,7 @@ public class DtoMapper {
 	public RoomAvailabilityTypeDto mapToAvailabilityTypeDto(RoomAvailabilityType roomAvailabilityType) {
 		return new RoomAvailabilityTypeDto(
 				roomAvailabilityType.id(), 
-				roomAvailabilityType.name(), 
-				roomAvailabilityType.description(), 
+				roomAvailabilityType.name(),
 				roomAvailabilityType.createdAt(), 
 				roomAvailabilityType.updatedAt()
 			);

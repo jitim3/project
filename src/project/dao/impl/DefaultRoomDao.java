@@ -24,16 +24,16 @@ public class DefaultRoomDao implements RoomDao {
 	private static final String SQL_SELECT_ROOM_BY_ID = """
 			SELECT 
 			    r.id, r.resort_id, r.room_type, r.num_of_pax, r.rate_per_night, r.description, r.room_image1, r.room_image2, r.created_at, r.updated_at,
-			    rat.id AS room_availability_type_id, rat.name AS room_availability_type_name, rat.description AS room_availability_type_description,
+			    rat.id AS room_availability_type_id, rat.name AS room_availability_type_name,
 			    rat.created_at AS room_availability_type_created_at, rat.updated_at AS room_availability_type_updated_at
 			FROM room r
 			LEFT JOIN room_availability_type rat ON r.room_availability_type_id = rat.id
-			WHERE id = ?
+			WHERE r.id = ?
 			""";
 	private static final String SQL_SELECT_ROOM_BY_RESORT_ID = """
 			SELECT 
 			    r.id, r.resort_id, r.room_type, r.num_of_pax, r.rate_per_night, r.description, r.room_image1, r.room_image2, r.created_at, r.updated_at,
-			    rat.id AS room_availability_type_id, rat.name AS room_availability_type_name, rat.description AS room_availability_type_description,
+			    rat.id AS room_availability_type_id, rat.name AS room_availability_type_name,
 			    rat.created_at AS room_availability_type_created_at, rat.updated_at AS room_availability_type_updated_at
 			FROM room r
 			LEFT JOIN room_availability_type rat ON r.room_availability_type_id = rat.id
@@ -180,7 +180,6 @@ public class DefaultRoomDao implements RoomDao {
 		return new RoomAvailabilityType(
 				rs.getInt("room_availability_type_id"),
 				rs.getString("room_availability_type_name"),
-				rs.getString("room_availability_type_description"),
 				createdAt != null ? createdAt.toInstant() : null,
 				updatedAt != null ? updatedAt.toInstant() : null
 			);
