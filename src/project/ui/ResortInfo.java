@@ -19,16 +19,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import project.dto.CreateResortDto;
 import project.dto.CreateRoomDto;
-import project.dto.RoomDto;
+import project.dto.ResortDto;
 import project.dto.UpdateResortDto;
 import project.service.ResortService;
 import project.service.RoomService;
@@ -621,41 +619,41 @@ public class ResortInfo implements ActionListener {
 					updatedAt
 				);
 //			boolean updatedResort = this.resortService.updateResort(updateResortDto);
+			String normalRoomDescription = resortDescriptionField.getText();
+			String normalRoomImage1 = selectedImageFile.getName();
+			String normalRoomImage2 = selectedImageFile.getName();
 			
 			CreateRoomDto normalRoom = new CreateRoomDto(
 					resortId, 
 					1, 
-					"Normal", 
+					"Normal",
 					10, 
 					new BigDecimal(100), 
-					"room description", 
-					"roomImage1", 
-					"roomImage2", 
+					normalRoomDescription,     
+					normalRoomImage1, 
+					normalRoomImage2, 
 					createdAt
 				);
 //			RoomDto boemalRoomDto = this.roomService.createRoom(normalRoom);
-			
+			String familyRoomDescription = resortDescriptionField.getText();
+			String familyRoomImage1 = selectedImageFile.getName();
+			String familyRoomImage2 = selectedImageFile.getName();
 			CreateRoomDto familyRoom = new CreateRoomDto(
 					resortId, 
 					2, 
-					"Familty", 
+					"Family", 
 					10, 
 					new BigDecimal(100), 
-					"room description", 
-					"roomImage1", 
-					"roomImage2", 
+					familyRoomDescription,
+					familyRoomImage1, 
+					familyRoomImage2, 
 					createdAt
 				);
 //			RoomDto familyRoomDto = this.roomService.createRoom(familyRoom);
 			
 			displayFrame frame = new displayFrame(
-					resortName, 
-					inputText, 
-					inputText,
-					selectedImageFile.getAbsolutePath(), 
-					selectedImageFile1.getAbsolutePath(),
-					description, 
-					inputText
+					resortService,
+					resortId
 			);
 		
 		}
@@ -668,11 +666,11 @@ public class ResortInfo implements ActionListener {
 			 JButton transaction = new JButton("Transaction");
 			 JButton exit = new JButton("EXIT");
 			 
-			 displayFrame(String inputframeText ,String inputText, String inputText1,String imageResortPath,String imagePoolPath,String resortDescription, String inputText2){
+			 displayFrame(ResortService resortService, long resortId){
+				 ResortDto resortDto = resortService.getResortById(resortId).orElse(new ResortDto());
+				 frame = new JFrame(resortDto.name());
 				 
-				 frame = new JFrame(inputframeText);
-				 
-				 JLabel displayLabel = new JLabel(inputText);                     //RESORT NAME
+				 JLabel displayLabel = new JLabel(resortDto.name());                     //RESORT NAME
 				 displayLabel.setBounds(310, 30, 300, 45);
 				 displayLabel.setFont(new Font("Times New Roman",Font.BOLD,30));
 				 displayLabel.setForeground(Color.black);
@@ -681,7 +679,7 @@ public class ResortInfo implements ActionListener {
 			     displayLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			     displayLabel.setVerticalAlignment(SwingConstants.CENTER);
 			     
-			     JLabel locationLabel = new JLabel (inputText1); 				//LOCATION AREA
+			     JLabel locationLabel = new JLabel (resortDto.name()); 				//LOCATION AREA
 			     locationLabel.setBounds(348, 90, 230, 30);
 			     locationLabel.setOpaque(true);
 			     locationLabel.setBackground(new Color(255, 255, 255, 64));
@@ -689,7 +687,7 @@ public class ResortInfo implements ActionListener {
 			     locationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			     locationLabel.setVerticalAlignment(SwingConstants.CENTER);
 			     
-			     JTextArea descriptionArea = new JTextArea(resortDescription); //DESCRIPTION
+			     JTextArea descriptionArea = new JTextArea(resortDto.description()); //DESCRIPTION
 			     descriptionArea.setBounds(40, 520, 780, 180);
 			     descriptionArea.setLineWrap(true);
 			     descriptionArea.setWrapStyleWord(true);
@@ -697,7 +695,7 @@ public class ResortInfo implements ActionListener {
 			     descriptionArea.setBackground(new Color(255, 255, 255, 64));
 			     descriptionArea.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 			     
-			     JTextArea htgAreaLabel = new JTextArea(inputText2);
+			     JTextArea htgAreaLabel = new JTextArea();
 			     htgAreaLabel.setBounds(40, 710, 780, 180);
 			     htgAreaLabel.setLineWrap(true);
 			     htgAreaLabel.setWrapStyleWord(true);
@@ -738,11 +736,6 @@ public class ResortInfo implements ActionListener {
 			     exit.setFocusable(false);
 			     exit.addActionListener(this);
 			     exit.setOpaque(false);
-			     
-			     
-			     
-			     
-			     
 			     
 				 ImageIcon icon = new ImageIcon("beach2.png");
 				 

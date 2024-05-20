@@ -20,4 +20,10 @@ public record ResortDto(
 		TownDto townDto, 
 		Instant createdAt, 
 		Instant updatedAt) {
+	
+	public ResortDto() {
+		   this(0, "", "", "", "", new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), "", "", "", List.of(), null, null, null);
+		}
+	
+	
 }
