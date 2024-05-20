@@ -131,7 +131,7 @@ public class ResortInfo implements ActionListener {
 		 this.resortService = resortService;
 		 this.roomService = new DefaultRoomService();
 		 
-		 resortNameField.setText(resortNameCreated);
+		 resortNameField.setText(this.resortNameCreated);
 		 
 		 //==> FOR LABELS
 		 label.setBounds(250,15,400,80);
