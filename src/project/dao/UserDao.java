@@ -10,6 +10,8 @@ public interface UserDao {
 	
 	Optional<User> getUserByUsernameAndPassword(String username, String password);
 
+	Optional<User> getSuperAdmin(String username, String password);
+
 	Optional<User> getAdmin(String username, String password);
 
 	Optional<User> getCustomer(String username, String password);

@@ -37,7 +37,7 @@ public class DefaultRoomDao implements RoomDao {
 			    rat.created_at AS room_availability_type_created_at, rat.updated_at AS room_availability_type_updated_at
 			FROM room r
 			LEFT JOIN room_availability_type rat ON r.room_availability_type_id = rat.id
-			WHERE resort_id = ?
+			WHERE r.resort_id = ?
 			""";
 	private static final String SQL_INSERT_ROOM = """
 			INSERT INTO room (

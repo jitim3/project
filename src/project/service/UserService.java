@@ -9,6 +9,8 @@ public interface UserService {
 	
 	Optional<UserDto> getUserByUsernameAndPassword(String username, String password);
 	
+	Optional<UserDto> getSuperAdmin(String username, String password);
+	
 	Optional<UserDto> getAdmin(String username, String password);
 
 	Optional<UserDto> getCustomer(String username, String password);

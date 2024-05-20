@@ -78,6 +78,24 @@ public class DefaultUserDao implements UserDao {
 	}
 
 	@Override
+	public Optional<User> getSuperAdmin(String username, String password) {
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_USER)) {
+			int i = 1;
+			statement.setString(i++, username);
+			statement.setString(i++, password);
+			statement.setInt(i++, UserTypes.SUPER_ADMIN.id());
+			ResultSet rs = statement.executeQuery();
+			if (rs.next()) {
+				return Optional.of(mapToUser(rs));
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.ERROR, e);
+		}
+
+		return Optional.empty();
+	}
+
+	@Override
 	public Optional<User> getAdmin(String username, String password) {
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_USER)) {
 			int i = 1;

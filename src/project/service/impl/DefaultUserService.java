@@ -29,6 +29,12 @@ public class DefaultUserService implements UserService {
 	}
 
 	@Override
+	public Optional<UserDto> getSuperAdmin(String username, String password) {
+		return this.userDao.getSuperAdmin(username, password)
+				.map(this::mapToUserDto);
+	}
+
+	@Override
 	public Optional<UserDto> getAdmin(String username, String password) {
 		return this.userDao.getAdmin(username, password)
 				.map(this::mapToUserDto);

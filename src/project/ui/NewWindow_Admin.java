@@ -1,42 +1,26 @@
 package project.ui;
 
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.Optional;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
-import project.dto.UserDto;
 import project.service.UserService;
-import project.service.impl.DefaultUserService;
-import project.util.UserTypes;
 
 public class NewWindow_Admin implements ActionListener {
-	private final UserService userService = new DefaultUserService();
-	JFrame frame = new JFrame("Admin");
-	JLabel label = new JLabel();
-	JButton button = new JButton("Log in");
-	JButton button1 = new JButton("Sign up");
-	JButton button2 = new JButton("EXIT");
-//	Connection conn;
-//	PreparedStatement psInsert;
-//	Statement stmt;
+	private final UserService userService;
+	private final JFrame frame = new JFrame("Admin");
+	private final JLabel label = new JLabel();
+	private final JButton loginButton = new JButton("Log in");
+	private final JButton signupButton = new JButton("Sign up");
+	private final JButton exitButton = new JButton("EXIT");
 
-	public NewWindow_Admin() {
-
-
+	public NewWindow_Admin(final UserService userService) {
+		this.userService = userService;
 
 		// Import logo for the Customer frame
 		ImageIcon icon = new ImageIcon("beach2.png");
@@ -51,33 +35,32 @@ public class NewWindow_Admin implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(350, 300);
 		frame.setIconImage(icon.getImage());
-		frame.add(button);
-		frame.add(button1);
-		frame.add(button2);
+		frame.add(loginButton);
+		frame.add(signupButton);
+		frame.add(exitButton);
 		frame.add(backgroundLabel);
 		frame.setLayout(null);
 		frame.setVisible(true);
 		frame.setResizable(false);
-		button.setBounds(75, 50, 200, 40);
-		button.setFocusable(false);
-		button.addActionListener(this);
+		loginButton.setBounds(75, 50, 200, 40);
+		loginButton.setFocusable(false);
+		loginButton.addActionListener(this);
 
-		button1.setBounds(75, 100, 200, 40);
-		button1.setFocusable(false);
-		button1.addActionListener(this);
+		signupButton.setBounds(75, 100, 200, 40);
+		signupButton.setFocusable(false);
+		signupButton.addActionListener(this);
 
-		button2.setBounds(75, 150, 200, 40);
-		button2.setFocusable(false);
-		button2.addActionListener(this);
-
+		exitButton.setBounds(75, 150, 200, 40);
+		exitButton.setFocusable(false);
+		exitButton.addActionListener(this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == button) {
+		if (e.getSource() == loginButton) {
 			frame.dispose();
 			AdminDatabaseLogin AdminlogInwindow = new AdminDatabaseLogin(userService);
-		} else if (e.getSource() == button1) {
+		} else if (e.getSource() == signupButton) {
 			frame.dispose();
 			AdminDatabaseSignup AdminsignUpwindow = new AdminDatabaseSignup(userService);
 		} else {
