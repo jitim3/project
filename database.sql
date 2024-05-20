@@ -94,3 +94,15 @@ CREATE TABLE IF NOT EXISTS room (
 	CONSTRAINT fk_room_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id),
 	CONSTRAINT fk_room_room_availability_type_id FOREIGN KEY (room_availability_type_id) REFERENCES room_availability_type (id)
 );
+
+CREATE TABLE IF NOT EXISTS review (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+	user_id BIGINT NOT NULL,
+	resort_id BIGINT NOT NULL,
+	comment TEXT,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT fk_review_user_id FOREIGN KEY (user_id) REFERENCES user (id),
+	CONSTRAINT fk_review_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
+);
