@@ -68,16 +68,15 @@ CREATE TABLE IF NOT EXISTS resort (
 CREATE TABLE IF NOT EXISTS room_availability_type (
 	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
-	description VARCHAR(255) NOT NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT uq_room_availability_type_name UNIQUE (name)
 );
 
-INSERT INTO room_availability_type (id, name, description) VALUES (1, 'DAY_USE','Day Use');
-INSERT INTO room_availability_type (id, name, description) VALUES (2, 'NIGHT_USE','Night Use');
-INSERT INTO room_availability_type (id, name, description) VALUES (3, 'DAY_AND_NIGHT_USE','Day and Night Use');
+INSERT INTO room_availability_type (id, name) VALUES (1, 'Day Use');
+INSERT INTO room_availability_type (id, name) VALUES (2, 'Night Use');
+INSERT INTO room_availability_type (id, name) VALUES (3, 'Day and Night Use');
 	
 CREATE TABLE IF NOT EXISTS room (
 	id BIGINT NOT NULL AUTO_INCREMENT,
