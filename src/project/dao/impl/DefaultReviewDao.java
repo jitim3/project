@@ -19,7 +19,7 @@ import project.util.DatabaseConnectionFactory;
 
 public class DefaultReviewDao implements ReviewDao {
 	private static final Logger LOGGER = System.getLogger(DefaultReviewDao.class.getName());
-	private static final String SQL_SELECT_REVIEWS = "SELECT id, user_id, resort_id, comment, created_at, updated_at";
+	private static final String SQL_SELECT_REVIEWS = "SELECT id, user_id, resort_id, comment, created_at, updated_at FROM review";
 	private static final String SQL_SELECT_REVIEW_BY_ID = SQL_SELECT_REVIEWS + " WHERE id = ?";
 	private static final String SQL_INSERT_REVIEW = "INSERT INTO review(user_id, resort_id, comment, created_at) VALUES(?, ?, ?, ?)";
 	private final Connection connection;

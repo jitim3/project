@@ -28,6 +28,19 @@ INSERT INTO user (id, username, password, user_type_id) VALUES(1, 'sa', 'sa', 1)
 INSERT INTO user (id, username, password, user_type_id) VALUES(2, 'a', 'a', 2);
 INSERT INTO user (id, username, password, user_type_id) VALUES(3, 'c', 'c', 3);
 
+CREATE TABLE IF NOT EXISTS customer (
+	id BIGINT NOT NULL,
+	first_name VARCHAR(255) NOT NULL,
+	last_name VARCHAR(255) NOT NULL,
+	contact_number VARCHAR(255) NOT NULL,
+	email_address VARCHAR(255) NULL,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT uq_customer_email_address UNIQUE (email_address),
+    CONSTRAINT fk_customer_id FOREIGN KEY (id) REFERENCES user (id)
+);
+
 CREATE TABLE IF NOT EXISTS town (
 	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
