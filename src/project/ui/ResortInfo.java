@@ -6,7 +6,11 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.math.BigDecimal;
+import java.time.Instant;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -22,8 +26,19 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import project.dto.CreateResortDto;
+import project.dto.CreateRoomDto;
+import project.dto.RoomDto;
+import project.dto.UpdateResortDto;
+import project.service.ResortService;
+import project.service.RoomService;
+import project.service.impl.DefaultRoomService;
+
 public class ResortInfo implements ActionListener {
 	private final long resortId;
+	private final String resortNameCreated;
+	private final ResortService resortService;
+	private final RoomService roomService;
 
 	 //==> FRAME
 	 JFrame frame = new JFrame("Fill up");
@@ -104,14 +119,19 @@ public class ResortInfo implements ActionListener {
 	 JButton browseResort = new JButton("Browse");
 	 JButton browsePool = new JButton("Browse");
 	 JButton browseCottage = new JButton("Browse");
-	 JButton Display = new JButton("Display");
+	 JButton displayButton = new JButton("Display");
 	 JButton addImage = new JButton("Add Image");
 	 JButton addImage1 = new JButton ("Add Image");
 	 JButton familyAddImage = new JButton ("Add Image");
 	 JButton familyAddImage1 = new JButton ("Add Image");
 	 
-	 public ResortInfo(long resortId){
+	 public ResortInfo(long resortId, String resortNameCreated, final ResortService resortService){
 		 this.resortId = resortId;
+		 this.resortNameCreated = resortNameCreated;
+		 this.resortService = resortService;
+		 this.roomService = new DefaultRoomService();
+		 
+		 resortNameField.setText(resortNameCreated);
 		 
 		 //==> FOR LABELS
 		 label.setBounds(250,15,400,80);
@@ -201,21 +221,54 @@ public class ResortInfo implements ActionListener {
 	     //==> FOR TEXTFIELDS
 	     resortNameField.setBounds(200,153,150,25);
 	     resortNameField.setPreferredSize(new Dimension(200,175));
+		 resortNameField.setEnabled(false);
 	     
 	     resortLocationField.setBounds(625,153,150,25);
 	     resortLocationField.setPreferredSize(new Dimension(200,175));
 	     
 	     resortEntranceFeeField.setBounds(275,1228,150,25);
 	     resortEntranceFeeField.setPreferredSize(new Dimension(200,175));
+	     resortEntranceFeeField.addKeyListener(new KeyAdapter() {
+	    	 public void keyTyped(KeyEvent e) {
+	              char c = e.getKeyChar();
+	              if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+	                   e.consume();  // if it's not a number, ignore the event
+	              }
+	         }
+	     });
 	     
 	     resortCottageFeeField.setBounds(275,1278,150,25);
 	     resortCottageFeeField.setPreferredSize(new Dimension(200,175));
+	     resortCottageFeeField.addKeyListener(new KeyAdapter() {
+	    	 public void keyTyped(KeyEvent e) {
+	              char c = e.getKeyChar();
+	              if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+	                   e.consume();  // if it's not a number, ignore the event
+	              }
+	         }
+	     });
 	     
 	     resortPoolFeeField.setBounds(295,1328,150,25);
 	     resortPoolFeeField.setPreferredSize(new Dimension(200,175));
+	     resortPoolFeeField.addKeyListener(new KeyAdapter() {
+	    	 public void keyTyped(KeyEvent e) {
+	              char c = e.getKeyChar();
+	              if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+	                   e.consume();  // if it's not a number, ignore the event
+	              }
+	         }
+	     });
 	     
 	     resortNumPaxField.setBounds(245,1527,150,25);
 	     resortNumPaxField.setPreferredSize(new Dimension(200,175));
+	     resortNumPaxField.addKeyListener(new KeyAdapter() {
+	    	 public void keyTyped(KeyEvent e) {
+	              char c = e.getKeyChar();
+	              if ( ((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+	                   e.consume();  // if it's not a number, ignore the event
+	              }
+	         }
+	     });
 	     
 	     resortRoomRateField.setBounds(245,1560,150,25);
 	     resortRoomRateField.setPreferredSize(new Dimension(200,175));
@@ -267,10 +320,10 @@ public class ResortInfo implements ActionListener {
 		 browseCottage.addActionListener(this);
 		 browseCottage.setOpaque(false);
 		 
-		 Display.setBounds(372,2500,150,25);
-		 Display.setFocusable(false);
-		 Display.addActionListener(this);
-		 Display.setOpaque(false);
+		 displayButton.setBounds(372,2500,150,25);
+		 displayButton.setFocusable(false);
+		 displayButton.addActionListener(this);
+		 displayButton.setOpaque(false);
 	     
 		 selectedImageLabel.setBounds(40, 250, 300, 250);								//FOR RESOSRT PICTURE			
 	     selectedImageLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -328,7 +381,7 @@ public class ResortInfo implements ActionListener {
 		 
 		 JPanel panel = new JPanel();
 		 
-		 panel.add(Display);
+		 panel.add(displayButton);
 		 panel.add(selectedFamilyaddImage1);
 		 panel.add(selectedFamilyaddImage);
 		 panel.add(familyAddImage1);
@@ -516,14 +569,94 @@ public class ResortInfo implements ActionListener {
 				selectedFamilyaddImage1.setIcon(new ImageIcon(img));
 			}
 		}
-		else if(e.getSource()==Display) {
+		else if(e.getSource()== displayButton) {
 			frame.dispose();
-			String inputframeText = resortNameField.getText();
+			String resortName = resortNameField.getText();
 			String inputText = resortNameField.getText();
-			String inputText1 = resortLocationField.getText();
-			String resortDescription = resortDescriptionField.getText();
-			String inputText2 = resortHTGField.getText();
-			displayFrame frame = new displayFrame(inputframeText, inputText,inputText1,selectedImageFile.getAbsolutePath(), selectedImageFile1.getAbsolutePath(),resortDescription,inputText2);
+			String location = resortLocationField.getText();
+			String description = resortDescriptionField.getText();
+			String howToGetThere = resortHTGField.getText();
+			
+			String resortFeeValue = resortEntranceFeeField.getText();
+			BigDecimal resortFee;
+			try {
+				resortFeeValue = (resortFeeValue == null || resortFeeValue.isBlank()) ? "0" : resortFeeValue;
+				resortFee = new BigDecimal(resortFeeValue);
+			} catch (Exception e2) {
+				resortFee = new BigDecimal(0);
+			}
+			
+			String cottageFeeValue = resortCottageFeeField.getText();
+			BigDecimal cottageFee;
+			try {
+				cottageFeeValue = (cottageFeeValue == null || cottageFeeValue.isBlank()) ? "0" : cottageFeeValue;
+				cottageFee = new BigDecimal(cottageFeeValue);
+			} catch (Exception e2) {
+				cottageFee = new BigDecimal(0);
+			}
+			
+			String poolFeeValue = resortPoolFeeField.getText();
+			BigDecimal poolFee;
+			try {
+				poolFeeValue = (poolFeeValue == null || poolFeeValue.isBlank()) ? "0" : poolFeeValue;
+				poolFee = new BigDecimal(poolFeeValue);
+			} catch (Exception e2) {
+				poolFee = new BigDecimal(0);
+			}
+			
+			Instant updatedAt = Instant.now();
+			Instant createdAt = updatedAt;
+			
+			UpdateResortDto updateResortDto = new UpdateResortDto(
+					resortId, 
+					description, 
+					location, 
+					howToGetThere, 
+					resortFee, 
+					cottageFee, 
+					poolFee, 
+					null, 
+					null,
+					null, 
+					updatedAt
+				);
+//			boolean updatedResort = this.resortService.updateResort(updateResortDto);
+			
+			CreateRoomDto normalRoom = new CreateRoomDto(
+					resortId, 
+					1, 
+					"Normal", 
+					10, 
+					new BigDecimal(100), 
+					"room description", 
+					"roomImage1", 
+					"roomImage2", 
+					createdAt
+				);
+//			RoomDto boemalRoomDto = this.roomService.createRoom(normalRoom);
+			
+			CreateRoomDto familyRoom = new CreateRoomDto(
+					resortId, 
+					2, 
+					"Familty", 
+					10, 
+					new BigDecimal(100), 
+					"room description", 
+					"roomImage1", 
+					"roomImage2", 
+					createdAt
+				);
+//			RoomDto familyRoomDto = this.roomService.createRoom(familyRoom);
+			
+			displayFrame frame = new displayFrame(
+					resortName, 
+					inputText, 
+					inputText,
+					selectedImageFile.getAbsolutePath(), 
+					selectedImageFile1.getAbsolutePath(),
+					description, 
+					inputText
+			);
 		
 		}
 }

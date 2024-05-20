@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public record CreateRoomDto(
-		int resortId,
+		long resortId,
 		int roomAvailabilityTypeId, 
 		String roomType, 
 		int numberOfPax,
