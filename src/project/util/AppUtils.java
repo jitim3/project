@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 public class AppUtils {
-	public static final String UPLOADED_IMAGE_STRING = "./uploaded_images/";
+	public static final String UPLOADED_IMAGE = "./uploaded_images/";
 	
 	private AppUtils() {
 	}
@@ -37,7 +37,7 @@ public class AppUtils {
 	
 	public static void saveImage(File file, String newFilename) throws IOException {
 		if (file != null && newFilename != null && !newFilename.isBlank()) {
-	        Path path = Paths.get(UPLOADED_IMAGE_STRING + newFilename);
+	        Path path = Paths.get(UPLOADED_IMAGE + newFilename);
 	        
 	        byte[] byteArray = new byte[(int) file.length()];
 	        try (FileInputStream inputStream = new FileInputStream(file)) {
