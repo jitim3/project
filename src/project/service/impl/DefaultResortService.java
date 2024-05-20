@@ -8,19 +8,16 @@ import project.dao.RoomDao;
 import project.dao.TownDao;
 import project.dao.entity.Resort;
 import project.dao.entity.Room;
-import project.dao.entity.RoomAvailabilityType;
 import project.dao.entity.Town;
 import project.dao.impl.DefaultResortDao;
 import project.dao.impl.DefaultRoomDao;
 import project.dao.impl.DefaultTownDao;
 import project.dto.CreateResortDto;
 import project.dto.ResortDto;
-import project.dto.RoomAvailabilityTypeDto;
-import project.dto.RoomDto;
 import project.dto.UpdateResortDto;
 import project.service.ResortService;
 
-public class DefaultResortService extends TownMapper implements ResortService {
+public class DefaultResortService extends DtoMapper implements ResortService {
 	private final ResortDao resortDao;
 	private final RoomDao roomDao;
 	private final TownDao townDao;
@@ -110,36 +107,11 @@ public class DefaultResortService extends TownMapper implements ResortService {
 				resort.poolImage(),
 				resort.cottageImage(),
 				rooms.stream()
-					.map(this::mapToRoomDto)
+					.map(super::mapToRoomDto)
 					.toList(), 
 				super.mapToTownDto(town),
 				resort.createdAt(), 
 				resort.updatedAt()
-			);
-	}
-	
-	private RoomDto mapToRoomDto(Room room) {
-		return new RoomDto(
-				room.id(), 
-				this.mapToAvailabilityTypeDto(room.roomAvailabilityType()), 
-				room.roomType(), 
-				room.numberOfPax(), 
-				room.ratePerNight(), 
-				room.description(), 
-				room.roomImage1(), 
-				room.roomImage2(), 
-				room.createdAt(), 
-				room.updatedAt()
-			);
-	}
-	
-	private RoomAvailabilityTypeDto mapToAvailabilityTypeDto(RoomAvailabilityType roomAvailabilityType) {
-		return new RoomAvailabilityTypeDto(
-				roomAvailabilityType.id(), 
-				roomAvailabilityType.name(), 
-				roomAvailabilityType.description(), 
-				roomAvailabilityType.createdAt(), 
-				roomAvailabilityType.updatedAt()
 			);
 	}
 }

@@ -8,7 +8,7 @@ import project.dao.impl.DefaultTownDao;
 import project.dto.TownDto;
 import project.service.TownService;
 
-public class DefaultTownService extends TownMapper implements TownService {
+public class DefaultTownService extends DtoMapper implements TownService {
 	private final TownDao townDao;
 	
 	public DefaultTownService() {
