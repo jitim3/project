@@ -52,7 +52,7 @@ public class ResortInfo implements ActionListener {
 	private final JLabel resortName = new JLabel("Name of the resort");
 	private final JLabel uploadResort = new JLabel("Upload image of the resort");
 	private final JLabel resortLocation = new JLabel("Resort address/Location");
-	private final static JLabel resortDescription = new JLabel("Resort description");
+	private final JLabel resortDescription = new JLabel("Resort description");
 	private final JLabel uploadPool = new JLabel("Upload image of the pool");
 	private final JLabel resortHTG = new JLabel("How to get there?");
 	private final JLabel uploadCottage = new JLabel("Upload image of the cottage");
@@ -88,15 +88,15 @@ public class ResortInfo implements ActionListener {
 	JComboBox<String> roomAvailabilityTypeComboBox = new JComboBox<>(roomAvailabilityChoices);
 
 	// ==> TEXTFIELDS
-	JTextField resortNameTextField = new JTextField();
-	JTextField resortLocationTextField = new JTextField();
-	JTextField resortEntranceFeeTextField = new JTextField();
-	JTextField resortCottageFeeTextField = new JTextField();
-	JTextField resortPoolFeeTextField = new JTextField();
-	JTextField normalRoomNumberOfPaxTextField = new JTextField();
-	JTextField normalRoomRatePerNightTextField = new JTextField();
-	JTextField familyRoomNumberPaxTextField = new JTextField();
-	JTextField familyRoomRatePerNightTextField = new JTextField();
+	private final JTextField resortNameTextField = new JTextField();
+	private final JTextField resortLocationTextField = new JTextField();
+	private final JTextField resortEntranceFeeTextField = new JTextField();
+	private final JTextField resortCottageFeeTextField = new JTextField();
+	private final JTextField resortPoolFeeTextField = new JTextField();
+	private final JTextField normalRoomNumberOfPaxTextField = new JTextField();
+	private final JTextField normalRoomRatePerNightTextField = new JTextField();
+	private final JTextField familyRoomNumberPaxTextField = new JTextField();
+	private final JTextField familyRoomRatePerNightTextField = new JTextField();
 
 	// JTEXTAREA WITH SCROLLPANES
 	private final JTextArea resortDescriptionTextArea = new JTextArea(3, 20);
@@ -120,14 +120,14 @@ public class ResortInfo implements ActionListener {
 	private final JButton normalRoomImage2Button = new JButton("Add Image");
 	private final JButton familyRoomImage1Button = new JButton("Add Image");
 	private final JButton familyRoomImage2Button = new JButton("Add Image");
-	
-	private	File resortImageFile;
-	private	File poolImageFile;
-	private	File cottageImageFile;
-	private	File normalRoomImage1File;
-	private	File normalRoomImage2File;;
-	private	File familyRoomImage1File;
-	private	File familyRoomImage2File;
+
+	private File resortImageFile;
+	private File poolImageFile;
+	private File cottageImageFile;
+	private File normalRoomImage1File;
+	private File normalRoomImage2File;;
+	private File familyRoomImage1File;
+	private File familyRoomImage2File;
 
 	public ResortInfo(long resortId, String resortNameCreated, final ResortService resortService) {
 		this.resortId = resortId;
@@ -470,7 +470,7 @@ public class ResortInfo implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {		
+	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == resortImageButton) {
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
@@ -483,7 +483,8 @@ public class ResortInfo implements ActionListener {
 					// String filePath = selectedFile.getAbsolutePath();
 					// ImageIcon selectedImage = new ImageIcon(filePath);
 					// Resize the image to fit the JLabel
-					Image image = imageIcon.getImage().getScaledInstance(resortImageLabel.getWidth(), resortImageLabel.getHeight(), Image.SCALE_SMOOTH);
+					Image image = imageIcon.getImage().getScaledInstance(resortImageLabel.getWidth(),
+							resortImageLabel.getHeight(), Image.SCALE_SMOOTH);
 					resortImageLabel.setIcon(new ImageIcon(image));
 				}
 			}
@@ -496,7 +497,8 @@ public class ResortInfo implements ActionListener {
 					String filePath = poolImageFile.getAbsolutePath();
 					ImageIcon selectedImage = new ImageIcon(filePath);
 					// Resize the image to fit the JLabel
-					Image img = selectedImage.getImage().getScaledInstance(poolImageLabel.getWidth(), poolImageLabel.getHeight(), Image.SCALE_SMOOTH);
+					Image img = selectedImage.getImage().getScaledInstance(poolImageLabel.getWidth(),
+							poolImageLabel.getHeight(), Image.SCALE_SMOOTH);
 					poolImageLabel.setIcon(new ImageIcon(img));
 				}
 			}
@@ -508,7 +510,8 @@ public class ResortInfo implements ActionListener {
 				String filePath = cottageImageFile.getAbsolutePath();
 				ImageIcon imageIcon = new ImageIcon(filePath);
 				// Resize the image to fit the JLabel
-				Image image = imageIcon.getImage().getScaledInstance(cottageImageLabel.getWidth(), cottageImageLabel.getHeight(), Image.SCALE_SMOOTH);
+				Image image = imageIcon.getImage().getScaledInstance(cottageImageLabel.getWidth(),
+						cottageImageLabel.getHeight(), Image.SCALE_SMOOTH);
 				cottageImageLabel.setIcon(new ImageIcon(image));
 			}
 		} else if (e.getSource() == normalRoomImage1Button) {
@@ -518,7 +521,8 @@ public class ResortInfo implements ActionListener {
 				normalRoomImage1File = fileChooser.getSelectedFile();
 				String filePath = normalRoomImage1File.getAbsolutePath();
 				ImageIcon imageIcon = new ImageIcon(filePath);
-				Image image = imageIcon.getImage().getScaledInstance(normalRoomImage1Label.getWidth(), normalRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
+				Image image = imageIcon.getImage().getScaledInstance(normalRoomImage1Label.getWidth(),
+						normalRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
 				normalRoomImage1Label.setIcon(new ImageIcon(image));
 			}
 		} else if (e.getSource() == normalRoomImage2Button) {
@@ -528,7 +532,8 @@ public class ResortInfo implements ActionListener {
 				normalRoomImage2File = fileChooser.getSelectedFile();
 				String filePath = normalRoomImage2File.getAbsolutePath();
 				ImageIcon imageIcon = new ImageIcon(filePath);
-				Image image = imageIcon.getImage().getScaledInstance(normalRoomImage2Label.getWidth(), normalRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
+				Image image = imageIcon.getImage().getScaledInstance(normalRoomImage2Label.getWidth(),
+						normalRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
 				normalRoomImage2Label.setIcon(new ImageIcon(image));
 			}
 		} else if (e.getSource() == familyRoomImage1Button) {
@@ -538,7 +543,8 @@ public class ResortInfo implements ActionListener {
 				familyRoomImage1File = fileChooser.getSelectedFile();
 				String filePath = familyRoomImage1File.getAbsolutePath();
 				ImageIcon imageIcon = new ImageIcon(filePath);
-				Image image = imageIcon.getImage().getScaledInstance(familyRoomImage1Label.getWidth(), familyRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
+				Image image = imageIcon.getImage().getScaledInstance(familyRoomImage1Label.getWidth(),
+						familyRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
 				familyRoomImage1Label.setIcon(new ImageIcon(image));
 			}
 		} else if (e.getSource() == familyRoomImage2Button) {
@@ -548,12 +554,13 @@ public class ResortInfo implements ActionListener {
 				familyRoomImage2File = fileChooser.getSelectedFile();
 				String filePath = familyRoomImage2File.getAbsolutePath();
 				ImageIcon imageIcon = new ImageIcon(filePath);
-				Image image = imageIcon.getImage().getScaledInstance(familyRoomImage2Label.getWidth(), familyRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
+				Image image = imageIcon.getImage().getScaledInstance(familyRoomImage2Label.getWidth(),
+						familyRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
 				familyRoomImage2Label.setIcon(new ImageIcon(image));
 			}
 		} else if (e.getSource() == displayButton) {
 			frame.dispose();
-			
+
 			// Update resort
 			String description = resortDescriptionTextArea.getText();
 			String location = resortLocationTextField.getText();
@@ -615,19 +622,8 @@ public class ResortInfo implements ActionListener {
 			Instant updatedAt = Instant.now();
 			Instant createdAt = updatedAt;
 
-			UpdateResortDto updateResortDto = new UpdateResortDto(
-					resortId, 
-					description,
-					location, 
-					howToGetThere,
-					resortFee, 
-					cottageFee, 
-					poolFee, 
-					resortImage, 
-					poolImage, 
-					cottageImage, 
-					updatedAt
-				);
+			UpdateResortDto updateResortDto = new UpdateResortDto(resortId, description, location, howToGetThere,
+					resortFee, cottageFee, poolFee, resortImage, poolImage, cottageImage, updatedAt);
 			this.resortService.updateResort(updateResortDto);
 
 			// Create rooms
@@ -670,17 +666,9 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + normalRoomImage2 + " was not saved.");
 				}
 			}
-			CreateRoomDto normalRoom = new CreateRoomDto(
-					resortId, 
-					roomAvailabilityTypeId, 
-					RoomTypes.NORMAL.value(),
-					normalNormalNumberOfPax, 
-					normalRoomRatePerNight, 
-					normalRoomDescription, 
-					normalRoomImage1,
-					normalRoomImage2, 
-					createdAt
-				);
+			CreateRoomDto normalRoom = new CreateRoomDto(resortId, roomAvailabilityTypeId, RoomTypes.NORMAL.value(),
+					normalNormalNumberOfPax, normalRoomRatePerNight, normalRoomDescription, normalRoomImage1,
+					normalRoomImage2, createdAt);
 			this.roomService.createRoom(normalRoom);
 
 			// Family room
@@ -719,20 +707,12 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + familyRoomImage2 + " was not saved.");
 				}
 			}
-			CreateRoomDto familyRoom = new CreateRoomDto(
-					resortId, 
-					roomAvailabilityTypeId, 
-					RoomTypes.FAMILY.value(),
-					familyNormalNumberOfPax, 
-					familyRoomRatePerNight, 
-					familyRoomDescription, 
-					familyRoomImage1,
-					familyRoomImage2, 
-					createdAt
-				);
+			CreateRoomDto familyRoom = new CreateRoomDto(resortId, roomAvailabilityTypeId, RoomTypes.FAMILY.value(),
+					familyNormalNumberOfPax, familyRoomRatePerNight, familyRoomDescription, familyRoomImage1,
+					familyRoomImage2, createdAt);
 			this.roomService.createRoom(familyRoom);
 
-			DisplayFrame displayFrame = new DisplayFrame(resortService, resortId);
+			DisplayFrame DisplayFrame = new DisplayFrame(resortService, resortId);
 		}
 	}
 }

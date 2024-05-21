@@ -29,19 +29,8 @@ public class NewWindow_Admin implements ActionListener {
 		ImageIcon background = new ImageIcon("beach3.jpg");
 		Image backgroundImage = background.getImage().getScaledInstance(350, 300, Image.SCALE_DEFAULT);
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-		backgroundLabel.setBounds(0, 0, 350, 300);
+		backgroundLabel.setBounds(0, 0, 350, 300);		
 
-		frame.add(label);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(350, 300);
-		frame.setIconImage(icon.getImage());
-		frame.add(loginButton);
-		frame.add(signupButton);
-		frame.add(exitButton);
-		frame.add(backgroundLabel);
-		frame.setLayout(null);
-		frame.setVisible(true);
-		frame.setResizable(false);
 		loginButton.setBounds(75, 50, 200, 40);
 		loginButton.setFocusable(false);
 		loginButton.addActionListener(this);
@@ -53,6 +42,19 @@ public class NewWindow_Admin implements ActionListener {
 		exitButton.setBounds(75, 150, 200, 40);
 		exitButton.setFocusable(false);
 		exitButton.addActionListener(this);
+
+		frame.add(label);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(350, 300);
+		frame.setIconImage(icon.getImage());
+		frame.add(loginButton);
+		frame.add(signupButton);
+		frame.add(exitButton);
+		frame.add(backgroundLabel);
+		frame.setLayout(null);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	@Override

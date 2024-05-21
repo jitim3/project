@@ -50,11 +50,9 @@ public class Carcar implements Town { // CARCAR FRAME
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 		backgroundLabel.setBounds(0, 0, 500, 600);
 
-		frame.setLocation(300, 250);
 		frame.add(back);
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
-		frame.setVisible(true);
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
@@ -67,6 +65,8 @@ public class Carcar implements Town { // CARCAR FRAME
 				}
 			}			
 		});
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	@Override

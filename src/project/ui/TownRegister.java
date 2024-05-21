@@ -87,10 +87,11 @@ public class TownRegister implements ActionListener {
 		frame.add(label1);
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
-		frame.setVisible(true);
 		frame.setSize(500, 400);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	@Override
