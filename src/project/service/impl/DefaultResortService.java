@@ -58,8 +58,8 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 	}
 
 	@Override
-	public List<ResortDto> getResortsByTownId(int townId) {
-		List<Resort> resorts = this.resortDao.getResortsByTownId(townId);
+	public List<ResortDto> getResortsByTownId(int townId, boolean approved) {
+		List<Resort> resorts = this.resortDao.getResortsByTownId(townId, approved);
 		
 		return resorts.stream()
 				.map(resort -> {
@@ -110,6 +110,9 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 					.map(super::mapToRoomDto)
 					.toList(), 
 				super.mapToTownDto(town),
+				resort.approved(),
+				resort.approvedBy(),
+				resort.approvedAt(), 
 				resort.createdAt(), 
 				resort.updatedAt()
 			);

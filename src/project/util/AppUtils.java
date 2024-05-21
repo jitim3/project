@@ -58,4 +58,8 @@ public class AppUtils {
 		
 		return Optional.empty();
 	}
+	
+	public static boolean isUserTypeCustomer(int userTypeId) {
+		return UserTypes.CUSTOMER.id() == userTypeId;
+	}
 }

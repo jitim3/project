@@ -22,13 +22,13 @@ public class DefaultResortDao implements ResortDao {
 	private static final Logger LOGGER = System.getLogger(DefaultResortDao.class.getName());
 	private static final String SQL_SELECT_RESORT = """
 			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
-			resort_image, pool_image, cottage_image, town_id, user_id, created_at, updated_at 
+			resort_image, pool_image, cottage_image, town_id, user_id, approved, approved_by, approved_at, created_at, updated_at 
 			FROM resort
 			""";
 	private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
 	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORT + " WHERE id = ?";
 	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORT + " WHERE user_id = ?";
-	private static final String SQL_SELECT_RESORT_BY_TOWN_ID = SQL_SELECT_RESORT + " WHERE town_id = ?";
+	private static final String SQL_SELECT_RESORT_BY_TOWN_ID = SQL_SELECT_RESORT + " WHERE town_id = ? AND approved = ?";
 	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORT + " WHERE user_id = ? AND town_id = ?";
 	private static final String SQL_INSERT_RESORT = """
 			INSERT INTO resort (name, user_id, town_id, created_at)
@@ -109,12 +109,13 @@ public class DefaultResortDao implements ResortDao {
 
 	
 	@Override
-	public List<Resort> getResortsByTownId(int townId) {
+	public List<Resort> getResortsByTownId(int townId, boolean approved) {
 		final List<Resort> resorts = new ArrayList<>();
 		
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_TOWN_ID)) {
 			int i = 1;
 			statement.setInt(i++, townId);
+			statement.setBoolean(i++, approved);
 			try (ResultSet rs = statement.executeQuery()) {
 				while (rs.next()) {
 					resorts.add(mapToResort(rs));
@@ -208,6 +209,7 @@ public class DefaultResortDao implements ResortDao {
 	}
 
 	private static Resort mapToResort(ResultSet rs) throws SQLException {
+		var approvedAt = rs.getTimestamp("approved_at");
 		var createdAt = rs.getTimestamp("created_at");
 		var updatedAt = rs.getTimestamp("updated_at");
 		
@@ -225,6 +227,9 @@ public class DefaultResortDao implements ResortDao {
 				rs.getString("cottage_image"), 
 				rs.getLong("user_id"), 
 				rs.getInt("town_id"),
+				rs.getBoolean("approved"),
+				rs.getString("approved_by"),
+				approvedAt != null ? approvedAt.toInstant() : null,
 				createdAt != null ? createdAt.toInstant() : null,
 				updatedAt != null ? updatedAt.toInstant() : null
 			);

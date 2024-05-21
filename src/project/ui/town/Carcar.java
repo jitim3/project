@@ -123,7 +123,8 @@ public class Carcar implements Town { // CARCAR FRAME
 					return this.resortService.getResortsByUserIdAndTownId(this.userDto.getId(), this.townId);
 				}
 			} else if (UserTypes.CUSTOMER.id() == userTypeId) {
-				return this.resortService.getResortsByTownId(this.townId);
+				// only approved resort available to customers
+				return this.resortService.getResortsByTownId(this.townId, true);
 			} else {
 				return List.of();
 			}

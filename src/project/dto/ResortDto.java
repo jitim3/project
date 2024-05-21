@@ -18,10 +18,13 @@ public record ResortDto(
 		String cottageImage, 
 		List<RoomDto> roomDtos,
 		TownDto townDto, 
+		Boolean approved,
+		String approvedBy,
+		Instant approvedAt,		
 		Instant createdAt, 
 		Instant updatedAt) {
 	
 	public ResortDto() {
-		this(0, "", "", "", "", new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), "", "", "", List.of(), null, null, null);
+		this(0, "", "", "", "", new BigDecimal(0), new BigDecimal(0), new BigDecimal(0), "", "", "", List.of(), null, false, null, null, null, null);
 	}	
 }

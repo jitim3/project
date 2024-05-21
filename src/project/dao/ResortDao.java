@@ -14,7 +14,7 @@ public interface ResortDao {
 
 	List<Resort> getResortsByUserId(long userId);
 
-	List<Resort> getResortsByTownId(int townId);
+	List<Resort> getResortsByTownId(int townId, boolean approved);
 
 	List<Resort> getResortsByUserIdAndTownId(long userId, int townId);
 

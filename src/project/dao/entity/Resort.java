@@ -17,6 +17,9 @@ public record Resort(
 		String cottageImage,
 		Long userId, 
 		int townId, 
+		Boolean approved,
+		String approvedBy,
+		Instant approvedAt, 
 		Instant createdAt, 
 		Instant updatedAt) {
 }
