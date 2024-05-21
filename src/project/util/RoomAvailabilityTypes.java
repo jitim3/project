@@ -25,7 +25,7 @@ public enum RoomAvailabilityTypes {
 	
 	public static String[] names() {
 		return Arrays.stream(values())
-				.map(RoomAvailabilityTypes::name)
+				.map(RoomAvailabilityTypes::value)
 				.toArray(String[]::new);
 	}
 	
