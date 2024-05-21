@@ -2,6 +2,8 @@ package project.ui.town;
 
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -54,7 +56,17 @@ public class SanTander implements Town {
 		frame.add(backgroundLabel);
 		frame.setVisible(true);
 		frame.setSize(500, 500);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if (townsJFrame != null) {
+					townsJFrame.setVisible(true);
+				} else {
+					new Towns(userDto);
+				}
+			}			
+		});
 	}
 
 	@Override
