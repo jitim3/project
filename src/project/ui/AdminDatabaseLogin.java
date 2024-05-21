@@ -70,10 +70,10 @@ public class AdminDatabaseLogin extends JFrame implements ActionListener {
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setResizable(false);
-		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(350, 300);
 		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	@Override

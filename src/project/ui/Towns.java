@@ -89,6 +89,7 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setSize(500, 550);
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.setResizable(false);
 	}

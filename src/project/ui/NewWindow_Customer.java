@@ -42,22 +42,7 @@ public class NewWindow_Customer implements ActionListener {
 		// ==> Setting up the components
 		label.setBounds(150, 50, 150, 100);
 		label.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-
-		frame.setLocation(300, 250);
-		frame.add(label);
-		frame.setTitle("Selection tab");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(350, 300);
-		frame.setLayout(null);
-		frame.setVisible(true);
-
-		frame.setIconImage(icon.getImage());
-		frame.add(button);
-		frame.add(button1);
-		frame.add(button2);
-		frame.add(backgroundLabel);
-		frame.setResizable(false);
-
+		
 		button.setBounds(75, 50, 200, 40);
 		button.setFocusable(false);
 		button.addActionListener(this);
@@ -69,6 +54,23 @@ public class NewWindow_Customer implements ActionListener {
 		button2.setBounds(75, 150, 200, 40);
 		button2.setFocusable(false);
 		button2.addActionListener(this);
+
+		frame.setLocation(300, 250);
+		frame.add(label);
+		frame.setTitle("Selection tab");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(350, 300);
+		frame.setLayout(null);
+
+		frame.setIconImage(icon.getImage());
+		frame.add(button);
+		frame.add(button1);
+		frame.add(button2);
+		frame.add(backgroundLabel);
+		frame.setResizable(false);
+		
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);	
 	}
 
 	public void actionPerformed(ActionEvent e) {

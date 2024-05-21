@@ -55,6 +55,7 @@ public class MenuAdmin implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(350, 300);
 		frame.setLayout(null);
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 
