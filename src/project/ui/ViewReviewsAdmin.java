@@ -37,7 +37,7 @@ public class ViewReviewsAdmin extends JFrame {
 	
 	public ViewReviewsAdmin() {
 		setTitle("View Reviews");
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Dell\\Desktop\\clone\\project\\beach2.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("beach2.png"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		contentPane = new JPanel();

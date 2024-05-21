@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -64,7 +62,6 @@ public class ResortInfo implements ActionListener {
 	private final JLabel resortPoolFee = new JLabel("Enter pool entrace fee of the resort");
 	private final JLabel resortRoomInformation = new JLabel("RESORT ROOMS INFORMATION");
 	private final JLabel resortRoomNormal = new JLabel("Normal Room");
-	private final JLabel resortPaxInformation = new JLabel("Number of pax");
 	private final JLabel resortRoomAvailability = new JLabel("Room Availability");
 	private final JLabel resortNumPax = new JLabel("Number of Pax");
 	private final JLabel resortRoomRate = new JLabel("Room Rate per Night");
@@ -87,8 +84,8 @@ public class ResortInfo implements ActionListener {
 	private final JLabel familyRoomImage2Label = new JLabel(); // USED FOR UPLOAD FAMILY ROOM 2nd PIC
 
 	// ==>COMBOBOX
-	String roomAvailabilityChoices[] = RoomAvailabilityTypes.names();
-	JComboBox roomAvailabilityTypeComboBox = new JComboBox(roomAvailabilityChoices);
+	String[] roomAvailabilityChoices = RoomAvailabilityTypes.names();
+	JComboBox<String> roomAvailabilityTypeComboBox = new JComboBox<>(roomAvailabilityChoices);
 
 	// ==> TEXTFIELDS
 	JTextField resortNameTextField = new JTextField();
@@ -111,8 +108,8 @@ public class ResortInfo implements ActionListener {
 	private final JTextArea familyRoomDescriptionTextArea = new JTextArea(1, 10);
 	private final JScrollPane resortFamilyRoomDescriptionScrollPane = new JScrollPane(familyRoomDescriptionTextArea);
 
-	private final JTextArea howToGoTextArea = new JTextArea(1, 10);
-	private final JScrollPane resortHTGFieldScrollPane = new JScrollPane(howToGoTextArea);
+	private final JTextArea howToGetThereTextArea = new JTextArea(1, 10);
+	private final JScrollPane resortHTGFieldScrollPane = new JScrollPane(howToGetThereTextArea);
 
 	// ==> BUTTONS
 	private final JButton resortImageButton = new JButton("Browse");
@@ -222,8 +219,8 @@ public class ResortInfo implements ActionListener {
 		resortNameTextField.setPreferredSize(new Dimension(200, 175));
 		resortNameTextField.setEnabled(false);
 
-		howToGoTextArea.setBounds(625, 153, 150, 25);
-		howToGoTextArea.setPreferredSize(new Dimension(200, 175));
+		resortLocationTextField.setBounds(625, 153, 150, 25);
+		resortLocationTextField.setPreferredSize(new Dimension(200, 175));
 
 		resortEntranceFeeTextField.setBounds(275, 1228, 150, 25);
 		resortEntranceFeeTextField.setPreferredSize(new Dimension(200, 175));
@@ -316,8 +313,8 @@ public class ResortInfo implements ActionListener {
 		familyRoomDescriptionTextArea.setWrapStyleWord(true);
 
 		resortHTGFieldScrollPane.setBounds(590, 525, 220, 200);
-		howToGoTextArea.setLineWrap(true);
-		howToGoTextArea.setWrapStyleWord(true);
+		howToGetThereTextArea.setLineWrap(true);
+		howToGetThereTextArea.setWrapStyleWord(true);
 
 		// ==> FOR BUTTONS
 		resortImageButton.setBounds(245, 197, 150, 25);
@@ -437,8 +434,9 @@ public class ResortInfo implements ActionListener {
 		panel.add(uploadPool);
 		panel.add(resortNameScrollPane);
 		panel.add(resortDescription);
-		panel.add(howToGoTextArea);
+		panel.add(howToGetThereTextArea);
 		panel.setLayout(null);
+		panel.add(resortLocationTextField);
 		panel.add(resortLocation);
 		panel.add(resortNameTextField);
 		panel.add(label);
@@ -460,7 +458,7 @@ public class ResortInfo implements ActionListener {
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		/*
 		 * frame.add(uploadResort); frame.add(browse); frame.add(resortNameField);
 		 * frame.add(resortName); frame.add(resortInformation); frame.add(label);
@@ -558,8 +556,8 @@ public class ResortInfo implements ActionListener {
 			
 			// Update resort
 			String description = resortDescriptionTextArea.getText();
-			String location = howToGoTextArea.getText();
-			String howToGetThere = howToGoTextArea.getText();
+			String location = resortLocationTextField.getText();
+			String howToGetThere = howToGetThereTextArea.getText();
 
 			BigDecimal resortFee;
 			try {
@@ -586,7 +584,6 @@ public class ResortInfo implements ActionListener {
 			if (resortImageFilenameOptional.isPresent()) {
 				resortImage = resortImageFilenameOptional.get();
 				try {
-		            Files.createDirectories(Paths.get("./topzeluj"));
 					AppUtils.saveImage(resortImageFile, resortImage);
 				} catch (IOException ioe) {
 					resortImage = null;
