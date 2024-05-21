@@ -142,7 +142,7 @@ public class DisplayFrame implements ActionListener {
 		frame.setIconImage(icon.getImage());
 		frame.setSize(900, 2580);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 	}
