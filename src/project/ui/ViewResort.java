@@ -22,6 +22,6 @@ public class ViewResort {
 		frame.setSize(500, 550);
 		frame.setVisible(true);
 		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 }
