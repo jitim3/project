@@ -14,7 +14,7 @@ public interface ResortService {
 
 	List<ResortDto> getResortsByUserId(long userId);
 
-	List<ResortDto> getResortsByTownId(int townId);
+	List<ResortDto> getResortsByTownId(int townId, boolean approved);
 
 	List<ResortDto> getResortsByUserIdAndTownId(long userId, int townId);
 
