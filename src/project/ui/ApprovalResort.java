@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class ApprovalResort implements ActionListener {
-	private final JFrame frame = new JFrame("APPROVAL");
+	private final JFrame frame = new JFrame("APPROVAL"); //DAPAT DITO MAPUNTA ANG GENERATED BUTTONS PARA SA REGISTERED RESORT (ONCE MA APPROVE, MAPOST)
 	private final JLabel resortsToBeApprovedLabel = new JLabel("RESORTS TO BE APPROVED");
 	private final JButton exitButton = new JButton("Exit");
 	private final JFrame superAdminNextPagFrame;
@@ -61,7 +61,6 @@ public class ApprovalResort implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == exitButton) {
 			frame.dispose();
-			// DocsVerification window = new DocsVerification ();
 			if (superAdminNextPagFrame != null) {
 				superAdminNextPagFrame.setVisible(true);
 			} else {
@@ -69,4 +68,6 @@ public class ApprovalResort implements ActionListener {
 			}
 		}
 	}
+	
+	
 }
