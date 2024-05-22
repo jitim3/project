@@ -42,7 +42,8 @@ public class DisplayFrame implements ActionListener {
 		poolEntranceFeeLabel.setBounds(475, 515, 230, 30);
 		poolEntranceFeeLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
 
-		JLabel poolFeeLabel = new JLabel(this.resortDto.poolFee().toString()); // POOL FEE LABEL
+		String poolFee = this.resortDto.poolFee() != null ? this.resortDto.poolFee().toString() : "";
+		JLabel poolFeeLabel = new JLabel(poolFee); // POOL FEE LABEL
 		poolFeeLabel.setBounds(570, 515, 230, 30);
 		poolFeeLabel.setForeground(Color.black);
 		poolFeeLabel.setOpaque(false);
@@ -70,7 +71,8 @@ public class DisplayFrame implements ActionListener {
 		resortNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		resortNameLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-		JLabel locationLabel = new JLabel(this.resortDto.location()); // LOCATION AREA
+		String location = this.resortDto.location() != null ? this.resortDto.location() : "";
+		JLabel locationLabel = new JLabel(location); // LOCATION AREA
 		locationLabel.setBounds(348, 90, 230, 30);
 		locationLabel.setOpaque(true);
 		locationLabel.setBackground(new Color(255, 255, 255, 64));
@@ -78,7 +80,8 @@ public class DisplayFrame implements ActionListener {
 		locationLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		locationLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-		JTextArea descriptionTextArea = new JTextArea(this.resortDto.description()); // DESCRIPTION
+		String description = this.resortDto.description() != null ? this.resortDto.description() : "";
+		JTextArea descriptionTextArea = new JTextArea(description); // DESCRIPTION
 		descriptionTextArea.setBounds(40, 560, 780, 180);
 		descriptionTextArea.setLineWrap(true);
 		descriptionTextArea.setWrapStyleWord(true);
@@ -86,7 +89,8 @@ public class DisplayFrame implements ActionListener {
 		descriptionTextArea.setBackground(new Color(255, 255, 255, 64));
 		descriptionTextArea.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 
-		JTextArea howToGetThereLabel = new JTextArea(this.resortDto.howToGetThere());
+		String howToGeThere = this.resortDto.howToGetThere() != null ? this.resortDto.howToGetThere() : "";
+		JTextArea howToGetThereLabel = new JTextArea(howToGeThere);
 		howToGetThereLabel.setBounds(40, 750, 780, 180);
 		howToGetThereLabel.setLineWrap(true);
 		howToGetThereLabel.setWrapStyleWord(true);

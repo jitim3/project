@@ -186,7 +186,7 @@ class DatabaseLogin extends JFrame implements ActionListener {
 	private JFrame frame;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
-	private Towns townsFrame;
+	private CustomerMenu customerMenu;
 	private JFrame successFrame;
 
 	DatabaseLogin(final UserService userService) {
@@ -250,7 +250,7 @@ class DatabaseLogin extends JFrame implements ActionListener {
 		okButton.addActionListener(e -> {
 			successFrame.dispose(); // Close the success frame
 			frame.dispose(); // Close the login frame
-			townsFrame = new Towns(this.userDto); // Open the Towns frame
+			customerMenu = new CustomerMenu(this.userDto); // Open the Towns frame
 		});
 		successFrame.add(okButton);
 		successFrame.setSize(400, 200);
