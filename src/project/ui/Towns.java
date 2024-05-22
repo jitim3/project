@@ -69,9 +69,9 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 		sanTanderButton.setFocusable(false);
 		sanTanderButton.addActionListener(this);
 
-		sanTanderButton.setBounds(250, 300, 150, 40);
-		sanTanderButton.setFocusable(false);
-		sanTanderButton.addActionListener(this);
+		oslobButton.setBounds(250, 300, 150, 40);
+		oslobButton.setFocusable(false);
+		oslobButton.addActionListener(this);
 
 		backButton.setBounds(160, 370, 150, 40);
 		backButton.setFocusable(false);
