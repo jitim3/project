@@ -63,7 +63,7 @@ public class CustomerMenu implements ActionListener {
 			frame.dispose();
 			new Towns(frame, userDto);
 		} else if (e.getSource() == profileButton) { // For the sign up menu
-			new CustomerInformation();
+			new CustomerViewOrUpdateInformaton(userDto.getId());
 		} else {
 			frame.dispose();
 		}
