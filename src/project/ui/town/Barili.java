@@ -16,26 +16,26 @@ import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.impl.DefaultResortService;
 import project.ui.DisplayFrame;
-import project.ui.Towns;
 import project.util.UserTypes;
 
 public class Barili implements Town {
-	private final UserDto userDto;
 	private final int townId = 2;
+	private final UserDto userDto;
 	private final ResortService resortService;
 	private final List<ResortDto> resortDtos;
 	private JFrame frame = new JFrame("Barili");
-	private JFrame townsJFrame;
+	private JFrame parentFrame;
 	private JButton back = new JButton("Back");
 
-	public Barili(UserDto userDto, JFrame townsJFrame) {
-		this(userDto, (Long) null);
-		this.townsJFrame = townsJFrame;
+	public Barili(UserDto userDto, JFrame parentFrame) {
+		this(userDto, parentFrame, null);
 	}
 
-	public Barili(UserDto userDto, Long resortId) {
+	public Barili(UserDto userDto, JFrame parentFrame, Long resortId) {
 		this.userDto = userDto;
 		this.resortService = new DefaultResortService();
+		this.parentFrame = parentFrame;
+		
 		this.resortDtos = this.getRegisteredResorts(resortId);
 		this.generateButton();
 
@@ -58,11 +58,7 @@ public class Barili implements Town {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				if (townsJFrame != null) {
-					townsJFrame.setVisible(true);
-				} else {
-					new Towns(userDto);
-				}
+				parentFrame.setVisible(true);
 			}			
 		});
 		frame.setLocationRelativeTo(null);
@@ -70,19 +66,10 @@ public class Barili implements Town {
 	}
 
 	@Override
-	public JFrame getFrame() {
-		return frame;
-	}
-
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == back) {
 			frame.dispose();
-			if (this.townsJFrame != null) {
-				this.townsJFrame.setVisible(true);
-			} else {
-				new Towns(this.userDto);
-			}
+			this.parentFrame.setVisible(true);
 		}
 	}
 
