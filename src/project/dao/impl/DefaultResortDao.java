@@ -20,16 +20,16 @@ import project.util.DatabaseConnectionFactory;
 
 public class DefaultResortDao implements ResortDao {
 	private static final Logger LOGGER = System.getLogger(DefaultResortDao.class.getName());
-	private static final String SQL_SELECT_RESORT = """
+	private static final String SQL_SELECT_RESORTS = """
 			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
 			resort_image, pool_image, cottage_image, town_id, user_id, approved, approved_by, approved_at, created_at, updated_at 
 			FROM resort
 			""";
 	private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
-	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORT + " WHERE id = ?";
-	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORT + " WHERE user_id = ?";
-	private static final String SQL_SELECT_RESORT_BY_TOWN_ID = SQL_SELECT_RESORT + " WHERE town_id = ? AND approved = ?";
-	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORT + " WHERE user_id = ? AND town_id = ?";
+	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORTS + " WHERE id = ?";
+	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORTS + " WHERE user_id = ?";
+	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORTS + " WHERE user_id = ? AND town_id = ?";
+	private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " WHERE town_id = ? AND approved = ?";
 	private static final String SQL_INSERT_RESORT = """
 			INSERT INTO resort (name, user_id, town_id, created_at)
 			VALUES (?, ?, ?, ?)
@@ -83,28 +83,43 @@ public class DefaultResortDao implements ResortDao {
 		return Optional.empty();
 	}
 
-	
 	@Override
-	public List<Resort> getResortsByUserId(long userId) {
-		final List<Resort> resorts = new ArrayList<>();
-		
+	public Optional<Resort> getResortByUserId(long id) {
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_USER_ID)) {
 			int i = 1;
-			statement.setLong(i++, userId);
+			statement.setLong(i++, id);
 			try (ResultSet rs = statement.executeQuery()) {
-				while (rs.next()) {
-					resorts.add(mapToResort(rs));
+				if (rs.next()) {
+					return Optional.of(mapToResort(rs));
+				} else {
+					LOGGER.log(Level.INFO, "No resort with ID " + id + " found");
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.ERROR, e);
 		}
-		
-		if (resorts.isEmpty()) {
-			LOGGER.log(Level.INFO, "No resorts found for user with ID " + userId + " found");
+
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Resort> getResortByUserIdAndTownId(long userId, int townId) {		
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID)) {
+			int i = 1;
+			statement.setLong(i++, userId);
+			statement.setInt(i++, townId);
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					return Optional.of(mapToResort(rs));
+				} else {
+					LOGGER.log(Level.INFO, "No resort for user with ID " + userId + " and town with ID " + townId + " found");
+				}
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.ERROR, e);
 		}
 
-		return resorts;
+		return Optional.empty();
 	}
 
 	
@@ -112,7 +127,7 @@ public class DefaultResortDao implements ResortDao {
 	public List<Resort> getResortsByTownId(int townId, boolean approved) {
 		final List<Resort> resorts = new ArrayList<>();
 		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_TOWN_ID)) {
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORTS_BY_TOWN_ID)) {
 			int i = 1;
 			statement.setInt(i++, townId);
 			statement.setBoolean(i++, approved);
@@ -126,31 +141,7 @@ public class DefaultResortDao implements ResortDao {
 		}
 		
 		if (resorts.isEmpty()) {
-			LOGGER.log(Level.INFO, "No resorts found for town with ID " + townId + " found");
-		}
-
-		return resorts;
-	}
-
-	@Override
-	public List<Resort> getResortsByUserIdAndTownId(long userId, int townId) {
-		final List<Resort> resorts = new ArrayList<>();
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID)) {
-			int i = 1;
-			statement.setLong(i++, userId);
-			statement.setInt(i++, townId);
-			try (ResultSet rs = statement.executeQuery()) {
-				while (rs.next()) {
-					resorts.add(mapToResort(rs));
-				}
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
-		
-		if (resorts.isEmpty()) {
-			LOGGER.log(Level.INFO, "No resorts found for user with ID " + userId + " and town with ID " + townId + " found");
+			LOGGER.log(Level.INFO, "No resorts for town with ID " + townId + " found");
 		}
 
 		return resorts;

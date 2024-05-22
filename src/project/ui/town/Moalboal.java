@@ -103,9 +103,13 @@ public class Moalboal implements Town {
 			int userTypeId = this.userDto.getUserType().id();
 			if (UserTypes.ADMIN.id() == userTypeId) {
 				if (resortId != null) {
-					return this.resortService.getResortById(resortId).map(List::of).orElse(List.of());
+					return this.resortService.getResortById(resortId)
+							.map(List::of)
+							.orElse(List.of());
 				} else {
-					return this.resortService.getResortsByUserIdAndTownId(this.userDto.getId(), this.townId);
+					return this.resortService.getResortByUserIdAndTownId(this.userDto.getId(), this.townId)
+							.map(List::of)
+							.orElse(List.of());
 				}
 			} else if (UserTypes.CUSTOMER.id() == userTypeId) {
 				// only approved resort available to customers
