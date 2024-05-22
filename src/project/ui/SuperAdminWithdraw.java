@@ -21,9 +21,12 @@ public class SuperAdminWithdraw implements ActionListener {
 	private final JLabel withdrawLabel = new JLabel("WITHDRAW", SwingConstants.CENTER);
 	private final JButton confirmWithdrawButton = new JButton(" CONFIRM WITHDRAW");
 	private final JButton exitButton = new JButton("EXIT");
+	private final JFrame superAdminNextPageFrame;
 	private final JFrame superAdminWalletFrame;
+	private String closeSource;
 
-	public SuperAdminWithdraw(JFrame superAdminWalletFrame) {
+	public SuperAdminWithdraw(JFrame superAdminNextPageFrame, JFrame superAdminWalletFrame) {
+		this.superAdminNextPageFrame = superAdminNextPageFrame;
 		this.superAdminWalletFrame = superAdminWalletFrame;
 		
 		JLabel balance = new JLabel("ENTER WITHDRAWAL AMOUNT: ");// with textfield
@@ -72,7 +75,9 @@ public class SuperAdminWithdraw implements ActionListener {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				superAdminWalletFrame.setVisible(true);
+				if (!"confirmWithdrawButton".equals(closeSource)) {
+					superAdminWalletFrame.setVisible(true);
+				}
 			}
 		});
 		frame.setLocationRelativeTo(null);
@@ -83,13 +88,16 @@ public class SuperAdminWithdraw implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == exitButton) {
+			this.closeSource = "exitButton";
 			frame.dispose();
 //			new SuperAdminConfirmation();
 			superAdminWalletFrame.setVisible(true);
 		} else if (e.getSource() == confirmWithdrawButton) {
+			this.closeSource = "confirmWithdrawButton";
 			frame.dispose();
-			new SuperAdminConfirmation();
+			new SuperAdminConfirmation(superAdminNextPageFrame);
 		} else {
+			this.closeSource = "unknown";
 			System.exit(0);
 		}
 	}

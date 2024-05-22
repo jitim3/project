@@ -20,10 +20,11 @@ public class SuperAdminWallet implements ActionListener {
 	private final JLabel moneyLabel = new JLabel("0.00 ", SwingConstants.CENTER);
 	private final JButton withdrawButton = new JButton("WITHDRAW");
 	private final JButton exitButton = new JButton("EXIT");
-	private final JFrame superAdminNextPagFrame;
+	private final JFrame superAdminNextPageFrame;
+	private String closeSource;
 
-	public SuperAdminWallet(JFrame superAdminNextPagFrame) {
-		this.superAdminNextPagFrame = superAdminNextPagFrame;
+	public SuperAdminWallet(JFrame superAdminNextPageFrame) {
+		this.superAdminNextPageFrame = superAdminNextPageFrame;
 
 		moneyLabel.setBounds(200, 150, 300, 30);
 		moneyLabel.setFont(new Font("Times New Roman", Font.BOLD, 17));
@@ -64,7 +65,9 @@ public class SuperAdminWallet implements ActionListener {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				superAdminNextPagFrame.setVisible(true);
+				if (!"withdrawButton".equals(closeSource)) {
+					superAdminNextPageFrame.setVisible(true);
+				}
 			}
 		});
 		frame.setLocationRelativeTo(null);
@@ -77,12 +80,14 @@ public class SuperAdminWallet implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == withdrawButton) {
+			this.closeSource = "withdrawButton";
 			frame.dispose();
-			new SuperAdminWithdraw(frame);
+			new SuperAdminWithdraw(superAdminNextPageFrame, frame);
 		} else if (e.getSource() == exitButton) {
 //			System.exit(0);
+			this.closeSource = "exitButton";
 			frame.dispose();
-			superAdminNextPagFrame.setVisible(true);
+			superAdminNextPageFrame.setVisible(true);
 		} else {
 			System.exit(0);
 		}

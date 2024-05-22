@@ -21,8 +21,11 @@ public class SuperAdminConfirmation implements ActionListener {
 	private final JLabel confirmationLabel = new JLabel("CONFIRMATION", SwingConstants.CENTER);
 	private final JButton confirmButton = new JButton(" CONFIRM ");
 	private final JButton exitButton = new JButton("EXIT");
+	private final JFrame superAdminNextPageFrame;
 
-	public SuperAdminConfirmation() {
+	public SuperAdminConfirmation(JFrame superAdminNextPageFrame) {
+		this.superAdminNextPageFrame = superAdminNextPageFrame;
+		
 		JLabel pass = new JLabel("ENTER PASSWORD: ");// with textfield
 		passwordTextField = new JPasswordField();
 
@@ -76,7 +79,7 @@ public class SuperAdminConfirmation implements ActionListener {
 		if (e.getSource() == confirmButton) {
 			JOptionPane.showMessageDialog(null, "Withdraw Successful!", "Success!", JOptionPane.INFORMATION_MESSAGE);
 			frame.dispose();
-			new SuperAdmin_NextPage();
+			this.superAdminNextPageFrame.setVisible(true);
 		} else {
 			JOptionPane.showMessageDialog(null, "Incorrect Password", "Incorrect Password", JOptionPane.ERROR_MESSAGE);
 		}
