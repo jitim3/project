@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,8 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import project.dto.UserDto;
-import project.service.ResortService;
-import project.service.impl.DefaultResortService;
 import project.ui.town.Alcoy;
 import project.ui.town.Barili;
 import project.ui.town.Carcar;
@@ -22,21 +22,21 @@ import project.ui.town.SanTander;
 
 public class Towns extends JFrame implements ActionListener { // Prompts after user log in
 	private final UserDto userDto;
-	private final ResortService resortService;
-	JFrame frame = new JFrame("Where to?");
-	JLabel label = new JLabel("TOWN");
-	JButton button = new JButton("Carcar"); // CARCAR BUTTON id: 3
-	JButton button1 = new JButton("Barili");// Barili BUTTON id: 2
-	JButton button2 = new JButton("Moalboal");// Moalboal BUTTON id: 4
-	JButton button3 = new JButton("Alcoy");// Alcoy BUTTON id: 1
-	JButton button4 = new JButton("SanTander");// SAN TANDER BUTTON id: 6
-	JButton button5 = new JButton("Oslob");// OSLOB BUTTON id: 5
-	JButton button6 = new JButton("EXIT");// EXIT BUTTON
-	//
+	private final JFrame frame = new JFrame("Where to?");
+	private final JLabel townLabel = new JLabel("TOWN");
+	private final JButton carcarButton = new JButton("Carcar"); // CARCAR BUTTON id: 3
+	private final JButton bariliButton = new JButton("Barili");// Barili BUTTON id: 2
+	private final JButton moalBoalButton = new JButton("Moalboal");// Moalboal BUTTON id: 4
+	private final JButton alcoyButton = new JButton("Alcoy");// Alcoy BUTTON id: 1
+	private final JButton sanTanderButton = new JButton("SanTander");// SAN TANDER BUTTON id: 6
+	private final JButton oslobButton = new JButton("Oslob");// OSLOB BUTTON id: 5
+	private final JButton backButton = new JButton("BACK");// EXIT BUTTON
+	private final JFrame customerMenuFrame;
+	private String closeSource;
 
-	public Towns(UserDto userDto) {
+	public Towns(JFrame customerMenuFrame, UserDto userDto) {
+		this.customerMenuFrame = customerMenuFrame;
 		this.userDto = userDto;
-		this.resortService = new DefaultResortService();
 		// Set logo to the frame
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -46,82 +46,95 @@ public class Towns extends JFrame implements ActionListener { // Prompts after u
 		backgroundLabel.setBounds(0, 0, 500, 600);
 		// Add components to the frame
 
-		label.setBounds(200, 35, 200, 125);
-		label.setFont(new Font("+", Font.PLAIN, 28));
+		townLabel.setBounds(200, 35, 200, 125);
+		townLabel.setFont(new Font("+", Font.PLAIN, 28));
 
-		button.setBounds(70, 180, 150, 40);
-		button.setFocusable(false);
-		button.addActionListener(this);
+		carcarButton.setBounds(70, 180, 150, 40);
+		carcarButton.setFocusable(false);
+		carcarButton.addActionListener(this);
 
-		button1.setBounds(250, 180, 150, 40);
-		button1.setFocusable(false);
-		button1.addActionListener(this);
+		bariliButton.setBounds(250, 180, 150, 40);
+		bariliButton.setFocusable(false);
+		bariliButton.addActionListener(this);
 
-		button2.setBounds(70, 240, 150, 40);
-		button2.setFocusable(false);
-		button2.addActionListener(this);
+		moalBoalButton.setBounds(70, 240, 150, 40);
+		moalBoalButton.setFocusable(false);
+		moalBoalButton.addActionListener(this);
 
-		button3.setBounds(250, 240, 150, 40);
-		button3.setFocusable(false);
-		button3.addActionListener(this);
+		alcoyButton.setBounds(250, 240, 150, 40);
+		alcoyButton.setFocusable(false);
+		alcoyButton.addActionListener(this);
 
-		button4.setBounds(70, 300, 150, 40);
-		button4.setFocusable(false);
-		button4.addActionListener(this);
+		sanTanderButton.setBounds(70, 300, 150, 40);
+		sanTanderButton.setFocusable(false);
+		sanTanderButton.addActionListener(this);
 
-		button5.setBounds(250, 300, 150, 40);
-		button5.setFocusable(false);
-		button5.addActionListener(this);
+		oslobButton.setBounds(250, 300, 150, 40);
+		oslobButton.setFocusable(false);
+		oslobButton.addActionListener(this);
 
-		button6.setBounds(160, 370, 150, 40);
-		button6.setFocusable(false);
-		button6.addActionListener(this);
+		backButton.setBounds(160, 370, 150, 40);
+		backButton.setFocusable(false);
+		backButton.addActionListener(this);
 
 		frame.setLocation(300, 250);
-		frame.add(button);
-		frame.add(button6);
-		frame.add(button5);
-		frame.add(button4);
-		frame.add(button3);
-		frame.add(button2);
-		frame.add(button1);
-		frame.add(label);
+		frame.add(carcarButton);
+		frame.add(backButton);
+		frame.add(oslobButton);
+		frame.add(sanTanderButton);
+		frame.add(alcoyButton);
+		frame.add(moalBoalButton);
+		frame.add(bariliButton);
+		frame.add(townLabel);
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setSize(500, 550);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if (!"carcarButton".equals(closeSource) && !"bariliButton".equals(closeSource)
+						&& !"moalBoalButton".equals(closeSource) && !"alcoyButton".equals(closeSource)
+						&& !"sanTanderButton".equals(closeSource) && !"oslobButton".equals(closeSource)) {
+					customerMenuFrame.setVisible(true);
+				}
+			}
+		});
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.setResizable(false);
 	}
 
-	public JFrame getFrame() {
-		return frame;
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == button) {
+		if (e.getSource() == carcarButton) {
+			this.closeSource = "carcarButton";
 			frame.dispose();
-			Carcar window = new Carcar(this.userDto, frame);
-		} else if (e.getSource() == button1) {
+			new Carcar(this.userDto, frame);
+		} else if (e.getSource() == bariliButton) {
+			this.closeSource = "bariliButton";
 			frame.dispose();
-			Barili window = new Barili(this.userDto, frame);
-		} else if (e.getSource() == button2) {
+			new Barili(this.userDto, frame);
+		} else if (e.getSource() == moalBoalButton) {
+			this.closeSource = "moalBoalButton";
 			frame.dispose();
-			Moalboal window = new Moalboal(this.userDto, frame);
-		} else if (e.getSource() == button3) {
+			new Moalboal(this.userDto, frame);
+		} else if (e.getSource() == alcoyButton) {
+			this.closeSource = "alcoyButton";
 			frame.dispose();
-			Alcoy window = new Alcoy(this.userDto, frame);
-		} else if (e.getSource() == button4) {
+			new Alcoy(this.userDto, frame);
+		} else if (e.getSource() == sanTanderButton) {
+			this.closeSource = "sanTanderButton";
 			frame.dispose();
-			SanTander window = new SanTander(this.userDto, frame);
-		} else if (e.getSource() == button5) {
+			new SanTander(this.userDto, frame);
+		} else if (e.getSource() == oslobButton) {
+			this.closeSource = "oslobButton";
 			frame.dispose();
-			Oslob window = new Oslob(this.userDto, frame);
+			new Oslob(this.userDto, frame);
 		} else {
+			this.closeSource = "unknown";
 			frame.dispose();
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			customerMenuFrame.setVisible(true);
 		}
-
 	}
 }

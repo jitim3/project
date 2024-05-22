@@ -30,12 +30,13 @@ import project.util.AppUtils;
 public class TownRegister implements ActionListener {
 	private final UserDto userDto;
 	private final ResortService resortService;
-	JFrame frame = new JFrame("Select Town to Register");
-	JLabel label = new JLabel("Welcome Admin!");
-	JLabel label1 = new JLabel("Please select town to register");
-	JLabel label2 = new JLabel("Enter name of the resort");
-	JTextField field = new JTextField();
-	JButton display = new JButton("Display");
+	private final JFrame frame = new JFrame("Select Town to Register");
+	private final JLabel label = new JLabel("Welcome Admin!");
+	private final JLabel label1 = new JLabel("Please select town to register");
+	private final JLabel label2 = new JLabel("Enter name of the resort");
+	private final JTextField field = new JTextField();
+	private final JButton display = new JButton("Display");
+	private final ButtonGroup group = new ButtonGroup();
 	private final List<TownHolder> townHolders;
 
 	TownRegister(final UserDto userDto, final ResortService resortService) {
@@ -55,7 +56,6 @@ public class TownRegister implements ActionListener {
 		display.setFocusable(false);
 		display.addActionListener(this);
 
-		ButtonGroup group = new ButtonGroup();
 		this.townHolders.forEach(townHolder -> {
 			group.add(townHolder.button());
 		});
@@ -108,11 +108,12 @@ public class TownRegister implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
 				int choice = JOptionPane.showConfirmDialog(null, "Do you want to proceed to Register Information Fill up?", "Confirmation", JOptionPane.YES_NO_OPTION);
 				frame.dispose();
+				group.clearSelection();
+				field.setText(null);
 				
 				if (choice == JOptionPane.YES_OPTION) {
 					new ResortInfo(resortId, resortName, this.resortService);
 				} else {
-					new ResortInfo(resortId, resortName, this.resortService);
 					frame.dispose();
 					BiFunction<UserDto, Long, Town> townToOpen = townHolder.town();
 					townToOpen.apply(this.userDto, resortId);
@@ -127,7 +128,7 @@ public class TownRegister implements ActionListener {
 		carcarButton.setFocusable(false);
 		carcarButton.addActionListener(this);
 		carcarButton.setOpaque(false);
-		BiFunction<UserDto, Long, Town> carcarTown = (userDto, resortId) -> new Carcar(userDto, resortId);
+		BiFunction<UserDto, Long, Town> carcarTown = (userDto, resortId) -> new Carcar(userDto, frame, resortId);
 		TownHolder carcarTownHolder = new TownHolder(1, carcarButton, carcarTown);
 
 		JRadioButton bariliButton = new JRadioButton("Barili"); // id: 2
@@ -135,7 +136,7 @@ public class TownRegister implements ActionListener {
 		bariliButton.setFocusable(false);
 		bariliButton.addActionListener(this);
 		bariliButton.setOpaque(false);
-		BiFunction<UserDto, Long, Town> bariliTown = (userDto, resortId) -> new Carcar(userDto, resortId);
+		BiFunction<UserDto, Long, Town> bariliTown = (userDto, resortId) -> new Carcar(userDto, frame, resortId);
 		TownHolder bariliTownHolder = new TownHolder(2, bariliButton, bariliTown);
 
 		JRadioButton moalboalButton = new JRadioButton("Moalboal"); // id: 3
@@ -143,7 +144,7 @@ public class TownRegister implements ActionListener {
 		moalboalButton.setFocusable(false);
 		moalboalButton.addActionListener(this);
 		moalboalButton.setOpaque(false);
-		BiFunction<UserDto, Long, Town> moalboalTown = (userDto, resortId) -> new Carcar(userDto, resortId);
+		BiFunction<UserDto, Long, Town> moalboalTown = (userDto, resortId) -> new Carcar(userDto, frame, resortId);
 		TownHolder moalboalTownHolder = new TownHolder(3, moalboalButton, moalboalTown);
 		
 		JRadioButton alcoyButton = new JRadioButton("Alcoy"); // id: 4
@@ -151,7 +152,7 @@ public class TownRegister implements ActionListener {
 		alcoyButton.setFocusable(false);
 		alcoyButton.addActionListener(this);
 		alcoyButton.setOpaque(false);
-		BiFunction<UserDto, Long, Town> alcoyTown = (userDto, resortId) -> new Carcar(userDto, resortId);
+		BiFunction<UserDto, Long, Town> alcoyTown = (userDto, resortId) -> new Carcar(userDto, frame, resortId);
 		TownHolder alcoyTownHolder = new TownHolder(4, alcoyButton, alcoyTown);
 
 		JRadioButton santanderButton = new JRadioButton("SanTander"); // id: 5
@@ -159,7 +160,7 @@ public class TownRegister implements ActionListener {
 		santanderButton.setFocusable(false);
 		santanderButton.addActionListener(this);
 		santanderButton.setOpaque(false);
-		BiFunction<UserDto, Long, Town> santanderTown = (userDto, resortId) -> new Carcar(userDto, resortId);
+		BiFunction<UserDto, Long, Town> santanderTown = (userDto, resortId) -> new Carcar(userDto, frame, resortId);
 		TownHolder santanderTownHolder = new TownHolder(5, santanderButton, santanderTown);
 
 		JRadioButton oslobButton = new JRadioButton("Oslob"); // id: 6
@@ -167,7 +168,7 @@ public class TownRegister implements ActionListener {
 		oslobButton.setFocusable(false);
 		oslobButton.addActionListener(this);
 		oslobButton.setOpaque(false);
-		BiFunction<UserDto, Long, Town> oslobTown = (userDto, resortId) -> new Carcar(userDto, resortId);
+		BiFunction<UserDto, Long, Town> oslobTown = (userDto, resortId) -> new Carcar(userDto, frame, resortId);
 		TownHolder oslobTownHolder = new TownHolder(6, oslobButton, oslobTown);
 		
 		return List.of(

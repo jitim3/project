@@ -97,7 +97,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 					if (UserTypes.ADMIN.name().equals(userType.name())) {
 						MenuAdmin MenuAdmin = new MenuAdmin(userDto);
 					} else if (UserTypes.CUSTOMER.name().equals(userType.name())) {
-						Towns towns = new Towns(userDto);
+						CustomerMenu customerMenu = new CustomerMenu(userDto);
 					} else if (UserTypes.SUPER_ADMIN.name().equals(userType.name())) {
 						SuperAdmin_NextPage window = new SuperAdmin_NextPage();
 					}
