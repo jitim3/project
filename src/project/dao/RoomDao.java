@@ -10,7 +10,7 @@ import project.dto.UpdateRoomDto;
 public interface RoomDao {
 	Optional<Room> getRoomById(long id);
 
-	List<Room> getRoomByResortId(long resortId);
+	List<Room> getRoomsByResortId(long resortId);
 	
 	Room createRoom(CreateRoomDto createRoomDto);
 

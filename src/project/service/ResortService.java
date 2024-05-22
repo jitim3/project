@@ -11,12 +11,12 @@ public interface ResortService {
 	boolean isResortExists(String name);
 
 	Optional<ResortDto> getResortById(long id);
+	
+	Optional<ResortDto> getResortByUserId(long userId);
 
-	List<ResortDto> getResortsByUserId(long userId);
+	Optional<ResortDto> getResortByUserIdAndTownId(long userId, int townId);
 
 	List<ResortDto> getResortsByTownId(int townId, boolean approved);
-
-	List<ResortDto> getResortsByUserIdAndTownId(long userId, int townId);
 
 	Long createResort(CreateResortDto createResortDto);
 	

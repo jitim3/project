@@ -76,7 +76,7 @@ public class DefaultRoomDao implements RoomDao {
 	}
 
 	@Override
-	public List<Room> getRoomByResortId(long resortId) {
+	public List<Room> getRoomsByResortId(long resortId) {
 		final List<Room> rooms = new ArrayList<>();
 		
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_ROOM_BY_RESORT_ID)) {

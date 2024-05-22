@@ -25,8 +25,8 @@ public class DefaultRoomService extends DtoMapper implements RoomService {
 	}
 
 	@Override
-	public List<RoomDto> getRoomByResortId(long resortId) {
-		return this.roomDao.getRoomByResortId(resortId).stream()
+	public List<RoomDto> getRoomsByResortId(long resortId) {
+		return this.roomDao.getRoomsByResortId(resortId).stream()
 				.map(super::mapToRoomDto)
 				.toList();
 	}
