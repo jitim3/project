@@ -3,7 +3,6 @@ package project.ui;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,14 +17,21 @@ import project.service.impl.DefaultResortService;
 public class MenuAdmin implements ActionListener {
 	private final UserDto userDto;
 	private final ResortService resortService;
-	JFrame frame = new JFrame("Menu");
-	JButton button = new JButton("Register resort");
-	JButton button1 = new JButton("View registered resort");
-	JButton button2 = new JButton("EXIT");
+	private ResortDto registeredResort;
+	private final JFrame frame = new JFrame("Menu");
+	private final JButton registerResortButton = new JButton("Register resort");
+	private final JButton viewRegisteredResortButton = new JButton("View registered resort");
+	private final JButton exitButton = new JButton("EXIT");
 
 	public MenuAdmin(UserDto userDto) {
 		this.userDto = userDto;
-		this.resortService = new DefaultResortService();
+		this.resortService = new DefaultResortService();	
+
+		this.resortService.getResortByUserId(this.userDto.getId())
+			.ifPresent(resortDto -> {
+				this.registeredResort = resortDto;
+				registerResortButton.setEnabled(false);
+			});
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -34,21 +40,21 @@ public class MenuAdmin implements ActionListener {
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 		backgroundLabel.setBounds(0, 0, 350, 300);
 
-		button.setBounds(75, 50, 200, 40);
-		button.setFocusable(false);
-		button.addActionListener(this);
+		registerResortButton.setBounds(75, 50, 200, 40);
+		registerResortButton.setFocusable(false);
+		registerResortButton.addActionListener(this);
 
-		button1.setBounds(75, 100, 200, 40);
-		button1.setFocusable(false);
-		button1.addActionListener(this);
+		viewRegisteredResortButton.setBounds(75, 100, 200, 40);
+		viewRegisteredResortButton.setFocusable(false);
+		viewRegisteredResortButton.addActionListener(this);
 
-		button2.setBounds(75, 150, 200, 40);
-		button2.setFocusable(false);
-		button2.addActionListener(this);
+		exitButton.setBounds(75, 150, 200, 40);
+		exitButton.setFocusable(false);
+		exitButton.addActionListener(this);
 
-		frame.add(button);
-		frame.add(button1);
-		frame.add(button2);
+		frame.add(registerResortButton);
+		frame.add(viewRegisteredResortButton);
+		frame.add(exitButton);
 		frame.setResizable(false);
 		frame.add(backgroundLabel);
 		frame.setIconImage(icon.getImage());
@@ -61,12 +67,11 @@ public class MenuAdmin implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == button) { // For the Log in menu
+		if (e.getSource() == registerResortButton) { // For the Log in menu
 			frame.dispose();
 			new TownRegister(this.userDto, this.resortService);
-		} else if (e.getSource() == button1) { // For the sign up menu
-			List<ResortDto> registeredResorts = this.resortService.getResortsByUserId(this.userDto.getId());
-			new ViewResort(registeredResorts);
+		} else if (e.getSource() == viewRegisteredResortButton) { // For the sign up menu
+			new ViewResort(registeredResort);
 		} else {
 			frame.dispose();
 		}

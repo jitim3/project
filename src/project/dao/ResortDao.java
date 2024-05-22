@@ -12,11 +12,11 @@ public interface ResortDao {
 
 	Optional<Resort> getResortById(long id);
 
-	List<Resort> getResortsByUserId(long userId);
+	Optional<Resort> getResortByUserId(long id);
+
+	Optional<Resort> getResortByUserIdAndTownId(long userId, int townId);
 
 	List<Resort> getResortsByTownId(int townId, boolean approved);
-
-	List<Resort> getResortsByUserIdAndTownId(long userId, int townId);
 
 	Long createResort(CreateResortDto createResortDto);
 	

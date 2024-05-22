@@ -25,8 +25,6 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 INSERT INTO user (id, username, password, user_type_id) VALUES(1, 'sa', 'sa', 1);
-INSERT INTO user (id, username, password, user_type_id) VALUES(2, 'a', 'a', 2);
-INSERT INTO user (id, username, password, user_type_id) VALUES(3, 'c', 'c', 3);
 
 CREATE TABLE IF NOT EXISTS customer (
 	id BIGINT NOT NULL,
@@ -78,6 +76,7 @@ CREATE TABLE IF NOT EXISTS resort (
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT uq_resort_name UNIQUE (name),
+	CONSTRAINT uq_resort_user_id UNIQUE (user_id),
     CONSTRAINT fk_resort_town_id FOREIGN KEY (town_id) REFERENCES town (id),
     CONSTRAINT fk_resort_user_id FOREIGN KEY (user_id) REFERENCES user (id)
 );
