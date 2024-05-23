@@ -16,7 +16,7 @@ public class ConfirmationMessage implements ActionListener {
     private final JFrame frame = new JFrame("Waiting Confirmation Message"); 
     private final JButton okButton = new JButton("OK");
 
-    public ConfirmationMessage() {		
+    public ConfirmationMessage() {
 		okButton.setBounds(230, 350, 220, 40);
 		okButton.setFocusable(false);
 	    okButton.addActionListener(this);

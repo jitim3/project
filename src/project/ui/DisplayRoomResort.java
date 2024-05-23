@@ -14,12 +14,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import project.dto.CreateRoomReservationDto;
 import project.dto.ResortDto;
 import project.dto.RoomDto;
 import project.util.AppUtils;
+import project.util.ReservationStatus;
 import project.util.RoomTypes;
 
 public class DisplayRoomResort implements ActionListener {
+	private final long userId;
 	private final ResortDto resortDto;
 	private final JFrame frame = new JFrame("Room Information");
 	private final JLabel roomsLabel = new JLabel("Rooms");
@@ -31,8 +34,11 @@ public class DisplayRoomResort implements ActionListener {
 	private final JLabel familyRoomNumberOfPaxLabel = new JLabel("Number of PAX");
 	private final JLabel familyRoomFeeLabel = new JLabel("Family Room Fee");
 	private final JButton familyRoomReserveNowButton = new JButton("RESERVE NOW");
+	private RoomDto normalRoomDto;
+	private RoomDto familyRoomDto;
 
-	public DisplayRoomResort(final ResortDto resortDto) {
+	public DisplayRoomResort(Long userId, ResortDto resortDto) {
+		this.userId = userId;
 		this.resortDto = resortDto;
 
 		Optional<RoomDto> normalRoomDtoOptional = this.resortDto.roomDtos().stream()
@@ -41,14 +47,14 @@ public class DisplayRoomResort implements ActionListener {
 		String normalRoomRatePerNightValue = "";
 		Optional<String> normalRoomImage1 = Optional.empty();
 		if (normalRoomDtoOptional.isPresent()) {
-			RoomDto roomDto = normalRoomDtoOptional.get();
+			normalRoomDto = normalRoomDtoOptional.get();
 
-			normalRoomNumberOfPaxValue = roomDto.numberOfPax();
+			normalRoomNumberOfPaxValue = normalRoomDto.numberOfPax();
 
-			BigDecimal ratePerNight = roomDto.ratePerNight();
+			BigDecimal ratePerNight = normalRoomDto.ratePerNight();
 			normalRoomRatePerNightValue = ratePerNight != null ? ratePerNight.toString() : "";
 
-			normalRoomImage1 = AppUtils.imagePath(roomDto.roomImage1());
+			normalRoomImage1 = AppUtils.imagePath(normalRoomDto.roomImage1());
 		}
 
 		Optional<RoomDto> familyRoomDtoOptional = this.resortDto.roomDtos().stream()
@@ -57,14 +63,14 @@ public class DisplayRoomResort implements ActionListener {
 		String familyRoomRatePerNightValue = "";
 		Optional<String> familyRoomImage1 = Optional.empty();
 		if (familyRoomDtoOptional.isPresent()) {
-			RoomDto roomDto = familyRoomDtoOptional.get();
+			familyRoomDto = familyRoomDtoOptional.get();
 
-			familyRoomNumberOfPaxValue = roomDto.numberOfPax();
+			familyRoomNumberOfPaxValue = familyRoomDto.numberOfPax();
 
-			BigDecimal ratePerNight = roomDto.ratePerNight();
+			BigDecimal ratePerNight = familyRoomDto.ratePerNight();
 			familyRoomRatePerNightValue = ratePerNight != null ? ratePerNight.toString() : "";
 			
-			familyRoomImage1 = AppUtils.imagePath(roomDto.roomImage1());
+			familyRoomImage1 = AppUtils.imagePath(familyRoomDto.roomImage1());
 		}
 
 		familyRoomReserveNowButton.setBounds(525, 560, 150, 25);
@@ -183,10 +189,12 @@ public class DisplayRoomResort implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == normalRoomReserveNowButton) {
 			frame.dispose();
-			Checkin window = new Checkin();
+			CreateRoomReservationDto createRoomReservationDto = new CreateRoomReservationDto(userId, normalRoomDto.id(), ReservationStatus.PENDING);
+			new Checkin(userId, resortDto, createRoomReservationDto);
 		} else if (e.getSource() == familyRoomReserveNowButton) {
 			frame.dispose();
-			Checkin window = new Checkin();			
+			CreateRoomReservationDto createRoomReservationDto = new CreateRoomReservationDto(userId, familyRoomDto.id(), ReservationStatus.PENDING);
+			new Checkin(userId, resortDto, createRoomReservationDto);			
 		}
 	}
 }

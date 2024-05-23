@@ -12,10 +12,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import project.dto.CreateCottageReservationDto;
+import project.dto.CreateReservationDto;
 import project.dto.ResortDto;
 import project.util.AppUtils;
+import project.util.ReservationStatus;
 
 public class DisplayCottageResort implements ActionListener {
+	private final long userId;
 	private final ResortDto resortDto;
 	private final JFrame frame = new JFrame("Cottage Information");
 	private final JLabel cottagesLabel = new JLabel("COTTAGES");
@@ -23,7 +27,8 @@ public class DisplayCottageResort implements ActionListener {
 	private final JButton reserveNowButton = new JButton("RESERVE NOW");
 	private final JButton exitButton = new JButton("EXIT");
 
-	public DisplayCottageResort(final ResortDto resortDto) {
+	public DisplayCottageResort(long userId, ResortDto resortDto) {
+		this.userId = userId;
 		this.resortDto = resortDto;
 		
 		reserveNowButton.setBounds(315, 530, 220, 25);
@@ -86,7 +91,8 @@ public class DisplayCottageResort implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == reserveNowButton) {
 			frame.dispose();
-			CustomerInformation window = new CustomerInformation();
+			CreateReservationDto createReservationDto = new CreateCottageReservationDto(userId, resortDto.id(), ReservationStatus.PENDING);
+			CustomerInformation window = new CustomerInformation(userId, resortDto, createReservationDto);
 		}
 	}
 }

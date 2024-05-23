@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
-public record ReservationRoom(
+public record RoomReservation(
 		long id,
 		long userId,
 		long roomId,
