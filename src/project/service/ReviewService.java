@@ -9,7 +9,7 @@ import project.dto.ReviewDto;
 public interface ReviewService {
 	Optional<ReviewDto> getReviewById(Long id);
 	
-	List<ReviewDto> getReviews();
+	List<ReviewDto> getReviewsByResortId(long resortId);
 	
 	ReviewDto createReview(CreateReviewDto createReviewDto);
 }

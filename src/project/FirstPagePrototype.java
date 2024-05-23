@@ -13,7 +13,6 @@ public class FirstPagePrototype {
 	public static void main(String[] args) throws IOException {
         Files.createDirectories(Paths.get(AppUtils.UPLOADED_IMAGE));
 		EventQueue.invokeLater(LaunchPage::new);
-		//EventQueue.invokeLater(LoginFrame::new);
 	}
 
 }

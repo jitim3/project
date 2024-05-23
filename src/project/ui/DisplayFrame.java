@@ -22,6 +22,7 @@ import project.util.AppUtils;
 
 public class DisplayFrame implements ActionListener {
 	private final ResortService resortService;
+	private final long userId;
 	private final ResortDto resortDto;
 	private final JFrame frame;
 	private final JButton reservationButton = new JButton("Make a reservation");
@@ -31,8 +32,9 @@ public class DisplayFrame implements ActionListener {
 	private final JLabel resortEntranceFeeLabel = new JLabel("Resort Entrance Fee:");
 	private final JLabel poolEntranceFeeLabel = new JLabel("Pool Entrance Fee:");
 
-	public DisplayFrame(ResortService resortService, long resortId) {
+	public DisplayFrame(ResortService resortService, long userId, long resortId) {
 		this.resortService = resortService;
+		this.userId = userId;
 		this.resortDto = this.resortService.getResortById(resortId).orElse(new ResortDto());
 		this.frame = new JFrame(resortDto.name());
 
@@ -179,11 +181,11 @@ public class DisplayFrame implements ActionListener {
 			frame.dispose();
 			ReservationChoices window = new ReservationChoices(this.resortDto);	
 		} else if (e.getSource() == viewReviewsButton) {
-			view_WriteCustomer_Reviews window = new view_WriteCustomer_Reviews();
+			new Reviews(userId, resortDto.id());
 		} else if (e.getSource() == transactionButton) {
 			Admin_Trasaction window = new Admin_Trasaction();
 		} else if (e.getSource() == exitButton) {
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.dispose();
 		}
 	}
 }

@@ -13,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import project.service.impl.DefaultUserService;
+
 class AdminWithdraw extends JFrame implements ActionListener{
 	
 	
@@ -75,14 +77,12 @@ class AdminWithdraw extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == widbutton) {
 			frame.dispose();
-			AdminWithdraw_Confirmation adminwallet = new AdminWithdraw_Confirmation();
+			new AdminWithdraw_Confirmation();
 		} else if (e.getSource() == exitbutton) {
 			frame.dispose();
-			AdminDatabaseSignup AdminsignUpwindow = new AdminDatabaseSignup(userService);
+			new AdminDatabaseSignup(new DefaultUserService());
 		} else {
 			frame.dispose();
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		}
-	
-		}
+		}	
 	}
+}

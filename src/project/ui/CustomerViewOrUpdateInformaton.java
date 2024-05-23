@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +41,13 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 	private final JLabel emailAddressLabel = new JLabel("Email Address:");
 	private final JTextField emailAddressTextField = new JTextField();
 	private final JButton saveButton = new JButton("Save"); 
-	private final JButton back = new JButton("Back");
-	private UserDto userDto;
+	private final JButton backButton = new JButton("Back");
+	private final JFrame customerMenuFrame;
+	private String windowEventSource = "";
 
-	public CustomerViewOrUpdateInformaton(long userId) {
+	public CustomerViewOrUpdateInformaton(long userId, JFrame customerMenuFrame) {
 		this.userId = userId;
+		this.customerMenuFrame = customerMenuFrame;
 		this.customerService = new DefaultCustomerService();
 		
 		Optional<CustomerDto> customerDtoOptional = this.customerService.getCustomerById(this.userId);
@@ -58,9 +62,9 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 		saveButton.setFocusable(false);
 		saveButton.addActionListener(this);
 
-		back.setBounds(300, 400	, 99, 50);
-		back.setFocusable(false);
-		back.addActionListener(this);
+		backButton.setBounds(300, 400	, 99, 50);
+		backButton.setFocusable(false);
+		backButton.addActionListener(this);
 		
 		ImageIcon icon = new ImageIcon("beach2.png");
 		ImageIcon background = new ImageIcon("figma.jpg");
@@ -104,17 +108,26 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 		frame.add(emailAddressLabel);
 		frame.add(emailAddressTextField);
 		frame.add(saveButton);
-		frame.add(back);
+		frame.add(backButton);
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if (!"saveButton".equals(windowEventSource) && !"backButton".equals(windowEventSource)) {
+					customerMenuFrame.setVisible(true);
+				}
+			}
+		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == saveButton) {
+			this.windowEventSource = "saveButton";
 			String firstName = this.firstNameTextField.getText();
 			String lastName = this.lastNameTextField.getText();
 			String contactNumber = this.contactNumberTextField.getText();
@@ -139,9 +152,10 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 				JOptionPane.showMessageDialog(null, message, "Customer Info Save Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-		}else if (e.getSource()==back) {
+		} else if (e.getSource() == backButton) {
+			this.windowEventSource = "backButton";
 			frame.dispose();
-			CustomerMenu window = new CustomerMenu(this.userDto);
+			customerMenuFrame.setVisible(true);
 		}
 	}
 	

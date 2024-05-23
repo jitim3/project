@@ -24,8 +24,8 @@ public class DefaultReviewService implements ReviewService {
 	}
 
 	@Override
-	public List<ReviewDto> getReviews() {
-		return this.reviewDao.getReviews().stream()
+	public List<ReviewDto> getReviewsByResortId(long resortId) {
+		return this.reviewDao.getReviewsByResortId(resortId).stream()
 				.map(this::mapToReviewDto)
 				.toList();
 	}
@@ -42,6 +42,7 @@ public class DefaultReviewService implements ReviewService {
 				review.id(), 
 				review.userId(), 
 				review.resortId(), 
+				review.rate(),
 				review.comment(), 
 				review.createdAt(), 
 				review.updatedAt()

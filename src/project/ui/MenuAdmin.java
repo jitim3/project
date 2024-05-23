@@ -28,10 +28,10 @@ public class MenuAdmin implements ActionListener {
 		this.resortService = new DefaultResortService();	
 
 		this.resortService.getResortByUserId(this.userDto.getId())
-			.ifPresent(resortDto -> {
+			.ifPresentOrElse(resortDto -> {
 				this.registeredResort = resortDto;
 				registerResortButton.setEnabled(false);
-			});
+			}, () -> viewRegisteredResortButton.setEnabled(false));
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -71,7 +71,8 @@ public class MenuAdmin implements ActionListener {
 			frame.dispose();
 			new TownRegister(this.userDto, this.resortService);
 		} else if (e.getSource() == viewRegisteredResortButton) { // For the sign up menu
-			adminMain window = new adminMain();
+			frame.dispose();
+			new adminMain(this.userDto.getId(), this.registeredResort, this.resortService);
 		} else {
 			frame.dispose();
 		}

@@ -10,12 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import project.dto.UserDto;
-import project.service.ResortService;
-import project.service.impl.DefaultResortService;
 
 public class CustomerMenu implements ActionListener {
 	private final UserDto userDto;
-	private final ResortService resortService;
 	JFrame frame = new JFrame("Customer Menu");
 	JButton viewResortsButton = new JButton("View Resorts");
 	JButton profileButton = new JButton("Profile");
@@ -23,7 +20,6 @@ public class CustomerMenu implements ActionListener {
 
 	public CustomerMenu(UserDto userDto) {
 		this.userDto = userDto;
-		this.resortService = new DefaultResortService();
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -64,7 +60,7 @@ public class CustomerMenu implements ActionListener {
 			new Towns(frame, userDto);
 		} else if (e.getSource() == profileButton) { // For the sign up menu
 			frame.dispose();
-			new CustomerViewOrUpdateInformaton(userDto.getId());
+			new CustomerViewOrUpdateInformaton(userDto.getId(), frame);
 		} else {
 			frame.dispose();
 		}

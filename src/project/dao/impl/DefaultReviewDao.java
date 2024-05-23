@@ -19,9 +19,10 @@ import project.util.DatabaseConnectionFactory;
 
 public class DefaultReviewDao implements ReviewDao {
 	private static final Logger LOGGER = System.getLogger(DefaultReviewDao.class.getName());
-	private static final String SQL_SELECT_REVIEWS = "SELECT id, user_id, resort_id, comment, created_at, updated_at FROM review";
+	private static final String SQL_SELECT_REVIEWS = "SELECT id, user_id, resort_id, rate, comment, created_at, updated_at FROM review";
 	private static final String SQL_SELECT_REVIEW_BY_ID = SQL_SELECT_REVIEWS + " WHERE id = ?";
-	private static final String SQL_INSERT_REVIEW = "INSERT INTO review(user_id, resort_id, comment, created_at) VALUES(?, ?, ?, ?)";
+	private static final String SQL_SELECT_REVIEW_BY_RESORT_ID = SQL_SELECT_REVIEWS + " WHERE resort_id = ?";
+	private static final String SQL_INSERT_REVIEW = "INSERT INTO review(user_id, resort_id, rate, comment, created_at) VALUES(?, ?, ?, ?)";
 	private final Connection connection;
 	
 	public DefaultReviewDao() {
@@ -47,10 +48,12 @@ public class DefaultReviewDao implements ReviewDao {
 	}
 
 	@Override
-	public List<Review> getReviews() {
+	public List<Review> getReviewsByResortId(long resortId) {
 		final List<Review> reviews = new ArrayList<>();
 		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_REVIEWS)) {
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_REVIEW_BY_RESORT_ID)) {
+			int i = 1;
+			statement.setLong(i++, resortId);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				reviews.add(mapToReview(rs));
@@ -72,6 +75,7 @@ public class DefaultReviewDao implements ReviewDao {
 			int i = 1;
 			statement.setLong(i++, createReviewDto.userId());
 			statement.setLong(i++, createReviewDto.resortId());
+			statement.setInt(i++, createReviewDto.rate());
 			statement.setString(i++, createReviewDto.comment());
 			statement.setTimestamp(i++, Timestamp.from(createReviewDto.createdAt()));
 			if (statement.executeUpdate() == 0) {
@@ -102,7 +106,8 @@ public class DefaultReviewDao implements ReviewDao {
 				rs.getLong("id"),  
 				rs.getLong("user_id"),
 				rs.getLong("resort_id"),
-				rs.getString("content"),
+				rs.getInt("rate"),
+				rs.getString("comment"),
 				createdAt != null ? createdAt.toInstant() : null,
 				updatedAt != null ? updatedAt.toInstant() : null
 			);

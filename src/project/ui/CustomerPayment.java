@@ -16,7 +16,7 @@ import javax.swing.SwingConstants;
 import project.service.UserService;
 import project.service.impl.DefaultUserService;
 
-public class customerPayment implements ActionListener {
+public class CustomerPayment implements ActionListener {
 
     JFrame frame = new JFrame("Amount"); 
     JButton btnConfirm = new JButton("Confirm");
@@ -25,7 +25,7 @@ public class customerPayment implements ActionListener {
     
    
 
-    public customerPayment() {
+    public CustomerPayment() {
 		
     	JLabel lblEnterAmount = new JLabel("Enter exact amount:");
     	JTextField amount = new JTextField();

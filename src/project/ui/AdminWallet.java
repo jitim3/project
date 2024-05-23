@@ -11,19 +11,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-class AdminWallet extends JFrame implements ActionListener{
+import project.service.impl.DefaultUserService;
+
+class AdminWallet extends JFrame implements ActionListener {
+	private final JFrame frame = new JFrame("ADMIN WALLET");	
+	private final JButton widbutton = new JButton("WITHDRAW");
+	private final JButton exitbutton = new JButton("EXIT");
+	private final JLabel label = new JLabel("VIEW WALLET", SwingConstants.CENTER);
+	private final JLabel balance = new JLabel("BALANCE: ", SwingConstants.CENTER);
+	private final JLabel money = new JLabel("0.00 ", SwingConstants.CENTER);
 	
-	
-	JFrame frame = new JFrame("ADMIN WALLET");
-	
-	JButton widbutton = new JButton("WITHDRAW");
-	JButton exitbutton = new JButton("EXIT");
-	JLabel label = new JLabel("VIEW WALLET", SwingConstants.CENTER);
-	JLabel balance = new JLabel("BALANCE: ", SwingConstants.CENTER);
-	JLabel money = new JLabel("0.00 ", SwingConstants.CENTER);
-	
-	public AdminWallet(){
-		
+	public AdminWallet() {		
 		money.setBounds(200,150,300,30);
 		money.setFont(new Font("Times New Roman", Font.BOLD, 17));
 		balance.setBounds(100, 150, 300, 30);
@@ -64,14 +62,12 @@ class AdminWallet extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == widbutton) {
 			frame.dispose();
-			AdminWithdraw adminwallet = new AdminWithdraw();
+			new AdminWithdraw();
 		} else if (e.getSource() == exitbutton) {
 			frame.dispose();
-			AdminDatabaseSignup AdminsignUpwindow = new AdminDatabaseSignup(userService);
+			new AdminDatabaseSignup(new DefaultUserService());
 		} else {
 			frame.dispose();
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		}
-	
-		}
+		}	
 	}
+}

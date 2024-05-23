@@ -11,19 +11,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import project.service.UserService;
-import project.service.impl.DefaultUserService;
-
 public class LaunchPage implements ActionListener {
-	private final UserService userService;
 	private final JFrame frame = new JFrame("SouthShore Hub Oasis");
 	private final JButton getStartedButton = new JButton("Get Started");
 	private final JLabel nameLabel = new JLabel("SOUTHSHORE             HUB OASIS", SwingConstants.CENTER);
 	private final JLabel taglineLabel = new JLabel("Where Every      Stay is a Story", SwingConstants.CENTER);
 
 	public LaunchPage() {
-		this.userService = new DefaultUserService(); // Initialize userService
-
 		nameLabel.setBounds(70, 155, 500, 70);
 		nameLabel.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		taglineLabel.setBounds(95, 190, 500, 70);
@@ -58,12 +52,7 @@ public class LaunchPage implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == getStartedButton) {
 			frame.dispose();
-			Updated_Login login= new Updated_Login(userService);
-			//new Coverpage(userService); // Pass userService to Coverpage
+			new Login(frame);
 		}
-	}
-
-	public static void main(String[] args) {
-		new LaunchPage();
 	}
 }

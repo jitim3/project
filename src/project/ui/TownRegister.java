@@ -112,7 +112,7 @@ public class TownRegister implements ActionListener {
 				field.setText(null);
 				
 				if (choice == JOptionPane.YES_OPTION) {
-					new ResortInfo(resortId, resortName, this.resortService);
+					new ResortInfo(userDto.getId(), resortId, resortName, this.resortService);
 				} else {
 					frame.dispose();
 					BiFunction<UserDto, Long, Town> townToOpen = townHolder.town();

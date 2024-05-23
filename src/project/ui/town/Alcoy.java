@@ -86,7 +86,7 @@ public class Alcoy implements Town {
 			resortButton.setBounds(50, y, 400, 75);
 			resortButton.setOpaque(false);
 			resortButton.setFocusable(false);
-			resortButton.addActionListener(e -> new DisplayFrame(this.resortService, resortDto.id()));
+			resortButton.addActionListener(e -> new DisplayFrame(this.resortService, this.userDto.getId(), resortDto.id()));
 			frame.getContentPane().add(resortButton);
 			frame.add(resortButton);
 

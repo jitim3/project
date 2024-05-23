@@ -39,6 +39,7 @@ import project.util.RoomTypes;
 
 public class ResortInfo implements ActionListener {
 	private static final Logger LOGGER = System.getLogger(ResortInfo.class.getName());
+	private final long userId;
 	private final long resortId;
 	private final String resortNameCreated;
 	private final ResortService resortService;
@@ -129,7 +130,8 @@ public class ResortInfo implements ActionListener {
 	private File familyRoomImage1File;
 	private File familyRoomImage2File;
 
-	public ResortInfo(long resortId, String resortNameCreated, final ResortService resortService) {
+	public ResortInfo(long userId, long resortId, String resortNameCreated, final ResortService resortService) {
+		this.userId = userId;
 		this.resortId = resortId;
 		this.resortNameCreated = resortNameCreated;
 		this.resortService = resortService;
@@ -712,7 +714,7 @@ public class ResortInfo implements ActionListener {
 					familyRoomImage2, createdAt);
 			this.roomService.createRoom(familyRoom);
 
-			DisplayFrame DisplayFrame = new DisplayFrame(resortService, resortId);
+			DisplayFrame DisplayFrame = new DisplayFrame(resortService, userId, resortId);
 		}
 	}
 }

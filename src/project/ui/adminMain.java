@@ -1,25 +1,23 @@
 package project.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
+import project.dto.ResortDto;
 import project.service.ResortService;
-import project.service.UserService;
-import project.service.impl.DefaultUserService;
 
 
 public class adminMain implements ActionListener {
-
+	private final long userId;
+	private final ResortDto resortDto;
+	private final ResortService resortService;
     JFrame frame = new JFrame("MENU"); 
     JButton btnEditInfo = new JButton("Edit Information");
     JButton btnViewReviews = new JButton("View Reviews");
@@ -28,7 +26,10 @@ public class adminMain implements ActionListener {
     JButton btnViewTransaction = new JButton("View Transaction");
     JButton  btnExit = new JButton("EXIT");
 
-    public adminMain() {
+    public adminMain(long userId, ResortDto resortDto, ResortService resortService) {
+    	this.userId = userId;
+		this.resortDto = resortDto;
+		this.resortService = resortService;
 		
     	btnEditInfo.setFont(new Font("Times New Roman", Font.PLAIN, 10));
         btnEditInfo.setBounds(251, 53, 199, 46);
@@ -90,16 +91,16 @@ public class adminMain implements ActionListener {
     public void actionPerformed(ActionEvent e) {
     	if (e.getSource() == btnEditInfo) {
     		frame.dispose();
-            new ResortInfo(resortId, resortName, this.resortService);
+            new ResortInfo(userId, resortDto.id(), resortDto.name(), this.resortService);
         } else if (e.getSource() == btnViewReviews) {
+            frame.dispose();
             ViewReviewsAdmin review = new ViewReviewsAdmin();
-            frame.dispose();
         } else if (e.getSource() == btnViewReservation) {
+            frame.dispose();
            ViewReservationAdmin viewReserve = new ViewReservationAdmin();
-            frame.dispose();
         } else if (e.getSource() == btnViewWallet) {
-        	AdminWallet wallet = new AdminWallet();
             frame.dispose();
+        	AdminWallet wallet = new AdminWallet();
         } else if (e.getSource() == btnViewTransaction) {
         	Admin_Trasaction transaction = new Admin_Trasaction();
         	frame.dispose();

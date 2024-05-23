@@ -90,7 +90,7 @@ public class CustomerInformation implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == confirmButton) {
 			frame.dispose();
-			customerPayment window = new customerPayment();
+			CustomerPayment window = new CustomerPayment();
 			//ConfirmationMessage window = new ConfirmationMessage();
 		}
 	}
