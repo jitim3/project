@@ -12,13 +12,15 @@ import javax.swing.JLabel;
 import project.dto.ResortDto;
 
 public class ReservationChoices implements ActionListener {
+	private final long userId;
 	private final ResortDto resortDto;
 	private final JFrame frame = new JFrame("Select reservation choice");
 	private final JButton dailyUseButton = new JButton("DAILY USE");
 	private final JButton overnightButton = new JButton("OVERNIGHT");
 	private final JButton exitButton = new JButton("EXIT");
 
-	public ReservationChoices(final ResortDto resortDto) {
+	public ReservationChoices(long userId, ResortDto resortDto) {
+		this.userId = userId;
 		this.resortDto = resortDto;
 		
 		dailyUseButton.setBounds(172, 150, 150, 35);
@@ -60,10 +62,10 @@ public class ReservationChoices implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == dailyUseButton) {
 			frame.dispose();
-			DisplayCottageResort window = new DisplayCottageResort(this.resortDto);
+			DisplayCottageResort window = new DisplayCottageResort(this.userId, this.resortDto);
 		} else if (e.getSource() == overnightButton) {
 			frame.dispose();
-			DisplayRoomResort window = new DisplayRoomResort(this.resortDto);
+			DisplayRoomResort window = new DisplayRoomResort(this.userId, this.resortDto);
 		} else if (e.getSource() == exitButton) {
 			System.exit(0);
 		}

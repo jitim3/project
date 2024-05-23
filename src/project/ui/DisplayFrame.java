@@ -179,7 +179,7 @@ public class DisplayFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == reservationButton) {
 			frame.dispose();
-			ReservationChoices window = new ReservationChoices(this.resortDto);	
+			ReservationChoices window = new ReservationChoices(this.userId, this.resortDto);	
 		} else if (e.getSource() == viewReviewsButton) {
 			new Reviews(userId, resortDto.id());
 		} else if (e.getSource() == transactionButton) {

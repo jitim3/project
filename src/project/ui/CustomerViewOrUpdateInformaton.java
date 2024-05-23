@@ -42,12 +42,12 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 	private final JTextField emailAddressTextField = new JTextField();
 	private final JButton saveButton = new JButton("Save"); 
 	private final JButton backButton = new JButton("Back");
-	private final JFrame customerMenuFrame;
+	private final JFrame parentFrame;
 	private String windowEventSource = "";
 
-	public CustomerViewOrUpdateInformaton(long userId, JFrame customerMenuFrame) {
+	public CustomerViewOrUpdateInformaton(long userId, JFrame parentFrame) {
 		this.userId = userId;
-		this.customerMenuFrame = customerMenuFrame;
+		this.parentFrame = parentFrame;
 		this.customerService = new DefaultCustomerService();
 		
 		Optional<CustomerDto> customerDtoOptional = this.customerService.getCustomerById(this.userId);
@@ -118,7 +118,7 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				if (!"saveButton".equals(windowEventSource) && !"backButton".equals(windowEventSource)) {
-					customerMenuFrame.setVisible(true);
+					parentFrame.setVisible(true);
 				}
 			}
 		});
@@ -155,7 +155,7 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 		} else if (e.getSource() == backButton) {
 			this.windowEventSource = "backButton";
 			frame.dispose();
-			customerMenuFrame.setVisible(true);
+			parentFrame.setVisible(true);
 		}
 	}
 	
