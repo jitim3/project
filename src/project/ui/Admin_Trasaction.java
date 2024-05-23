@@ -60,12 +60,10 @@ public class Admin_Trasaction implements ActionListener{
 		        frame.setLayout(null);
 		        frame.setVisible(true);
 		        frame.setResizable(false);
-			}
-
-
+	 }
 
 public void actionPerformed(ActionEvent e ) {
-		
-} 
-
+	if (e.getSource() == exitButton) {
+		frame.dispose();
+	}}
 }
