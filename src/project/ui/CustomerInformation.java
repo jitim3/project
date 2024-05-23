@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -12,15 +13,42 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import project.dto.CreateReservationDto;
+import project.dto.CustomerDto;
+import project.dto.ResortDto;
+import project.service.CustomerService;
+import project.service.impl.DefaultCustomerService;
+
 public class CustomerInformation implements ActionListener {
+	private final long userId;
+	private final ResortDto resortDto;
+	private final CreateReservationDto createReservationDto;
+	private final CustomerService customerService;
 	private final JFrame frame = new JFrame("Customer Information");
-	private JTextField firstNameTextField;
-	private JTextField lastNameTextField;
-	private JTextField contactNumberTextField;
-	private JTextField emailAddressTextField;
+	private final JLabel customerInfoLabel = new JLabel("CUSTOMER INFORMATION");
+	private final JLabel firstLNameLabel = new JLabel("First Name:");	
+	private final JTextField firstNameTextField = new JTextField();	
+	private final JLabel lastNameLabel = new JLabel("Last Name:");	
+	private final JTextField lastNameTextField = new JTextField();
+	private final JLabel contactNumberLabel = new JLabel("Contact Number:");	
+	private final JTextField contactNumberTextField = new JTextField();	
+	private final JLabel emailAddressLabel = new JLabel("Email Address:");
+	private final JTextField emailAddressTextField = new JTextField();
 	private final JButton confirmButton = new JButton("Confirm");
 
-	public CustomerInformation() {
+	public CustomerInformation(long userId, ResortDto resortDto, CreateReservationDto createReservationDto) {
+		this.userId = userId;
+		this.resortDto = resortDto;
+		this.createReservationDto = createReservationDto;
+		this.customerService = new DefaultCustomerService();
+		
+		Optional<CustomerDto> customerDtoOptional = this.customerService.getCustomerById(this.userId);
+		customerDtoOptional.ifPresent(customerDto -> {
+			this.firstNameTextField.setText(customerDto.firstName());
+			this.lastNameTextField.setText(customerDto.lastName());
+			this.contactNumberTextField.setText(customerDto.contactNumber());
+			this.emailAddressTextField.setText(customerDto.emailAddress());
+		});		
 		
 		confirmButton.setBounds(300, 350, 99, 50);
 		confirmButton.setFocusable(false);
@@ -31,17 +59,7 @@ public class CustomerInformation implements ActionListener {
 		ImageIcon background = new ImageIcon("figma.jpg");
 		Image backgroundImage = background.getImage().getScaledInstance(800, 700, Image.SCALE_AREA_AVERAGING);
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-		backgroundLabel.setBounds(0, 0, 800, 700);
-
-		JLabel customerInfoLabel = new JLabel("CUSTOMER INFORMATION");
-		JLabel firstLNameLabel = new JLabel("First Name:");
-		firstNameTextField = new JTextField();
-		JLabel lastNameLabel = new JLabel("Last Name:");
-		lastNameTextField = new JTextField();
-		JLabel contactNumberLabel = new JLabel("Contact Number:");
-		contactNumberTextField = new JTextField();
-		JLabel emailAddressLabel = new JLabel("Email Address:");
-		emailAddressTextField = new JTextField();
+		backgroundLabel.setBounds(0, 0, 800, 700);		
 
 		customerInfoLabel.setBounds(180, 25, 500, 50);
 		customerInfoLabel.setFont(new Font("Times New Roman", Font.BOLD, 25));
@@ -50,21 +68,25 @@ public class CustomerInformation implements ActionListener {
 		firstLNameLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		firstNameTextField.setBounds(340, 110, 150, 25);
 		firstNameTextField.setPreferredSize(new Dimension(150, 100));
+		firstNameTextField.setEnabled(false);
 
 		lastNameLabel.setBounds(215, 70, 500, 180);
 		lastNameLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		lastNameTextField.setBounds(340, 150, 150, 25);
 		lastNameTextField.setPreferredSize(new Dimension(150, 100));
+		lastNameTextField.setEnabled(false);
 
 		contactNumberLabel.setBounds(215, 160, 500, 85);
 		contactNumberLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		contactNumberTextField.setBounds(340, 190, 150, 25);
 		contactNumberTextField.setPreferredSize(new Dimension(150, 100));
+		contactNumberTextField.setEnabled(false);
 
 		emailAddressLabel.setBounds(215, 200, 500, 85);
 		emailAddressLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		emailAddressTextField.setBounds(340, 230, 150, 25);
 		emailAddressTextField.setPreferredSize(new Dimension(150, 100));
+		emailAddressTextField.setEnabled(false);
 		
 		frame.setSize(700, 500);
 		frame.setLayout(null);
@@ -90,8 +112,7 @@ public class CustomerInformation implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == confirmButton) {
 			frame.dispose();
-			CustomerPayment window = new CustomerPayment();
-			//ConfirmationMessage window = new ConfirmationMessage();
+			new CustomerPayment(userId, resortDto, createReservationDto, frame);
 		}
 	}
 

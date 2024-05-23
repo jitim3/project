@@ -713,8 +713,8 @@ public class ResortInfo implements ActionListener {
 					familyNormalNumberOfPax, familyRoomRatePerNight, familyRoomDescription, familyRoomImage1,
 					familyRoomImage2, createdAt);
 			this.roomService.createRoom(familyRoom);
-
-			DisplayFrame DisplayFrame = new DisplayFrame(resortService, userId, resortId);
+			Admin_BusinessVerification Admin_BusinessVerification = new Admin_BusinessVerification();
+			//DisplayFrame DisplayFrame = new DisplayFrame(resortService, userId, resortId);
 		}
 	}
 }
