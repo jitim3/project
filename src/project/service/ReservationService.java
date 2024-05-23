@@ -1,20 +1,31 @@
 package project.service;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
+import project.dto.CottageReservationDto;
 import project.dto.CreateCottageReservationDto;
-import project.dto.CreateResortReservationDto;
 import project.dto.CreateRoomReservationDto;
+import project.dto.RoomReservationDto;
 import project.util.ReservationStatus;
 
-public interface ReservationService {
-	Long createResortReservation(CreateResortReservationDto createResortReservationDto);
+public interface ReservationService {	
+	Optional<RoomReservationDto> getRoomReservationById(long id);
+	
+	List<RoomReservationDto> getRoomReservations();
+	
+	List<RoomReservationDto> getRoomReservationsByCustomerId(long customerId);
+	
+	Optional<CottageReservationDto> getCottageReservationById(long id);
+	
+	List<CottageReservationDto> getCottageReservations();
+	
+	List<CottageReservationDto> getCottageReservationsByCustomerId(long customerId);
 
 	Long createRoomReservation(CreateRoomReservationDto createRoomReservationDto);
 
 	Long createCottageReservation(CreateCottageReservationDto createCottageReservationDto);	
-
-	boolean updateResortReservationStatus(long reservationResortId, ReservationStatus status, Instant updatedAt);
 
 	boolean updateRoomReservationStatus(long reservationRoomId, ReservationStatus status, Instant updatedAt);
 
