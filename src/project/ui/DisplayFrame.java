@@ -177,11 +177,11 @@ public class DisplayFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == reservationButton) {
 			frame.dispose();
-			ReservationChoices window = new ReservationChoices(this.resortDto);
+			ReservationChoices window = new ReservationChoices(this.resortDto);	
 		} else if (e.getSource() == viewReviewsButton) {
-
+			view_WriteCustomer_Reviews window = new view_WriteCustomer_Reviews();
 		} else if (e.getSource() == transactionButton) {
-
+			Admin_Trasaction window = new Admin_Trasaction();
 		} else if (e.getSource() == exitButton) {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}

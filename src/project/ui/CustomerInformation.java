@@ -21,6 +21,7 @@ public class CustomerInformation implements ActionListener {
 	private final JButton confirmButton = new JButton("Confirm");
 
 	public CustomerInformation() {
+		
 		confirmButton.setBounds(300, 350, 99, 50);
 		confirmButton.setFocusable(false);
 		confirmButton.addActionListener(this);
@@ -64,7 +65,7 @@ public class CustomerInformation implements ActionListener {
 		emailAddressLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		emailAddressTextField.setBounds(340, 230, 150, 25);
 		emailAddressTextField.setPreferredSize(new Dimension(150, 100));
-
+		
 		frame.setSize(700, 500);
 		frame.setLayout(null);
 		frame.setResizable(false);
@@ -89,7 +90,8 @@ public class CustomerInformation implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == confirmButton) {
 			frame.dispose();
-			ConfirmationMessage window = new ConfirmationMessage();
+			customerPayment window = new customerPayment();
+			//ConfirmationMessage window = new ConfirmationMessage();
 		}
 	}
 

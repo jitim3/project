@@ -38,7 +38,9 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 	private final JTextField contactNumberTextField = new JTextField();
 	private final JLabel emailAddressLabel = new JLabel("Email Address:");
 	private final JTextField emailAddressTextField = new JTextField();
-	private final JButton saveButton = new JButton("Save");
+	private final JButton saveButton = new JButton("Save"); 
+	private final JButton back = new JButton("Back");
+	private UserDto userDto;
 
 	public CustomerViewOrUpdateInformaton(long userId) {
 		this.userId = userId;
@@ -56,6 +58,10 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 		saveButton.setFocusable(false);
 		saveButton.addActionListener(this);
 
+		back.setBounds(300, 400	, 99, 50);
+		back.setFocusable(false);
+		back.addActionListener(this);
+		
 		ImageIcon icon = new ImageIcon("beach2.png");
 		ImageIcon background = new ImageIcon("figma.jpg");
 		Image backgroundImage = background.getImage().getScaledInstance(800, 700, Image.SCALE_AREA_AVERAGING);
@@ -98,6 +104,7 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 		frame.add(emailAddressLabel);
 		frame.add(emailAddressTextField);
 		frame.add(saveButton);
+		frame.add(back);
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setLocationRelativeTo(null);
@@ -132,6 +139,9 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 				JOptionPane.showMessageDialog(null, message, "Customer Info Save Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+		}else if (e.getSource()==back) {
+			frame.dispose();
+			CustomerMenu window = new CustomerMenu(this.userDto);
 		}
 	}
 	

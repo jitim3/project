@@ -71,7 +71,7 @@ public class MenuAdmin implements ActionListener {
 			frame.dispose();
 			new TownRegister(this.userDto, this.resortService);
 		} else if (e.getSource() == viewRegisteredResortButton) { // For the sign up menu
-			new ViewResort(registeredResort);
+			adminMain window = new adminMain();
 		} else {
 			frame.dispose();
 		}

@@ -67,7 +67,7 @@ public class NewWindow_SuperAdmin implements ActionListener {
 		frame.setVisible(true);
 		frame.setResizable(false);
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == enterButton) {

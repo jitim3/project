@@ -1,103 +1,110 @@
 package project.ui;
 
 import java.awt.Color;
-import java.awt.EventQueue;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
-public class adminMain extends JFrame {
+import project.service.ResortService;
+import project.service.UserService;
+import project.service.impl.DefaultUserService;
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					adminMain frame = new adminMain();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+public class adminMain implements ActionListener {
 
-	/**
-	 * Create the frame.
-	 */
-	public adminMain() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("beach2.png"));
-		setTitle("MENU");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 500);
-		contentPane = new JPanel();
-		contentPane.setForeground(new Color(0, 0, 0));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    JFrame frame = new JFrame("MENU"); 
+    JButton btnEditInfo = new JButton("Edit Information");
+    JButton btnViewReviews = new JButton("View Reviews");
+    JButton btnViewReservation = new JButton("View Reservation");
+    JButton btnViewWallet = new JButton("View Wallet");
+    JButton btnViewTransaction = new JButton("View Transaction");
+    JButton  btnExit = new JButton("EXIT");
 
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+    public adminMain() {
 		
-		JButton btnNewButton = new JButton("Edit Information");
-		btnNewButton.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-		btnNewButton.setBounds(251, 53, 199, 46);
-		btnNewButton.setFocusable(false);
-		contentPane.add(btnNewButton);
+    	btnEditInfo.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnEditInfo.setBounds(251, 53, 199, 46);
+        btnEditInfo.setFocusable(false);
+        btnEditInfo.addActionListener(this);
+        
+        btnViewReviews.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnViewReviews.setBounds(251, 119, 199, 46);
+        btnViewReviews.setFocusable(false);
+        btnViewReviews.addActionListener(this);
+        
+        btnViewReservation.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnViewReservation.setBounds(251, 192, 199, 46);
+        btnViewReservation.setFocusable(false);
+        btnViewReservation.addActionListener(this);
+        
+        btnViewWallet.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnViewWallet.setBounds(251, 264, 199, 46);
+        btnViewWallet.setFocusable(false);
+        btnViewWallet.addActionListener(this);
+        
+        btnViewTransaction.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnViewTransaction.setBounds(251, 334, 199, 46);
+        btnViewTransaction.setFocusable(false);
+        btnViewTransaction.addActionListener(this);
+        
+        btnExit.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnExit.setBounds(309, 414, 85, 21);
+        btnExit.setFocusable(false);
+        btnExit.addActionListener(this);
 		
-		JButton btnNewButton_1 = new JButton("View Reviews");
-		btnNewButton_1.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				ViewReviewsAdmin review = new ViewReviewsAdmin();
-				review.setVisible(true);
-				
-				dispose();
-			}
-		});
-		btnNewButton_1.setBounds(251, 119, 199, 46);
-		btnNewButton_1.setFocusable(false);
-		contentPane.add(btnNewButton_1);
-		
-		JButton btnNewButton_2 = new JButton("View Reservation");
-		btnNewButton_2.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-		btnNewButton_2.setBounds(251, 192, 199, 46);
-		btnNewButton_2.setFocusable(false);
-		contentPane.add(btnNewButton_2);
-		
-		JButton btnNewButton_3 = new JButton("View Wallet");
-		btnNewButton_3.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-		btnNewButton_3.setBounds(251, 264, 199, 46);
-		btnNewButton_3.setFocusable(false);
-		contentPane.add(btnNewButton_3);
-		
-		JButton btnNewButton_4 = new JButton("View Transaction");
-		btnNewButton_4.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-		btnNewButton_4.setBounds(251, 334, 199, 46);
-		btnNewButton_4.setFocusable(false);
-		contentPane.add(btnNewButton_4);
-		
-		JButton btnNewButton_5 = new JButton("EXIT");
-		btnNewButton_5.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-		btnNewButton_5.setBounds(309, 414, 85, 21);
-		btnNewButton_5.setFocusable(false);
-		contentPane.add(btnNewButton_5);
-		
-		JLabel lblNewLabel = new JLabel(".");
-		lblNewLabel.setIcon(new ImageIcon("figma.jpg"));
-		lblNewLabel.setBounds(0, 0, 686, 463);
-		contentPane.add(lblNewLabel);
-	}
+        ImageIcon image = new ImageIcon("beach2.png");
+        ImageIcon bg = new ImageIcon("figma.jpg");
+
+        Image backgroundImage = bg.getImage().getScaledInstance(700, 500, Image.SCALE_DEFAULT);
+        JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
+        backgroundLabel.setBounds(0, 0, 700, 500);
+        
+
+        frame.setIconImage(image.getImage());
+        frame.setSize(700, 500);
+        frame.setLayout(null); 
+        frame.setResizable(false);
+        frame.add(btnEditInfo);
+        frame.add(btnViewReviews);
+        frame.add(btnViewReservation);
+        frame.add(btnViewWallet);
+        frame.add(btnViewTransaction);
+        frame.add(btnExit);
+        frame.add(backgroundLabel); 
+        frame.add(backgroundLabel);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+    	if (e.getSource() == btnEditInfo) {
+    		frame.dispose();
+            new ResortInfo(resortId, resortName, this.resortService);
+        } else if (e.getSource() == btnViewReviews) {
+            ViewReviewsAdmin review = new ViewReviewsAdmin();
+            frame.dispose();
+        } else if (e.getSource() == btnViewReservation) {
+           ViewReservationAdmin viewReserve = new ViewReservationAdmin();
+            frame.dispose();
+        } else if (e.getSource() == btnViewWallet) {
+        	AdminWallet wallet = new AdminWallet();
+            frame.dispose();
+        } else if (e.getSource() == btnViewTransaction) {
+        	Admin_Trasaction transaction = new Admin_Trasaction();
+        	frame.dispose();
+        } else if (e.getSource() == btnExit) {
+            frame.dispose();
+        }
+    }
 }

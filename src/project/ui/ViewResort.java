@@ -16,6 +16,7 @@ public class ViewResort {
 			this.frame.add(resortLabel);
 		}
 
+		
 		frame.setSize(500, 550);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
