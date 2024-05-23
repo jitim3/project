@@ -103,7 +103,7 @@ public class TownRegister implements ActionListener {
 					.findFirst();
 			selectedTownHolderOptional.ifPresent(townHolder -> {
 				int townId = townHolder.townId();
-				long resortId = this.resortService.createResort(new CreateResortDto(resortName, this.userDto.getId(), townId, Instant.now()));
+			    long resortId = this.resortService.createResort(new CreateResortDto(resortName, this.userDto.getId(), townId, Instant.now()));
 				
 				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
 				int choice = JOptionPane.showConfirmDialog(null, "Do you want to proceed to Register Information Fill up?", "Confirmation", JOptionPane.YES_NO_OPTION);

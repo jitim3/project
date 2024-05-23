@@ -57,7 +57,7 @@ public Checkin(){
 	
 		ImageIcon icon = new ImageIcon("beach2.png");
 		 
-		ImageIcon background = new ImageIcon("figmapic.jpg");
+		ImageIcon background = new ImageIcon("figma.jpg");
 		Image backgroundImage = background.getImage().getScaledInstance(500,500, Image.SCALE_AREA_AVERAGING);
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 		backgroundLabel.setBounds(0, 0, 500,500);
@@ -72,7 +72,7 @@ public Checkin(){
 			
 			@Override
 			public String valueToString(Object value) throws ParseException {
-				// TODO Auto-generated method stub
+				// TODO Auto-generated method 
 				if (value != null) {
 					
 				Calendar calendar = (Calendar) value;

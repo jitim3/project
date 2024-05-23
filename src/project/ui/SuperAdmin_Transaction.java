@@ -19,7 +19,7 @@ public class SuperAdmin_Transaction implements ActionListener {
 	private final JLabel dateLabel = new JLabel("Date");
 	private final JLabel timeLabel = new JLabel("Time");
 	private final JLabel descriptionLabel = new JLabel("Description");
-	private final JButton exitButton = new JButton("Exit");
+	private final JButton exitButton = new JButton("Back");
 	private final JFrame superAdminNextPagFrame;
 
 	public SuperAdmin_Transaction(JFrame superAdminNextPagFrame) {

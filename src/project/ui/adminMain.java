@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import project.service.ResortService;
 import project.service.UserService;
 import project.service.impl.DefaultUserService;
 
@@ -60,7 +61,7 @@ public class adminMain implements ActionListener {
         btnExit.addActionListener(this);
 		
         ImageIcon image = new ImageIcon("beach2.png");
-        ImageIcon bg = new ImageIcon("bgdagat.jpg");
+        ImageIcon bg = new ImageIcon("figma.jpg");
 
         Image backgroundImage = bg.getImage().getScaledInstance(700, 500, Image.SCALE_DEFAULT);
         JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
@@ -88,7 +89,8 @@ public class adminMain implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
     	if (e.getSource() == btnEditInfo) {
-            ResortInfo window = new ResortInfo();
+    		frame.dispose();
+            new ResortInfo(resortId, resortName, this.resortService);
         } else if (e.getSource() == btnViewReviews) {
             ViewReviewsAdmin review = new ViewReviewsAdmin();
             frame.dispose();
@@ -99,7 +101,7 @@ public class adminMain implements ActionListener {
         	AdminWallet wallet = new AdminWallet();
             frame.dispose();
         } else if (e.getSource() == btnViewTransaction) {
-        	//Admin_Trasaction transaction = new Admin_Trasaction();
+        	Admin_Trasaction transaction = new Admin_Trasaction();
         	frame.dispose();
         } else if (e.getSource() == btnExit) {
             frame.dispose();
