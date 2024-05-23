@@ -5,10 +5,10 @@ import project.dao.impl.DefaultPaymentDao;
 import project.dto.CreatePaymentDto;
 import project.service.PaymentService;
 
-public class DefaulyPaymentDao implements PaymentService {
+public class DefaultPaymentService implements PaymentService {
 	private final PaymentDao paymentDao;
 
-	public DefaulyPaymentDao() {
+	public DefaultPaymentService() {
 		this.paymentDao = new DefaultPaymentDao();
 	}
 
