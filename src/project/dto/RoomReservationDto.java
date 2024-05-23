@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
-public record CreateResortReservationDto(
+public record RoomReservationDto(
+		long id,
 		long userId,
-		long resortId,
+		long roomId,
 		LocalDate startDate,
 		LocalDate endDate,
 		String status,
 		BigDecimal amount,
-		Instant createdAt) {
+		Instant createdAt,
+		Instant updatedAt) {
 }
