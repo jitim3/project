@@ -135,8 +135,8 @@ CREATE TABLE IF NOT EXISTS room_reservation (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
-	CONSTRAINT fk_reservation_cottage_user_id FOREIGN KEY (user_id) REFERENCES user (id),
-	CONSTRAINT fk_reservation_cottage_room_id FOREIGN KEY (room_id) REFERENCES room (id)
+	CONSTRAINT fk_room_reservation_user_id FOREIGN KEY (user_id) REFERENCES user (id),
+	CONSTRAINT fk_room_reservation_room_id FOREIGN KEY (room_id) REFERENCES room (id)
 );
 
 CREATE TABLE IF NOT EXISTS cottage_reservation (
@@ -149,8 +149,8 @@ CREATE TABLE IF NOT EXISTS cottage_reservation (
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
-	CONSTRAINT fk_reservation_cottage_user_id FOREIGN KEY (user_id) REFERENCES user (id),
-	CONSTRAINT fk_reservation_cottage_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
+	CONSTRAINT fk_cottage_reservation_user_id FOREIGN KEY (user_id) REFERENCES user (id),
+	CONSTRAINT fk_cottage_reservation_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
 );
 
 CREATE TABLE IF NOT EXISTS payment (
