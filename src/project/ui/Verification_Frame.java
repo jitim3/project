@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class Verification_Frame extends JFrame implements ActionListener{
 	JFrame frame = new JFrame("");
@@ -96,7 +97,7 @@ public class Verification_Frame extends JFrame implements ActionListener{
            }
 		}else if(e.getSource()==submitImage) {
 			frame.dispose();
-			displayBusinessPermit window = new displayBusinessPermit(selectedImageFile.getAbsolutePath());
+			JOptionPane.showMessageDialog(this, "SUBMITTED.", "VERIFICATION", JOptionPane.INFORMATION_MESSAGE);
 		}else if(e.getSource()==exit) {
 			System.exit(0);
 		}
