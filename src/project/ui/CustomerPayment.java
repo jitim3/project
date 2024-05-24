@@ -1,25 +1,5 @@
 package project.ui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
 import project.dto.CreateCottageReservationDto;
 import project.dto.CreateReservationDto;
 import project.dto.CreateRoomReservationDto;
@@ -27,7 +7,23 @@ import project.dto.ResortDto;
 import project.service.ReservationService;
 import project.service.impl.DefaultReservationService;
 
-public class CustomerPayment implements ActionListener {
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.math.BigDecimal;
+import java.time.Instant;
+
+public class CustomerPayment {
 	private final ReservationService reservationService;
 	private final long userId;
 	private final ResortDto resortDto;
@@ -63,9 +59,11 @@ public class CustomerPayment implements ActionListener {
 
 		confirmButton.setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		confirmButton.setBounds(247, 223, 89, 23);
+		confirmButton();
 
 		backButton.setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		backButton.setBounds(101, 223, 89, 23);
+		backButton.addActionListener(actionEvent -> frame.dispose());
 
 		displayTotal.setBounds(101, 25, 235, 82);
 		displayTotal.setOpaque(true);
@@ -103,9 +101,8 @@ public class CustomerPayment implements ActionListener {
 		});
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == confirmButton) {
+	private void confirmButton() {
+		confirmButton.addActionListener(actionEvent -> {
 			windowEventSource = "confirmButton";
 			frame.dispose();
 			BigDecimal amount;
@@ -115,9 +112,9 @@ public class CustomerPayment implements ActionListener {
 				JOptionPane.showMessageDialog(null, "Invalid amount. Please enter amount.", "Payment Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
+
 			Long reservationId = null;
-			
+
 			if (createReservationDto instanceof CreateRoomReservationDto createRoomReservationDto) {
 				CreateRoomReservationDto newRoomReservationDto = createRoomReservationDto
 						.amount(amount)
@@ -129,14 +126,12 @@ public class CustomerPayment implements ActionListener {
 						.createdAt(Instant.now());
 				reservationId = this.reservationService.createCottageReservation(newCottageReservationDto);
 			}
-			
+
 			if (reservationId == null || reservationId == 0) {
 				JOptionPane.showMessageDialog(null, "Reservation was not successful. Please try again.", "Reservation Error", JOptionPane.ERROR_MESSAGE);
-			} else {			
+			} else {
 				new ConfirmationMessage();
 			}
-		} else if (e.getSource() == backButton) {
-			frame.dispose();
-		}
+		});
 	}
 }

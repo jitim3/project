@@ -62,10 +62,10 @@ public class ReservationChoices implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == dailyUseButton) {
 			frame.dispose();
-			DisplayCottageResort window = new DisplayCottageResort(this.userId, this.resortDto);
+			new DisplayCottageResort(this.userId, this.resortDto);
 		} else if (e.getSource() == overnightButton) {
 			frame.dispose();
-			DisplayRoomResort window = new DisplayRoomResort(this.userId, this.resortDto);
+			new DisplayRoomResort(this.userId, this.resortDto);
 		} else if (e.getSource() == exitButton) {
 			System.exit(0);
 		}
