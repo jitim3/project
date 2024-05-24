@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,8 +22,11 @@ class AdminWallet extends JFrame implements ActionListener {
 	private final JLabel label = new JLabel("VIEW WALLET", SwingConstants.CENTER);
 	private final JLabel balance = new JLabel("BALANCE: ", SwingConstants.CENTER);
 	private final JLabel money = new JLabel("0.00 ", SwingConstants.CENTER);
+	private final JFrame parentFrame;
+	private String windowEventSource = "";
 	
-	public AdminWallet() {		
+	public AdminWallet(JFrame parentFrame) {	
+		this.parentFrame = parentFrame;	
 		money.setBounds(200,150,300,30);
 		money.setFont(new Font("Times New Roman", Font.BOLD, 17));
 		balance.setBounds(100, 150, 300, 30);
@@ -54,16 +59,26 @@ class AdminWallet extends JFrame implements ActionListener {
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setSize(700,500);
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
-		
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if(!"widbutton".equals(windowEventSource) && !"exitbutton".equals(windowEventSource)) {
+					parentFrame.setVisible(true);
+				}
+			}
+		});
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == widbutton) {
+			this.windowEventSource = "widbutton";
 			frame.dispose();
 			new AdminWithdraw();
 		} else if (e.getSource() == exitbutton) {
+			this.windowEventSource = "exitbutton";
 			frame.dispose();
 			new AdminDatabaseSignup(new DefaultUserService());
 		} else {
