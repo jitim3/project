@@ -22,7 +22,7 @@ public class DefaultReviewDao implements ReviewDao {
 	private static final String SQL_SELECT_REVIEWS = "SELECT id, user_id, resort_id, rate, comment, created_at, updated_at FROM review";
 	private static final String SQL_SELECT_REVIEW_BY_ID = SQL_SELECT_REVIEWS + " WHERE id = ?";
 	private static final String SQL_SELECT_REVIEW_BY_RESORT_ID = SQL_SELECT_REVIEWS + " WHERE resort_id = ?";
-	private static final String SQL_INSERT_REVIEW = "INSERT INTO review(user_id, resort_id, rate, comment, created_at) VALUES(?, ?, ?, ?)";
+	private static final String SQL_INSERT_REVIEW = "INSERT INTO review(user_id, resort_id, rate, comment, created_at) VALUES(?, ?, ?, ?, ?)";
 	private final Connection connection;
 	
 	public DefaultReviewDao() {
