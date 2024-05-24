@@ -183,7 +183,7 @@ public class DisplayFrame implements ActionListener {
 		} else if (e.getSource() == viewReviewsButton) {
 			new Reviews(userId, resortDto.id());
 		} else if (e.getSource() == transactionButton) {
-			Admin_Trasaction window = new Admin_Trasaction();
+			Admin_Trasaction window = new Admin_Trasaction(frame);
 		} else if (e.getSource() == exitButton) {
 			frame.dispose();
 		}

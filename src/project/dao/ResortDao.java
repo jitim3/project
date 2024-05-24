@@ -1,5 +1,6 @@
 package project.dao;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,6 @@ public interface ResortDao {
 	Long createResort(CreateResortDto createResortDto);
 	
 	boolean updateResort(UpdateResortDto updateResortDto);
+	
+	boolean updatePermitImage(long resortId, String permitImage, Instant updatedAt);
 }

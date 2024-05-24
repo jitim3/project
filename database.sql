@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS resort (
 	cottage_image VARCHAR (255) NULL,
 	town_id INT NOT NULL,
 	user_id BIGINT NOT NULL,
+	permit_image VARCHAR(255) NULL,
 	approved BOOLEAN NOT NULL DEFAULT FALSE,
 	approved_by VARCHAR(255) NULL,
 	approved_at DATETIME NULL,

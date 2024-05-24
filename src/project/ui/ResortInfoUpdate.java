@@ -30,8 +30,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import project.dto.CreateRoomDto;
+import project.dto.ResortDto;
+import project.dto.RoomDto;
 import project.dto.UpdateResortDto;
+import project.dto.UpdateRoomDto;
 import project.service.ResortService;
 import project.service.RoomService;
 import project.service.impl.DefaultRoomService;
@@ -39,18 +41,17 @@ import project.util.AppUtils;
 import project.util.RoomAvailabilityTypes;
 import project.util.RoomTypes;
 
-public class ResortInfo implements ActionListener {
-	private static final Logger LOGGER = System.getLogger(ResortInfo.class.getName());
+public class ResortInfoUpdate implements ActionListener {
+	private static final Logger LOGGER = System.getLogger(ResortInfoUpdate.class.getName());
 	private final long userId;
-	private final long resortId;
-	private final String resortNameCreated;
+	private final ResortDto resortDto;
 	private final ResortService resortService;
 	private final RoomService roomService;
 
 	// ==> FRAME
-	private final JFrame frame = new JFrame("Fill up");
+	private final JFrame frame = new JFrame("Edit");
 	// ==> LABELS
-	private final JLabel label = new JLabel("Fill up resort information");
+	private final JLabel label = new JLabel("Edit resort information");
 	private final JLabel resortInformation = new JLabel("RESORT DETAILS INFORMATION");
 	private final JLabel resortName = new JLabel("Name of the resort");
 	private final JLabel uploadResort = new JLabel("Upload image of the resort");
@@ -133,16 +134,16 @@ public class ResortInfo implements ActionListener {
 	private File familyRoomImage2File;
 	private final JFrame parentFrame;
 	private String windowEventSource = "";
+	
+	private RoomDto normalRoomDto;
+	private RoomDto familyRoomDto;
 
-	public ResortInfo(JFrame parentFrame, long userId, long resortId, String resortNameCreated, final ResortService resortService) {
+	public ResortInfoUpdate(JFrame parentFrame, long userId, ResortDto resortDto, final ResortService resortService) {
 		this.parentFrame = parentFrame;
 		this.userId = userId;
-		this.resortId = resortId;
-		this.resortNameCreated = resortNameCreated;
+		this.resortDto = resortDto;
 		this.resortService = resortService;
-		this.roomService = new DefaultRoomService();
-
-		this.resortNameTextField.setText(this.resortNameCreated);
+		this.roomService = new DefaultRoomService();	
 
 		// ==> FOR LABELS
 		label.setBounds(250, 15, 400, 80);
@@ -458,6 +459,82 @@ public class ResortInfo implements ActionListener {
 
 		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		// Display existing data
+		this.resortNameTextField.setText(this.resortDto.name());
+		this.resortLocationTextField.setText(this.resortDto.location());
+		this.resortDescriptionTextArea.setText(this.resortDto.description());
+		this.howToGetThereTextArea.setText(this.resortDto.howToGetThere());
+		String resortImagePath = AppUtils.imagePath(this.resortDto.resortImage()).orElse("");
+		ImageIcon resortImageIcon = new ImageIcon(resortImagePath);
+		Image resortImage = resortImageIcon.getImage().getScaledInstance(resortImageLabel.getWidth(),
+				resortImageLabel.getHeight(), Image.SCALE_SMOOTH);
+		resortImageLabel.setIcon(new ImageIcon(resortImage));
+		String poolImagePath = AppUtils.imagePath(this.resortDto.poolImage()).orElse("");
+		ImageIcon poolImageIcon = new ImageIcon(poolImagePath);
+		Image poolImage = poolImageIcon.getImage().getScaledInstance(poolImageLabel.getWidth(),
+				poolImageLabel.getHeight(), Image.SCALE_SMOOTH);
+		poolImageLabel.setIcon(new ImageIcon(poolImage));
+		String cottageImagePath = AppUtils.imagePath(this.resortDto.cottageImage()).orElse("");
+		ImageIcon cottageImageIcon = new ImageIcon(cottageImagePath);
+		Image cottageImage = cottageImageIcon.getImage().getScaledInstance(cottageImageLabel.getWidth(),
+				cottageImageLabel.getHeight(), Image.SCALE_SMOOTH);
+		cottageImageLabel.setIcon(new ImageIcon(cottageImage));
+		String resortFee = this.resortDto.resortFee() != null ? this.resortDto.resortFee().toString() : "";
+		this.resortEntranceFeeTextField.setText(resortFee);
+		String cottageFee = this.resortDto.cottageFee() != null ? this.resortDto.cottageFee().toString() : "";
+		this.resortCottageFeeTextField.setText(cottageFee);
+		String poolFee = this.resortDto.poolFee() != null ? this.resortDto.poolFee().toString() : "";
+		this.resortPoolFeeTextField.setText(poolFee);
+		
+		Optional<RoomDto> normalRoomDtoOptional = this.resortDto.roomDtos().stream()
+				.filter(roomDto -> RoomTypes.NORMAL.value().equals(roomDto.roomType())).findFirst();
+		if (normalRoomDtoOptional.isPresent()) {
+			normalRoomDto = normalRoomDtoOptional.get();
+			int normalRoomNumberOfPaxValue = normalRoomDto.numberOfPax();
+			BigDecimal ratePerNight = normalRoomDto.ratePerNight();
+			String normalRoomRatePerNightValue = ratePerNight != null ? ratePerNight.toString() : "";
+			
+			this.roomAvailabilityTypeComboBox.setSelectedItem(normalRoomDto.roomAvailabilityTypeDto().name());
+			
+			this.normalRoomNumberOfPaxTextField.setText(String.valueOf(normalRoomNumberOfPaxValue));
+			this.normalRoomRatePerNightTextField.setText(normalRoomRatePerNightValue);
+			this.normalRoomDescriptionTextArea.setText(normalRoomDto.description());
+			String normalRoomImagePath1 = AppUtils.imagePath(normalRoomDto.roomImage1()).orElse("");
+			ImageIcon normalRoomImageIcon1 = new ImageIcon(normalRoomImagePath1);
+			Image normalRoomImage1 = normalRoomImageIcon1.getImage().getScaledInstance(normalRoomImage1Label.getWidth(),
+					normalRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
+			normalRoomImage1Label.setIcon(new ImageIcon(normalRoomImage1));
+			String normalRoomImagePath2 = AppUtils.imagePath(normalRoomDto.roomImage1()).orElse("");
+			ImageIcon normalRoomImageIcon2 = new ImageIcon(normalRoomImagePath2);
+			Image normalRoomImage2 = normalRoomImageIcon2.getImage().getScaledInstance(normalRoomImage2Label.getWidth(),
+					normalRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
+			normalRoomImage2Label.setIcon(new ImageIcon(normalRoomImage2));
+		}
+
+		Optional<RoomDto> familyRoomDtoOptional = this.resortDto.roomDtos().stream()
+				.filter(roomDto -> RoomTypes.FAMILY.value().equals(roomDto.roomType())).findFirst();
+		if (familyRoomDtoOptional.isPresent()) {
+			familyRoomDto = familyRoomDtoOptional.get();
+			int familyRoomNumberOfPaxValue = familyRoomDto.numberOfPax();
+			BigDecimal ratePerNight = familyRoomDto.ratePerNight();
+			String familyRoomRatePerNightValue = ratePerNight != null ? ratePerNight.toString() : "";	
+			
+			this.familyRoomNumberPaxTextField.setText(String.valueOf(familyRoomNumberOfPaxValue));
+			this.familyRoomRatePerNightTextField.setText(familyRoomRatePerNightValue);
+			this.familyRoomDescriptionTextArea.setText(familyRoomDto.description());
+			String familyRoomImagePath1 = AppUtils.imagePath(familyRoomDto.roomImage1()).orElse("");
+			ImageIcon familyRoomImageIcon1 = new ImageIcon(familyRoomImagePath1);
+			Image familyRoomImage1 = familyRoomImageIcon1.getImage().getScaledInstance(familyRoomImage1Label.getWidth(),
+					familyRoomImage1Label.getHeight(), Image.SCALE_SMOOTH);
+			familyRoomImage1Label.setIcon(new ImageIcon(familyRoomImage1));
+			String familyRoomImagePath2 = AppUtils.imagePath(familyRoomDto.roomImage1()).orElse("");
+			ImageIcon familyRoomImageIcon2 = new ImageIcon(familyRoomImagePath2);
+			Image familyRoomImage2 = familyRoomImageIcon2.getImage().getScaledInstance(familyRoomImage2Label.getWidth(),
+					familyRoomImage2Label.getHeight(), Image.SCALE_SMOOTH);
+			familyRoomImage2Label.setIcon(new ImageIcon(familyRoomImage2));
+		}
+		// End: Display existing data
 
 		frame.setContentPane(scrollPane);
 		frame.setIconImage(icon.getImage());
@@ -467,14 +544,12 @@ public class ResortInfo implements ActionListener {
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
-
 			@Override
 			public void windowClosed(WindowEvent e) {
 				if (!"displayButton".equals(windowEventSource)) {
 					parentFrame.setVisible(true);
 				}
-			}
-			
+			}			
 		});
 		/*
 		 * frame.add(uploadResort); frame.add(browse); frame.add(resortNameField);
@@ -615,6 +690,9 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + resortImage + " was not saved.");
 				}
 			}
+			
+			resortImage = resortImage == null ? resortDto.resortImage() : resortImage;
+			
 			String poolImage = null;
 			Optional<String> poolImageFilenameOptional = AppUtils.generateFilename(poolImageFile);
 			if (poolImageFilenameOptional.isPresent()) {
@@ -626,6 +704,9 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + poolImage + " was not saved.");
 				}
 			}
+			
+			poolImage = poolImage == null ? resortDto.poolImage() : poolImage;
+			
 			String cottageImage = null;
 			Optional<String> cottageImageFilenameOptional = AppUtils.generateFilename(cottageImageFile);
 			if (cottageImageFilenameOptional.isPresent()) {
@@ -637,10 +718,13 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + cottageImage + " was not saved.");
 				}
 			}
+			
+			cottageImage = cottageImage == null ? resortDto.cottageImage() : cottageImage;
+			
 			Instant updatedAt = Instant.now();
 			Instant createdAt = updatedAt;
 
-			UpdateResortDto updateResortDto = new UpdateResortDto(resortId, description, location, howToGetThere,
+			UpdateResortDto updateResortDto = new UpdateResortDto(resortDto.id(), description, location, howToGetThere,
 					resortFee, cottageFee, poolFee, resortImage, poolImage, cottageImage, updatedAt);
 			this.resortService.updateResort(updateResortDto);
 
@@ -673,6 +757,9 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + normalRoomImage1 + " was not saved.");
 				}
 			}
+			
+			normalRoomImage1 = normalRoomImage1 == null ? normalRoomDto.roomImage2() : normalRoomImage1;
+			
 			String normalRoomImage2 = null;
 			Optional<String> normalRoomImage2NewFilenameOptional = AppUtils.generateFilename(normalRoomImage2File);
 			if (normalRoomImage2NewFilenameOptional.isPresent()) {
@@ -684,10 +771,20 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + normalRoomImage2 + " was not saved.");
 				}
 			}
-			CreateRoomDto normalRoom = new CreateRoomDto(resortId, roomAvailabilityTypeId, RoomTypes.NORMAL.value(),
-					normalNormalNumberOfPax, normalRoomRatePerNight, normalRoomDescription, normalRoomImage1,
-					normalRoomImage2, createdAt);
-			this.roomService.createRoom(normalRoom);
+			
+			normalRoomImage2 = normalRoomImage2 == null ? normalRoomDto.roomImage2() : normalRoomImage2;
+			
+			UpdateRoomDto normalRoom = new UpdateRoomDto(
+					normalRoomDto.id(),
+					roomAvailabilityTypeId, 
+					normalNormalNumberOfPax, 
+					normalRoomRatePerNight, 
+					normalRoomDescription, 
+					normalRoomImage1,
+					normalRoomImage2, 
+					updatedAt
+				);
+			this.roomService.updateRoom(normalRoom);
 
 			// Family room
 			int familyNormalNumberOfPax;
@@ -714,6 +811,9 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + familyRoomImage1 + " was not saved.");
 				}
 			}
+			
+			familyRoomImage1 = familyRoomImage1 == null ? normalRoomDto.roomImage2() : familyRoomImage1;
+			
 			String familyRoomImage2 = null;
 			Optional<String> familyRoomImage2NewFilenameOptional = AppUtils.generateFilename(familyRoomImage2File);
 			if (familyRoomImage2NewFilenameOptional.isPresent()) {
@@ -725,11 +825,22 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + familyRoomImage2 + " was not saved.");
 				}
 			}
-			CreateRoomDto familyRoom = new CreateRoomDto(resortId, roomAvailabilityTypeId, RoomTypes.FAMILY.value(),
-					familyNormalNumberOfPax, familyRoomRatePerNight, familyRoomDescription, familyRoomImage1,
-					familyRoomImage2, createdAt);
-			this.roomService.createRoom(familyRoom);
-			new DisplayFrame(resortService, userId, resortId);
+			
+			familyRoomImage2 = familyRoomImage2 == null ? normalRoomDto.roomImage2() : familyRoomImage2;
+			
+			UpdateRoomDto familyRoom = new UpdateRoomDto(
+					familyRoomDto.id(),
+					roomAvailabilityTypeId, 
+					familyNormalNumberOfPax, 
+					familyRoomRatePerNight, 
+					familyRoomDescription, 
+					familyRoomImage1,
+					familyRoomImage2, 
+					updatedAt
+				);
+			this.roomService.updateRoom(familyRoom);
+			
+			new Verification_Frame(resortDto.id(), resortService);
 		}
 	}
 }

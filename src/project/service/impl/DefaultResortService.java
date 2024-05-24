@@ -1,5 +1,6 @@
 package project.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +89,11 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 		return this.resortDao.updateResort(updateResortDto);
 	}
 	
+	@Override
+	public boolean updatePermitImage(long resortId, String permitImage, Instant updatedAt) {
+		return this.resortDao.updatePermitImage(resortId, permitImage, updatedAt);
+	}
+
 	private ResortDto mapToResortDto(Resort resort, List<Room> rooms, Town town) {
 		return new ResortDto(
 				resort.id(), 
@@ -105,6 +111,7 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 					.map(super::mapToRoomDto)
 					.toList(), 
 				super.mapToTownDto(town),
+				resort.permitImage(),
 				resort.approved(),
 				resort.approvedBy(),
 				resort.approvedAt(), 

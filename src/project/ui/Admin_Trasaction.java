@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,16 +13,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class Admin_Trasaction implements ActionListener {
+	private final JFrame frame = new JFrame("ADMIN TRANSACTION");
+	private final JLabel label = new JLabel("VIEW TRANSACTION");
+	private final JLabel details = new JLabel("Transaction Details: ");
+	private final JLabel date = new JLabel("Date");
+	private final JLabel time = new JLabel("Time");
+	private final JLabel transaction = new JLabel("Description");
+	private final JButton exitButton = new JButton("Exit");
+	private final JFrame parentFrame;
 
-	JFrame frame = new JFrame("ADMIN TRANSACTION");
-	JLabel label = new JLabel("VIEW TRANSACTION");
-	JLabel details = new JLabel("Transaction Details: ");
-	JLabel date = new JLabel("Date");
-	JLabel time = new JLabel("Time");
-	JLabel transaction = new JLabel("Description");
-	JButton exitButton = new JButton("Exit");
-
-	public Admin_Trasaction() {
+	public Admin_Trasaction(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 		label.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		label.setBounds(200, 40, 500, 30);
 
@@ -61,6 +64,12 @@ public class Admin_Trasaction implements ActionListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.setResizable(false);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				parentFrame.setVisible(true);
+			}
+		});
 	}
 
 	public void actionPerformed(ActionEvent e) {
