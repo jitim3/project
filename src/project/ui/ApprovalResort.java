@@ -20,7 +20,7 @@ public class ApprovalResort implements ActionListener {
 
 	public ApprovalResort(JFrame superAdminNextPagFrame) {
 		this.superAdminNextPagFrame = superAdminNextPagFrame;
-
+ 
 		exitButton.setBounds(275, 350, 150, 40);
 		exitButton.addActionListener(this);
 		exitButton.setFocusable(false);
