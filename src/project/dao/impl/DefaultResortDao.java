@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class DefaultResortDao implements ResortDao {
 	private static final Logger LOGGER = System.getLogger(DefaultResortDao.class.getName());
 	private static final String SQL_SELECT_RESORTS = """
 			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
-			resort_image, pool_image, cottage_image, town_id, user_id, approved, approved_by, approved_at, created_at, updated_at 
+			resort_image, pool_image, cottage_image, town_id, user_id, permit_image, approved, approved_by, approved_at, created_at, updated_at 
 			FROM resort
 			""";
 	private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
@@ -39,6 +40,7 @@ public class DefaultResortDao implements ResortDao {
 			cottage_fee = ?, pool_fee = ?, resort_image = ?, pool_image = ?, cottage_image = ?, updated_at = ?
 			WHERE id = ?
 			""";
+	private static final String SQL_UPDATE_RESORT_PERMIT_IMAGE = "UPDATE resort SET permit_image = ?, updated_at = ? WHERE id = ?";
 	private final Connection connection;
 	
 	public DefaultResortDao() {
@@ -191,7 +193,23 @@ public class DefaultResortDao implements ResortDao {
 			statement.setTimestamp(i++, Timestamp.from(updateResortDto.updatedAt()));
 			statement.setLong(i++, updateResortDto.id());
 			
-			return statement.executeUpdate() == 0;
+			return statement.executeUpdate() > 0;
+		} catch (SQLException e) {
+			LOGGER.log(Level.ERROR, e);
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean updatePermitImage(long resortId, String permitImage, Instant updatedAt) {
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_UPDATE_RESORT_PERMIT_IMAGE)) {
+			int i = 1;
+			statement.setString(i++, permitImage);
+			statement.setTimestamp(i++, Timestamp.from(updatedAt));
+			statement.setLong(i++, resortId);
+			
+			return statement.executeUpdate() > 0;
 		} catch (SQLException e) {
 			LOGGER.log(Level.ERROR, e);
 		}
@@ -218,6 +236,7 @@ public class DefaultResortDao implements ResortDao {
 				rs.getString("cottage_image"), 
 				rs.getLong("user_id"), 
 				rs.getInt("town_id"),
+				rs.getString("permit_image"),
 				rs.getBoolean("approved"),
 				rs.getString("approved_by"),
 				approvedAt != null ? approvedAt.toInstant() : null,

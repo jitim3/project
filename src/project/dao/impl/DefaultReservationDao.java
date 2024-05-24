@@ -16,8 +16,6 @@ import java.util.Optional;
 
 import project.dao.ReservationDao;
 import project.dao.entity.CottageReservation;
-import project.dao.entity.Customer;
-import project.dao.entity.Resort;
 import project.dao.entity.RoomReservation;
 import project.dto.CreateCottageReservationDto;
 import project.dto.CreateRoomReservationDto;
