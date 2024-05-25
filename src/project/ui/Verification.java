@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.System.Logger;
@@ -19,24 +21,28 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import project.service.ResortService;
 import project.util.AppUtils;
 
-public class Verification_Frame extends JFrame implements ActionListener {
-	private static final Logger LOGGER = System.getLogger(Verification_Frame.class.getName());
+public class Verification extends JFrame implements ActionListener {
+	private static final Logger LOGGER = System.getLogger(Verification.class.getName());
 	private final long resortId;
 	private final ResortService resortService;
-	JFrame frame = new JFrame("");
-	JLabel label = new JLabel("BUSINESS VERIFICATION");
-	JLabel label1 = new JLabel("PLEASE UPLOAD YOUR BUSINESS PERMIT");
+	private final JFrame frame = new JFrame("");
+	private final JLabel label = new JLabel("BUSINESS VERIFICATION");
+	private final JLabel label1 = new JLabel("PLEASE UPLOAD YOUR BUSINESS PERMIT");
 	private File selectedImageFile; // RESORT BUSINESS PERMIT DISPLAY
-	JLabel selectedImageLabel = new JLabel(); // USED FOR UPLOAD BUSINESS PERMIT PICTURE
-	JButton uploadImage = new JButton("UPLOAD IMAGE");
-	JButton submitImage = new JButton("SUBMIT IMAGE");
-	JButton exit = new JButton("EXIT");
+	private final JLabel selectedImageLabel = new JLabel(); // USED FOR UPLOAD BUSINESS PERMIT PICTURE
+	private final JButton uploadImage = new JButton("UPLOAD IMAGE");
+	private final JButton submitImage = new JButton("SUBMIT IMAGE");
+	private final JButton exit = new JButton("EXIT");
+	private final JFrame parentFrame;
+	private String windowEventSource = "";
 
-	public Verification_Frame(long resortId, ResortService resortService) {
+	public Verification(JFrame parentFrame, long resortId, ResortService resortService) {
+		this.parentFrame = parentFrame;
 		this.resortId = resortId;
 		this.resortService = resortService;
 
@@ -77,18 +83,26 @@ public class Verification_Frame extends JFrame implements ActionListener {
 		frame.add(selectedImageLabel);
 		frame.add(label1);
 		frame.add(label);
+		frame.add(backgroundLabel);
 		frame.setLayout(null);
-		frame.setVisible(true);
 		frame.setSize(600, 600);
-		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setIconImage(icon.getImage());
-		frame.add(backgroundLabel);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				parentFrame.setVisible(true);
+			}
+		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == uploadImage) {
+			this.windowEventSource = "uploadImage";
 			JFileChooser fileChooser = new JFileChooser();
 			int option = fileChooser.showOpenDialog(null);
 			if (option == JFileChooser.APPROVE_OPTION) {
@@ -108,7 +122,7 @@ public class Verification_Frame extends JFrame implements ActionListener {
 				}
 			}
 		} else if (e.getSource() == submitImage) {
-			frame.dispose();
+			this.windowEventSource = "submitImage";
 			if (selectedImageFile == null) {
 				JOptionPane.showMessageDialog(null, "No permit image selected. Please select permit image.",
 						"Upload Error", JOptionPane.ERROR_MESSAGE);
@@ -138,15 +152,15 @@ public class Verification_Frame extends JFrame implements ActionListener {
 			}
 			
 			if (savedInDatabase) {
-				frame.dispose();
 				JOptionPane.showMessageDialog(this, "SUDMITTED.", "VERIFICATION", JOptionPane.INFORMATION_MESSAGE);
+				frame.dispose();
+				parentFrame.setVisible(true);
 			} else {
 				JOptionPane.showMessageDialog(null, "Permit image was not saved. Please try again",
 						"Upload Error", JOptionPane.ERROR_MESSAGE);
-				return;
 			}
 		} else if (e.getSource() == exit) {
-			System.exit(0);
+			frame.dispose();
 		}
 	}
 }

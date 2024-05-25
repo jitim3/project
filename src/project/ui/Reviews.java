@@ -19,6 +19,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +32,11 @@ public class Reviews implements ActionListener {
     private final JFrame frame = new JFrame("REVIEWS");
     private final JButton createReviewButton = new JButton("Create Review");
     private List<ReviewDto> reviewDtos = new ArrayList<>();
+    private final JFrame parentFrame;
+    private String windowEventSource = "";
 
-    public Reviews(Long userId, Long resortId) {
+    public Reviews(JFrame parentFrame, Long userId, Long resortId) {
+        this.parentFrame = parentFrame;
         this.userId = userId;
         this.resortId = resortId;
         this.reviewService = new DefaultReviewService();
@@ -96,6 +101,14 @@ public class Reviews implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (!"createReviewButton".equalsIgnoreCase(windowEventSource)) {
+                    parentFrame.setVisible(true);
+                }
+            }
+        });
     }
 
     void getReviews() {
@@ -105,8 +118,9 @@ public class Reviews implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == createReviewButton) {
+            this.windowEventSource = "createReviewButton";
             frame.dispose();
-            new WriteReview(userId, resortId, reviewService);
+            new WriteReview(parentFrame, userId, resortId, reviewService);
         } else {
             frame.dispose();
         }

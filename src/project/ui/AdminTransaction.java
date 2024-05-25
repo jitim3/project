@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class Admin_Trasaction implements ActionListener {
+public class AdminTransaction implements ActionListener {
 	private final JFrame frame = new JFrame("ADMIN TRANSACTION");
 	private final JLabel label = new JLabel("VIEW TRANSACTION");
 	private final JLabel details = new JLabel("Transaction Details: ");
@@ -22,7 +22,7 @@ public class Admin_Trasaction implements ActionListener {
 	private final JButton exitButton = new JButton("Exit");
 	private final JFrame parentFrame;
 
-	public Admin_Trasaction(JFrame parentFrame) {
+	public AdminTransaction(JFrame parentFrame) {
 		this.parentFrame = parentFrame;
 		label.setFont(new Font("Times New Roman", Font.BOLD, 30));
 		label.setBounds(200, 40, 500, 30);

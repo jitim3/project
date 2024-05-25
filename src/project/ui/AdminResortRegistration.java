@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 import javax.swing.ButtonGroup;
@@ -18,7 +17,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
@@ -35,7 +33,7 @@ import project.ui.town.Town;
 import project.util.AppUtils;
 import project.util.TownEnum;
 
-public class TownRegister implements ActionListener {
+public class AdminResortRegistration implements ActionListener {
 	private final UserDto userDto;
 	private final ResortService resortService;
 	private final JFrame frame = new JFrame("Select Town to Register");
@@ -46,8 +44,10 @@ public class TownRegister implements ActionListener {
 	private final JButton display = new JButton("Display");
 	private final ButtonGroup group = new ButtonGroup();
 	private final List<TownHolder> townHolders;
+	private final JFrame adminMenuFrame;
 
-	TownRegister(final UserDto userDto, final ResortService resortService) {
+	AdminResortRegistration(JFrame adminMenuFrame, UserDto userDto, final ResortService resortService) {
+		this.adminMenuFrame = adminMenuFrame;
 		this.userDto = userDto;
 		this.resortService = resortService;
 
@@ -110,20 +110,11 @@ public class TownRegister implements ActionListener {
 					.toList();
 			if (!selectedTownIds.isEmpty()) {
 			    long resortId = this.resortService.createResort(new CreateResortDto(resortName, this.userDto.getId(), selectedTownIds, Instant.now()));
-				
 				JOptionPane.showMessageDialog(null, "Information successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
-				//int choice = JOptionPane.showConfirmDialog(null, "Do you want to proceed to Register Information Fill up?", "Confirmation", JOptionPane.YES_NO_OPTION);
 				frame.dispose();
 				group.clearSelection();
 				field.setText(null);
-				
-//				if (choice == JOptionPane.YES_OPTION) {
-					new ResortInfo(frame, userDto.getId(), resortId, resortName, this.resortService);
-				/*} else {
-					frame.dispose();
-					BiFunction<UserDto, Long, Town> townToOpen = townHolder.townFunction();
-					townToOpen.apply(this.userDto, resortId);
-				}*/
+				new ResortInfo(adminMenuFrame, userDto, resortId, resortName, this.resortService);
 			}
 		}
 	}

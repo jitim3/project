@@ -61,10 +61,10 @@ public class NewWindow_Admin implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == loginButton) {
 			frame.dispose();
-			AdminDatabaseLogin AdminlogInwindow = new AdminDatabaseLogin(userService);
+			AdminLogin AdminlogInwindow = new AdminLogin(userService);
 		} else if (e.getSource() == signupButton) {
 			frame.dispose();
-			AdminDatabaseSignup AdminsignUpwindow = new AdminDatabaseSignup(userService);
+			AdminSignup AdminsignUpwindow = new AdminSignup(userService);
 		} else {
 			frame.dispose();
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

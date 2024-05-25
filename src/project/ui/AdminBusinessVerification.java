@@ -11,14 +11,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-public class Admin_BusinessVerification implements ActionListener {
+public class AdminBusinessVerification implements ActionListener {
 	JFrame frame = new JFrame("DOCUMENT FOR VERIFICATION");
 	JLabel label = new JLabel("UPLOADED DOCUMENTS");
 	JButton approve = new JButton("APPROVE");
 	JButton decline = new JButton("DECLINE");
 	JButton exitButton = new JButton("Exit");
 
-	public Admin_BusinessVerification() {
+	public AdminBusinessVerification() {
 
 		approve.setBounds(150, 320, 150, 40);
 		approve.addActionListener(this);
