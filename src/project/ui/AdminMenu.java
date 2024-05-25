@@ -14,7 +14,7 @@ import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.impl.DefaultResortService;
 
-public class MenuAdmin implements ActionListener {
+public class AdminMenu implements ActionListener {
 	private final UserDto userDto;
 	private final ResortService resortService;
 	private ResortDto registeredResort;
@@ -23,7 +23,7 @@ public class MenuAdmin implements ActionListener {
 	private final JButton viewRegisteredResortButton = new JButton("View registered resort");
 	private final JButton exitButton = new JButton("EXIT");
 
-	public MenuAdmin(UserDto userDto) {
+	public AdminMenu(UserDto userDto) {
 		this.userDto = userDto;
 		this.resortService = new DefaultResortService();	
 
@@ -69,10 +69,10 @@ public class MenuAdmin implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == registerResortButton) { // For the Log in menu
 			frame.dispose();
-			new TownRegister(this.userDto, this.resortService);
+			new AdminResortRegistration(frame, this.userDto, this.resortService);
 		} else if (e.getSource() == viewRegisteredResortButton) { // For the sign up menu
 			frame.dispose();
-			new adminMain(frame, this.userDto.getId(), this.registeredResort, this.resortService);
+			new AdminRegisteredResortMenu(frame, this.userDto.getId(), this.registeredResort, this.resortService);
 		} else {
 			frame.dispose();
 		}

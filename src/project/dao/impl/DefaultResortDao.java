@@ -10,8 +10,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import project.dao.ResortDao;
 import project.dao.entity.Resort;
@@ -33,7 +35,11 @@ public class DefaultResortDao implements ResortDao {
 	private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " INNER JOIN town_resort tr ON tr.resort_id = r.id WHERE tr.town_id = ?";
 	private static final String SQL_INSERT_RESORT = """
 			INSERT INTO resort (name, user_id, created_at)
-			VALUES (?, ?, ?, ?)
+			VALUES (?, ?, ?)
+			""";
+	private static final String SQL_INSERT_TWON_RESORT = """
+			INSERT INTO town_resort (town_id, resort_id, created_at)
+			VALUES (?, ?, ?)
 			""";
 	private static final String SQL_UPDATE_RESORT = """
 			UPDATE resort SET description = ?, location = ?, how_to_get_there = ?, resort_fee = ?,
@@ -94,7 +100,7 @@ public class DefaultResortDao implements ResortDao {
 				if (rs.next()) {
 					return Optional.of(mapToResort(rs));
 				} else {
-					LOGGER.log(Level.INFO, "No resort with ID " + id + " found");
+					LOGGER.log(Level.INFO, "No resort with user ID " + id + " found");
 				}
 			}
 		} catch (SQLException e) {
@@ -149,8 +155,7 @@ public class DefaultResortDao implements ResortDao {
 
 	@Override
 	public Long createResort(CreateResortDto createResortDto) {
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_RESORT, Statement.RETURN_GENERATED_KEYS)) {
-			this.connection.setAutoCommit(false);
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_RESORT, Statement.RETURN_GENERATED_KEYS)) {
 			int i = 1;
 			statement.setString(i++, createResortDto.name());
 			statement.setLong(i++, createResortDto.userId());
@@ -164,7 +169,6 @@ public class DefaultResortDao implements ResortDao {
 			    	long resortId = rs.getLong(1);
 			    	LOGGER.log(Level.DEBUG, "Resort ID generated: " + resortId);
 					this.saveTownResort(resortId, createResortDto);
-					this.connection.commit();
 			        return resortId;
 			    } else {
 			    	LOGGER.log(Level.INFO, "No resort ID generated");
@@ -172,20 +176,13 @@ public class DefaultResortDao implements ResortDao {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.ERROR, e);
-            try {
-                this.connection.rollback();
-            } catch (SQLException ex) {
-				LOGGER.log(Level.ERROR, ex);
-            }
         }
 
 		return null;
 	}
 
 	private void saveTownResort(long resortId, CreateResortDto createResortDto) throws SQLException {
-		Connection conn = DatabaseConnectionFactory.getConnection();
-		conn.setAutoCommit(false);
-		try (PreparedStatement statement = conn.prepareStatement(SQL_INSERT_RESORT, Statement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_TWON_RESORT)) {
 			for (int townId : createResortDto.townIds()) {
 				int i = 1;
 				statement.setInt(i++, townId);
@@ -193,15 +190,17 @@ public class DefaultResortDao implements ResortDao {
 				statement.setTimestamp(i++, Timestamp.from(createResortDto.createdAt()));
 				statement.addBatch();
 			}
-			int[] rows = statement.executeBatch();
-			if (rows == null || rows.length == 0) {
+			int[] result = statement.executeBatch();
+			if (result == null || result.length == 0) {
 				throw new SQLException("Creating resort failed, no rows affected.");
+			} else {
+				String resultString = Arrays.stream(result)
+						.mapToObj(String::valueOf)
+						.collect(Collectors.joining(",", "[", "]"));
+				LOGGER.log(Level.INFO, resultString);
 			}
-			conn.commit();
 		} catch (SQLException e) {
 			LOGGER.log(Level.ERROR, e);
-			conn.rollback();
-			throw e;
 		}
 	}
 

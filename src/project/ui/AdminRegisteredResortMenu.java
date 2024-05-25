@@ -11,11 +11,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import project.dto.ResortDto;
 import project.service.ResortService;
 
-public class adminMain implements ActionListener {
+public class AdminRegisteredResortMenu implements ActionListener {
 	private final long userId;
 	private final ResortDto resortDto;
 	private final ResortService resortService;
@@ -29,7 +30,7 @@ public class adminMain implements ActionListener {
 	private final JFrame parentFrame;
 	private String windowEventSource = "";
 
-	public adminMain(JFrame parentFrame, long userId, ResortDto resortDto, ResortService resortService) {
+	public AdminRegisteredResortMenu(JFrame parentFrame, long userId, ResortDto resortDto, ResortService resortService) {
 		this.parentFrame = parentFrame;
 		this.userId = userId;
 		this.resortDto = resortDto;
@@ -85,7 +86,7 @@ public class adminMain implements ActionListener {
 		frame.add(backgroundLabel);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
@@ -119,9 +120,10 @@ public class adminMain implements ActionListener {
 		} else if (e.getSource() == btnViewTransaction) {
 			this.windowEventSource = "btnViewTransaction";
 			frame.dispose();
-			new Admin_Trasaction(frame);
+			new AdminTransaction(frame);
 		} else if (e.getSource() == btnExit) {
 			frame.dispose();
+			parentFrame.setVisible(true);
 		}
 	}
 }

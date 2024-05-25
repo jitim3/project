@@ -34,8 +34,10 @@ public class WriteReview {
     private final JTextField rateTextField = new JTextField("0");
     private final JTextArea commentTextArea = new JTextArea();
     private final JButton saveButton = new JButton("SAVE");
+    private final JFrame displayFrame;
 
-    public WriteReview(Long userId, Long resortId, ReviewService reviewService) {
+    public WriteReview(JFrame displayFrame, Long userId, Long resortId, ReviewService reviewService) {
+        this.displayFrame = displayFrame;
         this.userId = userId;
         this.resortId = resortId;
         this.reviewService = reviewService;
@@ -97,7 +99,7 @@ public class WriteReview {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                new Reviews(userId, resortId);
+                new Reviews(displayFrame, userId, resortId);
             }
         });
     }

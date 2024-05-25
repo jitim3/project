@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,15 +16,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 import project.dto.ResortDto;
+import project.dto.UserDto;
 import project.service.ResortService;
 import project.util.AppUtils;
+import project.util.ResortViewEvent;
+import project.util.UserTypes;
 
-public class DisplayFrame implements ActionListener {
+public class ResortView implements ActionListener {
+	private final JFrame parentFrame;
+	private final ResortViewEvent event;
 	private final ResortService resortService;
-	private final long userId;
+	private final UserDto userDto;
 	private final ResortDto resortDto;
 	private final JFrame frame;
 	private final JButton reservationButton = new JButton("Make a reservation");
@@ -31,10 +40,13 @@ public class DisplayFrame implements ActionListener {
 	private final JButton exitButton = new JButton("EXIT");
 	private final JLabel resortEntranceFeeLabel = new JLabel("Resort Entrance Fee:");
 	private final JLabel poolEntranceFeeLabel = new JLabel("Pool Entrance Fee:");
+	private String windowEventSource = "";
 
-	public DisplayFrame(ResortService resortService, long userId, long resortId) {
+	public ResortView(JFrame parentFrame, ResortViewEvent event, ResortService resortService, UserDto userDto, long resortId) {
+		this.parentFrame = parentFrame;
+		this.event = event;
 		this.resortService = resortService;
-		this.userId = userId;
+		this.userDto = userDto;
 		this.resortDto = this.resortService.getResortById(resortId).orElse(new ResortDto());
 		this.frame = new JFrame(resortDto.name());
 
@@ -150,9 +162,11 @@ public class DisplayFrame implements ActionListener {
 		panel.add(resortEntranceFeeLabel);
 		panel.add(resortFeeLabel);
 		panel.add(exitButton);
-		panel.add(transactionButton);
-		panel.add(viewReviewsButton);
-		panel.add(reservationButton);
+		if (ResortViewEvent.CUSTOMER_VIEW == event) {
+			panel.add(transactionButton);
+			panel.add(viewReviewsButton);
+			panel.add(reservationButton);
+		}
 		panel.setLayout(null);
 		panel.add(howToGetThereLabel);
 		panel.add(locationLabel); // RESORT LOCATION
@@ -164,28 +178,48 @@ public class DisplayFrame implements ActionListener {
 		panel.setPreferredSize(new Dimension(900, 1180));
 
 		JScrollPane scrollPane = new JScrollPane(panel);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
 		frame.setContentPane(scrollPane);
 		frame.setIconImage(icon.getImage());
 		frame.setSize(900, 2580);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if (!"reservationButton".equals(windowEventSource) && !"viewReviewsButton".equals(windowEventSource) && !"transactionButton".equals(windowEventSource) && !"exitButton".equals(windowEventSource)) {
+					String userType = userDto.getUserType().name();
+					if (UserTypes.CUSTOMER.name().equals(userType)) {
+						parentFrame.setVisible(true);
+					}
+				}
+			}
+		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == reservationButton) {
+			this.windowEventSource = "reservationButton";
 			frame.dispose();
-			ReservationChoices window = new ReservationChoices(this.userId, this.resortDto);	
+			new ReservationChoices(frame, this.userDto.getId(), this.resortDto);
 		} else if (e.getSource() == viewReviewsButton) {
-			new Reviews(userId, resortDto.id());
-		} else if (e.getSource() == transactionButton) {
-			Admin_Trasaction window = new Admin_Trasaction(frame);
-		} else if (e.getSource() == exitButton) {
+			this.windowEventSource = "viewReviewsButton";
 			frame.dispose();
+			new Reviews(frame, userDto.getId(), resortDto.id());
+		} else if (e.getSource() == transactionButton) {
+			this.windowEventSource = "transactionButton";
+			new AdminTransaction(frame);
+		} else if (e.getSource() == exitButton) {
+			this.windowEventSource = "exitButton";
+			frame.dispose();
+			String userType = userDto.getUserType().name();
+			if (UserTypes.CUSTOMER.name().equals(userType)) {
+				parentFrame.setVisible(true);
+			}
 		}
 	}
 }

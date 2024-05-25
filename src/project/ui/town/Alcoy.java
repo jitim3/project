@@ -4,18 +4,23 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import project.dto.ResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.impl.DefaultResortService;
-import project.ui.DisplayFrame;
+import project.ui.ResortView;
+import project.util.ResortViewEvent;
 import project.util.UserTypes;
 
 public class Alcoy implements Town {
@@ -26,6 +31,8 @@ public class Alcoy implements Town {
 	private JFrame frame = new JFrame("Alcoy");
 	private JFrame parentFrame;
 	private JButton back = new JButton("Back");
+	private final List<String> windowEventSources = new ArrayList<>();
+	private String windowEventSource = "";
 
 	public Alcoy(UserDto userDto, JFrame parentFrame) {
 		this(userDto, parentFrame, null);
@@ -54,15 +61,20 @@ public class Alcoy implements Town {
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setSize(500, 500);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				parentFrame.setVisible(true);
+				Optional<String> windowEventSourceOptional = windowEventSources.stream()
+						.filter(wes -> wes.equals(windowEventSource))
+						.findFirst();
+				if (windowEventSourceOptional.isEmpty()) {
+					parentFrame.setVisible(true);
+				}
 			}
 		});
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 	}
 
 	@Override
@@ -81,12 +93,20 @@ public class Alcoy implements Town {
 		backgroundLabel.setBounds(0, 0, 500, 600);
 
 		int y = 65;
-		for (ResortDto resortDto : this.resortDtos) {
+		for (int i = 0; i < this.resortDtos.size(); i++) {
+			String buttonName = "button" + i;
+			AtomicReference<String> windowEventSourceRef = new AtomicReference<>(buttonName);
+			windowEventSources.add(buttonName);
+			ResortDto resortDto = this.resortDtos.get(i);
 			JButton resortButton = new JButton(resortDto.name());
 			resortButton.setBounds(50, y, 400, 75);
 			resortButton.setOpaque(false);
 			resortButton.setFocusable(false);
-			resortButton.addActionListener(e -> new DisplayFrame(this.resortService, this.userDto.getId(), resortDto.id()));
+			resortButton.addActionListener(e -> {
+				windowEventSource = windowEventSourceRef.get();
+				frame.dispose();
+				new ResortView(frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
+			});
 			frame.getContentPane().add(resortButton);
 			frame.add(resortButton);
 
