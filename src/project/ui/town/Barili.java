@@ -112,8 +112,7 @@ public class Barili implements Town {
 							.orElse(List.of());
 				}
 			} else if (UserTypes.CUSTOMER.id() == userTypeId) {
-				// only approved resort available to customers
-				return this.resortService.getResortsByTownId(this.townId, true);
+				return this.resortService.getResortsByTownId(this.townId);
 			} else {
 				return List.of();
 			}

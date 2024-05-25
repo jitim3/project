@@ -22,21 +22,21 @@ import project.util.DatabaseConnectionFactory;
 public class DefaultResortDao implements ResortDao {
 	private static final Logger LOGGER = System.getLogger(DefaultResortDao.class.getName());
 	private static final String SQL_SELECT_RESORTS = """
-			SELECT id, name, description, location, how_to_get_there, resort_fee, cottage_fee, pool_fee,
-			resort_image, pool_image, cottage_image, town_id, user_id, permit_image, approved, approved_by, approved_at, created_at, updated_at 
-			FROM resort
+			SELECT r.id AS resort_id, r.name AS resort_name, r.description, r.location, r.how_to_get_there, r.resort_fee, r.cottage_fee, r.pool_fee,
+			r.resort_image, r.pool_image, r.cottage_image, r.user_id, r.permit_image, r.created_at AS resort_created_at, r.updated_at AS resort_updated_at
+			FROM resort r
 			""";
 	private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
-	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORTS + " WHERE id = ?";
-	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORTS + " WHERE user_id = ?";
-	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORTS + " WHERE user_id = ? AND town_id = ?";
-	private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " WHERE town_id = ? AND approved = ?";
+	private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORTS + " WHERE r.id = ?";
+	private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORTS + " WHERE r.user_id = ?";
+	private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORTS + " INNER JOIN town_resort tr ON tr.resort_id = r.id WHERE r.user_id = ? AND tr.town_id = ?";
+	private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " INNER JOIN town_resort tr ON tr.resort_id = r.id WHERE tr.town_id = ?";
 	private static final String SQL_INSERT_RESORT = """
-			INSERT INTO resort (name, user_id, town_id, created_at)
+			INSERT INTO resort (name, user_id, created_at)
 			VALUES (?, ?, ?, ?)
 			""";
 	private static final String SQL_UPDATE_RESORT = """
-			UPDATE resort SET description = ?, location = ?, how_to_get_there = ?, resort_fee = ?, 
+			UPDATE resort SET description = ?, location = ?, how_to_get_there = ?, resort_fee = ?,
 			cottage_fee = ?, pool_fee = ?, resort_image = ?, pool_image = ?, cottage_image = ?, updated_at = ?
 			WHERE id = ?
 			""";
@@ -124,15 +124,13 @@ public class DefaultResortDao implements ResortDao {
 		return Optional.empty();
 	}
 
-	
 	@Override
-	public List<Resort> getResortsByTownId(int townId, boolean approved) {
+	public List<Resort> getResortsByTownId(int townId) {
 		final List<Resort> resorts = new ArrayList<>();
 		
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESORTS_BY_TOWN_ID)) {
 			int i = 1;
 			statement.setInt(i++, townId);
-			statement.setBoolean(i++, approved);
 			try (ResultSet rs = statement.executeQuery()) {
 				while (rs.next()) {
 					resorts.add(mapToResort(rs));
@@ -150,31 +148,61 @@ public class DefaultResortDao implements ResortDao {
 	}
 
 	@Override
-	public Long createResort(CreateResortDto createUserDto) {
+	public Long createResort(CreateResortDto createResortDto) {
 		try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_RESORT, Statement.RETURN_GENERATED_KEYS)) {
+			this.connection.setAutoCommit(false);
 			int i = 1;
-			statement.setString(i++, createUserDto.name());
-			statement.setLong(i++, createUserDto.userId());
-			statement.setInt(i++, createUserDto.townId());
-			statement.setTimestamp(i++, Timestamp.from(createUserDto.createdAt()));
+			statement.setString(i++, createResortDto.name());
+			statement.setLong(i++, createResortDto.userId());
+			statement.setTimestamp(i++, Timestamp.from(createResortDto.createdAt()));
 			if (statement.executeUpdate() == 0) {
 				throw new SQLException("Creating resort failed, no rows affected.");
 			}
 
 			try (ResultSet rs = statement.getGeneratedKeys()) {
 			    if (rs.next()) {
-			    	Long id = rs.getLong(1);
-			    	LOGGER.log(Level.DEBUG, "Resort ID generated: " + id);
-			        return id;
+			    	long resortId = rs.getLong(1);
+			    	LOGGER.log(Level.DEBUG, "Resort ID generated: " + resortId);
+					this.saveTownResort(resortId, createResortDto);
+					this.connection.commit();
+			        return resortId;
 			    } else {
-			    	LOGGER.log(Level.INFO, "No resort ID genereted");
+			    	LOGGER.log(Level.INFO, "No resort ID generated");
 			    }
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.ERROR, e);
-		}
+            try {
+                this.connection.rollback();
+            } catch (SQLException ex) {
+				LOGGER.log(Level.ERROR, ex);
+            }
+        }
 
 		return null;
+	}
+
+	private void saveTownResort(long resortId, CreateResortDto createResortDto) throws SQLException {
+		Connection conn = DatabaseConnectionFactory.getConnection();
+		conn.setAutoCommit(false);
+		try (PreparedStatement statement = conn.prepareStatement(SQL_INSERT_RESORT, Statement.RETURN_GENERATED_KEYS)) {
+			for (int townId : createResortDto.townIds()) {
+				int i = 1;
+				statement.setInt(i++, townId);
+				statement.setLong(i++, resortId);
+				statement.setTimestamp(i++, Timestamp.from(createResortDto.createdAt()));
+				statement.addBatch();
+			}
+			int[] rows = statement.executeBatch();
+			if (rows == null || rows.length == 0) {
+				throw new SQLException("Creating resort failed, no rows affected.");
+			}
+			conn.commit();
+		} catch (SQLException e) {
+			LOGGER.log(Level.ERROR, e);
+			conn.rollback();
+			throw e;
+		}
 	}
 
 	@Override
@@ -218,13 +246,12 @@ public class DefaultResortDao implements ResortDao {
 	}
 
 	private static Resort mapToResort(ResultSet rs) throws SQLException {
-		var approvedAt = rs.getTimestamp("approved_at");
-		var createdAt = rs.getTimestamp("created_at");
-		var updatedAt = rs.getTimestamp("updated_at");
+		var createdAt = rs.getTimestamp("resort_created_at");
+		var updatedAt = rs.getTimestamp("resort_updated_at");
 		
 		return new Resort(
-				rs.getLong("id"), 
-				rs.getString("name"), 
+				rs.getLong("resort_id"),
+				rs.getString("resort_name"),
 				rs.getString("description"), 
 				rs.getString("location"), 
 				rs.getString("how_to_get_there"),
@@ -234,12 +261,8 @@ public class DefaultResortDao implements ResortDao {
 				rs.getString("resort_image"), 
 				rs.getString("pool_image"), 
 				rs.getString("cottage_image"), 
-				rs.getLong("user_id"), 
-				rs.getInt("town_id"),
+				rs.getLong("user_id"),
 				rs.getString("permit_image"),
-				rs.getBoolean("approved"),
-				rs.getString("approved_by"),
-				approvedAt != null ? approvedAt.toInstant() : null,
 				createdAt != null ? createdAt.toInstant() : null,
 				updatedAt != null ? updatedAt.toInstant() : null
 			);

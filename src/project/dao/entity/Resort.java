@@ -15,12 +15,8 @@ public record Resort(
 		String resortImage, 
 		String poolImage,
 		String cottageImage,
-		Long userId, 
-		int townId, 
+		Long userId,
 		String permitImage,
-		Boolean approved,
-		String approvedBy,
-		Instant approvedAt, 
 		Instant createdAt, 
 		Instant updatedAt) {
 }
