@@ -58,7 +58,15 @@ public class AppUtils {
 		
 		return Optional.empty();
 	}
-	
+
+	public static boolean isUserTypeSuperAdmin(int userTypeId) {
+		return UserTypes.SUPER_ADMIN.id() == userTypeId;
+	}
+
+	public static boolean isUserTypeAdmin(int userTypeId) {
+		return UserTypes.ADMIN.id() == userTypeId;
+	}
+
 	public static boolean isUserTypeCustomer(int userTypeId) {
 		return UserTypes.CUSTOMER.id() == userTypeId;
 	}
