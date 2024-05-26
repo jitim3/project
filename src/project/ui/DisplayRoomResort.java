@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 import javax.swing.ImageIcon;
@@ -36,6 +37,8 @@ public class DisplayRoomResort implements ActionListener {
 	private final JButton familyRoomReserveNowButton = new JButton("RESERVE NOW");
 	private RoomDto normalRoomDto;
 	private RoomDto familyRoomDto;
+	private BigDecimal normalRoomRatePerNightValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+	private BigDecimal familyRoomRatePerNightValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
 	public DisplayRoomResort(Long userId, ResortDto resortDto) {
 		this.userId = userId;
@@ -44,32 +47,28 @@ public class DisplayRoomResort implements ActionListener {
 		Optional<RoomDto> normalRoomDtoOptional = this.resortDto.roomDtos().stream()
 				.filter(roomDto -> RoomTypes.NORMAL.value().equals(roomDto.roomType())).findFirst();
 		int normalRoomNumberOfPaxValue = 0;
-		String normalRoomRatePerNightValue = "";
 		Optional<String> normalRoomImage1 = Optional.empty();
 		if (normalRoomDtoOptional.isPresent()) {
 			normalRoomDto = normalRoomDtoOptional.get();
-
 			normalRoomNumberOfPaxValue = normalRoomDto.numberOfPax();
-
-			BigDecimal ratePerNight = normalRoomDto.ratePerNight();
-			normalRoomRatePerNightValue = ratePerNight != null ? ratePerNight.toString() : "";
-
+			normalRoomRatePerNightValue = (normalRoomDto.ratePerNight() != null
+					? normalRoomDto.ratePerNight()
+					: BigDecimal.ZERO)
+					.setScale(2, RoundingMode.HALF_UP);
 			normalRoomImage1 = AppUtils.imagePath(normalRoomDto.roomImage1());
 		}
 
 		Optional<RoomDto> familyRoomDtoOptional = this.resortDto.roomDtos().stream()
 				.filter(roomDto -> RoomTypes.FAMILY.value().equals(roomDto.roomType())).findFirst();
 		int familyRoomNumberOfPaxValue = 0;
-		String familyRoomRatePerNightValue = "";
 		Optional<String> familyRoomImage1 = Optional.empty();
 		if (familyRoomDtoOptional.isPresent()) {
 			familyRoomDto = familyRoomDtoOptional.get();
-
 			familyRoomNumberOfPaxValue = familyRoomDto.numberOfPax();
-
-			BigDecimal ratePerNight = familyRoomDto.ratePerNight();
-			familyRoomRatePerNightValue = ratePerNight != null ? ratePerNight.toString() : "";
-			
+			familyRoomRatePerNightValue = (familyRoomDto.ratePerNight() != null
+					? familyRoomDto.ratePerNight().setScale(2, RoundingMode.HALF_UP)
+					: BigDecimal.ZERO)
+					.setScale(2, RoundingMode.HALF_UP);
 			familyRoomImage1 = AppUtils.imagePath(familyRoomDto.roomImage1());
 		}
 
@@ -83,7 +82,7 @@ public class DisplayRoomResort implements ActionListener {
 		normalRoomReserveNowButton.addActionListener(this);
 		normalRoomReserveNowButton.setOpaque(false);
 
-		JLabel familyRoomRatePerNight = new JLabel(familyRoomRatePerNightValue); // FAMILY ROOM FEE
+		JLabel familyRoomRatePerNight = new JLabel(familyRoomRatePerNightValue.toString()); // FAMILY ROOM FEE
 		familyRoomRatePerNight.setBounds(468, 515, 250, 35);
 		familyRoomRatePerNight.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		familyRoomRatePerNight.setForeground(Color.black);
@@ -110,7 +109,7 @@ public class DisplayRoomResort implements ActionListener {
 		normalRoomNumberOfPax.setHorizontalAlignment(SwingConstants.CENTER);
 		normalRoomNumberOfPax.setVerticalAlignment(SwingConstants.CENTER);
 
-		JLabel normalRoomRatePerNight = new JLabel(normalRoomRatePerNightValue); // ROOM FEE
+		JLabel normalRoomRatePerNight = new JLabel(normalRoomRatePerNightValue.toString()); // ROOM FEE
 		normalRoomRatePerNight.setBounds(70, 515, 250, 35);
 		normalRoomRatePerNight.setFont(new Font("Times New Roman", Font.BOLD, 15));
 		normalRoomRatePerNight.setForeground(Color.black);
@@ -190,11 +189,11 @@ public class DisplayRoomResort implements ActionListener {
 		if (e.getSource() == normalRoomReserveNowButton) {
 			frame.dispose();
 			CreateRoomReservationDto createRoomReservationDto = new CreateRoomReservationDto(userId, normalRoomDto.id(), ReservationStatus.PENDING);
-			new Checkin(userId, resortDto, createRoomReservationDto);
+			new Checkin(userId, resortDto, createRoomReservationDto, normalRoomRatePerNightValue);
 		} else if (e.getSource() == familyRoomReserveNowButton) {
 			frame.dispose();
 			CreateRoomReservationDto createRoomReservationDto = new CreateRoomReservationDto(userId, familyRoomDto.id(), ReservationStatus.PENDING);
-			new Checkin(userId, resortDto, createRoomReservationDto);			
+			new Checkin(userId, resortDto, createRoomReservationDto, familyRoomRatePerNightValue);
 		}
 	}
 }

@@ -1,37 +1,5 @@
 package project.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Optional;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
-
 import project.dto.CreateRoomDto;
 import project.dto.RoomDto;
 import project.dto.UpdateResortDto;
@@ -43,6 +11,37 @@ import project.util.AppUtils;
 import project.util.ResortViewEvent;
 import project.util.RoomAvailabilityTypes;
 import project.util.RoomTypes;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
+import java.util.Optional;
 
 public class ResortInfo implements ActionListener {
 	private static final Logger LOGGER = System.getLogger(ResortInfo.class.getName());
@@ -98,13 +97,13 @@ public class ResortInfo implements ActionListener {
 	// ==> TEXTFIELDS
 	private final JTextField resortNameTextField = new JTextField();
 	private final JTextField resortLocationTextField = new JTextField();
-	private final JTextField resortEntranceFeeTextField = new JTextField();
-	private final JTextField resortCottageFeeTextField = new JTextField();
-	private final JTextField resortPoolFeeTextField = new JTextField();
+	private final JFormattedTextField resortEntranceFeeTextField = new JFormattedTextField();
+	private final JFormattedTextField resortCottageFeeTextField = new JFormattedTextField();
+	private final JFormattedTextField resortPoolFeeTextField = new JFormattedTextField();
 	private final JTextField normalRoomNumberOfPaxTextField = new JTextField();
-	private final JTextField normalRoomRatePerNightTextField = new JTextField();
+	private final JFormattedTextField normalRoomRatePerNightTextField = new JFormattedTextField();
 	private final JTextField familyRoomNumberPaxTextField = new JTextField();
-	private final JTextField familyRoomRatePerNightTextField = new JTextField();
+	private final JFormattedTextField familyRoomRatePerNightTextField = new JFormattedTextField();
 
 	// JTEXTAREA WITH SCROLLPANES
 	private final JTextArea resortDescriptionTextArea = new JTextArea(3, 20);
@@ -236,80 +235,31 @@ public class ResortInfo implements ActionListener {
 
 		resortEntranceFeeTextField.setBounds(275, 1228, 150, 25);
 		resortEntranceFeeTextField.setPreferredSize(new Dimension(200, 175));
-		resortEntranceFeeTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.currency(resortEntranceFeeTextField);
 
 		resortCottageFeeTextField.setBounds(275, 1278, 150, 25);
 		resortCottageFeeTextField.setPreferredSize(new Dimension(200, 175));
-		resortCottageFeeTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.currency(resortCottageFeeTextField);
 
 		resortPoolFeeTextField.setBounds(295, 1328, 150, 25);
 		resortPoolFeeTextField.setPreferredSize(new Dimension(200, 175));
-		resortPoolFeeTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.currency(resortPoolFeeTextField);
 
 		normalRoomNumberOfPaxTextField.setBounds(245, 1527, 150, 25);
 		normalRoomNumberOfPaxTextField.setPreferredSize(new Dimension(200, 175));
-		normalRoomNumberOfPaxTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.numeric(normalRoomNumberOfPaxTextField);
 
 		normalRoomRatePerNightTextField.setBounds(245, 1560, 150, 25);
 		normalRoomRatePerNightTextField.setPreferredSize(new Dimension(200, 175));
-		normalRoomRatePerNightTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.currency(normalRoomRatePerNightTextField);
 
 		familyRoomNumberPaxTextField.setBounds(245, 2006, 150, 25);
 		familyRoomNumberPaxTextField.setPreferredSize(new Dimension(200, 175));
-		familyRoomNumberPaxTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.numeric(familyRoomNumberPaxTextField);
 
 		familyRoomRatePerNightTextField.setBounds(245, 2048, 150, 25);
 		familyRoomRatePerNightTextField.setPreferredSize(new Dimension(200, 175));
-		familyRoomRatePerNightTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.currency(familyRoomRatePerNightTextField);
 
 		// ==> SCROLLPANE
 		resortNameScrollPane.setBounds(445, 252, 400, 250); // Set bounds for the JScrollPane
@@ -579,23 +529,30 @@ public class ResortInfo implements ActionListener {
 			BigDecimal resortFee;
 			try {
 				resortFee = new BigDecimal(resortEntranceFeeTextField.getText());
-			} catch (Exception mfe) {
-				resortFee = new BigDecimal(0);
+			} catch (NumberFormatException nfe) {
+				resortFee = BigDecimal.ZERO;
 			}
+
+			resortFee = resortFee.setScale(2, RoundingMode.HALF_UP);
 
 			BigDecimal cottageFee;
 			try {
 				cottageFee = new BigDecimal(resortCottageFeeTextField.getText());
 			} catch (NumberFormatException nfe) {
-				cottageFee = new BigDecimal(0);
+				cottageFee = BigDecimal.ZERO;
 			}
+
+			cottageFee = cottageFee.setScale(2, RoundingMode.HALF_UP);
 
 			BigDecimal poolFee;
 			try {
 				poolFee = new BigDecimal(resortPoolFeeTextField.getText());
 			} catch (Exception e2) {
-				poolFee = new BigDecimal(0);
+				poolFee = BigDecimal.ZERO;
 			}
+
+			poolFee = poolFee.setScale(2, RoundingMode.HALF_UP);
+
 			String resortImage = null;
 			Optional<String> resortImageFilenameOptional = AppUtils.generateFilename(resortImageFile);
 			if (resortImageFilenameOptional.isPresent()) {
@@ -607,6 +564,7 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + resortImage + " was not saved.");
 				}
 			}
+
 			String poolImage = null;
 			Optional<String> poolImageFilenameOptional = AppUtils.generateFilename(poolImageFile);
 			if (poolImageFilenameOptional.isPresent()) {
@@ -618,6 +576,7 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + poolImage + " was not saved.");
 				}
 			}
+
 			String cottageImage = null;
 			Optional<String> cottageImageFilenameOptional = AppUtils.generateFilename(cottageImageFile);
 			if (cottageImageFilenameOptional.isPresent()) {
@@ -629,6 +588,7 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + cottageImage + " was not saved.");
 				}
 			}
+
 			Instant updatedAt = Instant.now();
 			Instant createdAt = updatedAt;
 
@@ -659,13 +619,18 @@ public class ResortInfo implements ActionListener {
 			} catch (NumberFormatException nfe) {
 				normalNormalNumberOfPax = 0;
 			}
+
 			BigDecimal normalRoomRatePerNight;
 			try {
 				normalRoomRatePerNight = new BigDecimal(normalRoomRatePerNightTextField.getText());
 			} catch (NumberFormatException nfe) {
-				normalRoomRatePerNight = new BigDecimal(0);
+				normalRoomRatePerNight = BigDecimal.ZERO;
 			}
+
+			normalRoomRatePerNight = normalRoomRatePerNight.setScale(2, RoundingMode.HALF_UP);
+
 			String normalRoomDescription = normalRoomDescriptionTextArea.getText();
+
 			String normalRoomImage1 = null;
 			Optional<String> normalRoomImage1NewFilenameOptional = AppUtils.generateFilename(normalRoomImage1File);
 			if (normalRoomImage1NewFilenameOptional.isPresent()) {
@@ -677,6 +642,7 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + normalRoomImage1 + " was not saved.");
 				}
 			}
+
 			String normalRoomImage2 = null;
 			Optional<String> normalRoomImage2NewFilenameOptional = AppUtils.generateFilename(normalRoomImage2File);
 			if (normalRoomImage2NewFilenameOptional.isPresent()) {
@@ -710,13 +676,18 @@ public class ResortInfo implements ActionListener {
 			} catch (NumberFormatException nfe) {
 				familyNormalNumberOfPax = 0;
 			}
+
 			BigDecimal familyRoomRatePerNight;
 			try {
 				familyRoomRatePerNight = new BigDecimal(familyRoomRatePerNightTextField.getText());
 			} catch (NumberFormatException nfe) {
-				familyRoomRatePerNight = new BigDecimal(0);
+				familyRoomRatePerNight = BigDecimal.ZERO;
 			}
+
+			familyRoomRatePerNight = familyRoomRatePerNight.setScale(2, RoundingMode.HALF_UP);
+
 			String familyRoomDescription = familyRoomDescriptionTextArea.getText();
+
 			String familyRoomImage1 = null;
 			Optional<String> familyRoomImage1NewFilenameOptional = AppUtils.generateFilename(familyRoomImage1File);
 			if (familyRoomImage1NewFilenameOptional.isPresent()) {
@@ -728,6 +699,7 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + familyRoomImage1 + " was not saved.");
 				}
 			}
+
 			String familyRoomImage2 = null;
 			Optional<String> familyRoomImage2NewFilenameOptional = AppUtils.generateFilename(familyRoomImage2File);
 			if (familyRoomImage2NewFilenameOptional.isPresent()) {
@@ -739,6 +711,7 @@ public class ResortInfo implements ActionListener {
 					LOGGER.log(Level.ERROR, "File " + familyRoomImage2 + " was not saved.");
 				}
 			}
+
 			CreateRoomDto familyRoom = new CreateRoomDto(
 					resortId,
 					roomAvailabilityTypeId,
