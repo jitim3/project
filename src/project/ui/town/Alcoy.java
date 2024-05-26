@@ -1,5 +1,18 @@
 package project.ui.town;
 
+import project.dto.ResortDto;
+import project.dto.UserDto;
+import project.service.ResortService;
+import project.service.impl.DefaultResortService;
+import project.ui.ResortView;
+import project.util.AppUtils;
+import project.util.ResortViewEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -9,28 +22,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.WindowConstants;
-
-import project.dto.ResortDto;
-import project.dto.UserDto;
-import project.service.ResortService;
-import project.service.impl.DefaultResortService;
-import project.ui.ResortView;
-import project.util.ResortViewEvent;
-import project.util.UserTypes;
-
 public class Alcoy implements Town {
 	private final int townId = 4;
 	private final UserDto userDto;
 	private final ResortService resortService;
 	private final List<ResortDto> resortDtos;
-	private JFrame frame = new JFrame("Alcoy");
-	private JFrame parentFrame;
-	private JButton back = new JButton("Back");
+	private final JFrame frame = new JFrame("Alcoy");
+	private final JFrame parentFrame;
+	private final JButton back = new JButton("Back");
 	private final List<String> windowEventSources = new ArrayList<>();
 	private String windowEventSource = "";
 
@@ -121,7 +120,7 @@ public class Alcoy implements Town {
 	private List<ResortDto> getRegisteredResorts(Long resortId) {
 		if (this.userDto != null) {
 			int userTypeId = this.userDto.getUserType().id();
-			if (UserTypes.ADMIN.id() == userTypeId) {
+			if (AppUtils.isUserTypeAdmin(userTypeId)) {
 				if (resortId != null) {
 					return this.resortService.getResortById(resortId)
 							.map(List::of)
@@ -131,7 +130,7 @@ public class Alcoy implements Town {
 							.map(List::of)
 							.orElse(List.of());
 				}
-			} else if (UserTypes.CUSTOMER.id() == userTypeId) {
+			} else if (AppUtils.isUserTypeCustomer(userTypeId)) {
 				return this.resortService.getResortsByTownId(this.townId);
 			} else {
 				return List.of();

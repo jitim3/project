@@ -1,19 +1,12 @@
 package project.ui;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Calendar;
-import java.util.Properties;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.SqlDateModel;
+import project.dto.CreateReservationDto;
+import project.dto.CreateRoomReservationDto;
+import project.dto.ResortDto;
+import project.util.AppUtils;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,33 +15,40 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.SqlDateModel;
-
-import project.dto.CreateReservationDto;
-import project.dto.CreateRoomReservationDto;
-import project.dto.ResortDto;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
+import java.util.Properties;
 
 public class Checkin extends JFrame implements ActionListener {
 	private static final String DATE_FORMAT = "dd-MMM-yyyy";
 	private final long userId;
 	private final ResortDto resortDto;
 	private final CreateRoomReservationDto createRoomReservationDto;
-	JDatePickerImpl datePicker;
-	JFrame frame = new JFrame("Check in");
-	JLabel label = new JLabel("CHECK IN");
-	JLabel label1 = new JLabel("Enter days to Stay");
-	JLabel label2 = new JLabel("Enter date");
-	JTextField stayTextField = new JTextField("1");
-	JButton exit = new JButton("EXIT");
-	JButton next = new JButton("NEXT");
+	private final BigDecimal ratePerNight;
+	private final JDatePickerImpl datePicker;
+	private final JFrame frame = new JFrame("Check in");
+	private final JLabel label = new JLabel("CHECK IN");
+	private final JLabel label1 = new JLabel("Enter days to Stay");
+	private final JLabel label2 = new JLabel("Enter date");
+	private final JTextField stayTextField = new JTextField("1");
+	private final JButton exit = new JButton("EXIT");
+	private final JButton next = new JButton("NEXT");
 
-	public Checkin(long userId, ResortDto resortDto, CreateRoomReservationDto createRoomReservationDto) {
+	public Checkin(long userId, ResortDto resortDto, CreateRoomReservationDto createRoomReservationDto, BigDecimal ratePerNight) {
 		this.userId = userId;
 		this.resortDto = resortDto;
 		this.createRoomReservationDto = createRoomReservationDto;
+		this.ratePerNight = ratePerNight;
+
 		next.setBounds(250, 285, 75, 25);
 		next.setFocusable(false);
 		next.addActionListener(this);
@@ -64,14 +64,7 @@ public class Checkin extends JFrame implements ActionListener {
 
 		stayTextField.setBounds(100, 125, 150, 25);
 		stayTextField.setPreferredSize(new Dimension(150, 100));
-		stayTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.numeric(stayTextField);
 
 		label1.setBounds(100, 75, 800, 80);
 		label1.setFont(new Font("Times New Roman", Font.BOLD, 15));
@@ -93,24 +86,19 @@ public class Checkin extends JFrame implements ActionListener {
 		p.put("text.year", "Year");
 		JDatePanelImpl panel = new JDatePanelImpl(model, p);
 		datePicker = new JDatePickerImpl(panel, new AbstractFormatter() {
-
 			@Override
-			public String valueToString(Object value) throws ParseException {
-				// TODO Auto-generated method
+			public String valueToString(Object value) {
 				if (value != null) {
-
 					Calendar calendar = (Calendar) value;
 					SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
-					String strDate = format.format(calendar.getTime());
-
-					return strDate;
+					return format.format(calendar.getTime());
 				}
+
 				return "";
 			}
 
 			@Override
-			public Object stringToValue(String text) throws ParseException {
-				// TODO Auto-generated method stub
+			public Object stringToValue(String text) {
 				return "";
 			}
 		});
@@ -137,7 +125,6 @@ public class Checkin extends JFrame implements ActionListener {
 		if (e.getSource() == exit) {
 			System.exit(0);
 		} else if (e.getSource() == next) {
-			
 			int numberOfStay = getNumberOfStay(stayTextField.getText());
 			
 			LocalDate startDate = this.getEnterDate(datePicker.getJFormattedTextField().getText());
@@ -146,12 +133,14 @@ public class Checkin extends JFrame implements ActionListener {
 				return;
 			}
 			
-			LocalDate endDate = startDate.plusDays(numberOfStay - 1);
+			LocalDate endDate = startDate.plusDays(numberOfStay - 1L);
+			BigDecimal amount = ratePerNight.multiply(BigDecimal.valueOf(numberOfStay));
 			
 			CreateReservationDto createReservationDto = createRoomReservationDto
 					.startDate(startDate)
-					.endDate(endDate);
-			
+					.endDate(endDate)
+					.amount(amount);
+			frame.dispose();
 			new CustomerInformation(userId, resortDto, createReservationDto);
 		}
 
