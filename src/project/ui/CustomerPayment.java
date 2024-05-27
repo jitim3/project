@@ -1,40 +1,38 @@
 package project.ui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
 import project.dto.CreateCottageReservationDto;
 import project.dto.CreateReservationDto;
 import project.dto.CreateRoomReservationDto;
 import project.dto.ResortDto;
 import project.service.ReservationService;
 import project.service.impl.DefaultReservationService;
+import project.util.AppUtils;
 
-public class CustomerPayment implements ActionListener {
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
+
+public class CustomerPayment {
 	private final ReservationService reservationService;
 	private final long userId;
 	private final ResortDto resortDto;
 	private CreateReservationDto createReservationDto;
-	private final JFrame frame = new JFrame("Amount");
-	private final JLabel lblEnterAmount = new JLabel("Enter exact amount:");
-	private final JTextField amountTextField = new JTextField();
+	private final BigDecimal amount;
+	private final JFrame frame = new JFrame();
+	private final JLabel lblEnterAmount = new JLabel();
+	private final JFormattedTextField amountTextField = new JFormattedTextField();
 	private final JButton confirmButton = new JButton("Confirm");
 	private final JButton backButton = new JButton("Back");
 	private final JLabel displayTotal = new JLabel();
@@ -47,25 +45,31 @@ public class CustomerPayment implements ActionListener {
 		this.resortDto = resortDto;
 		this.createReservationDto = createReservationDto;
 		this.parentFrame = parentFrame;
-		
+
+		if (createReservationDto instanceof CreateRoomReservationDto createRoomReservationDto) {
+			amount = createRoomReservationDto.amount();
+		} else if (createReservationDto instanceof CreateCottageReservationDto createCottageReservationDto) {
+			amount = createCottageReservationDto.amount();
+		} else {
+			amount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+		}
+
+		frame.setTitle("Amount: PHP " + amount.toString());
+
+		lblEnterAmount.setText("Enter exact amount: ");
 		lblEnterAmount.setFont(new Font("Times New Roman", Font.BOLD, 12));
 		lblEnterAmount.setBounds(114, 135, 150, 14);
 		amountTextField.setBounds(240, 132, 96, 20);
 		amountTextField.setColumns(10);
-		amountTextField.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
-					e.consume(); // if it's not a number, ignore the event
-				}
-			}
-		});
+		AppUtils.currency(amountTextField);
 
 		confirmButton.setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		confirmButton.setBounds(247, 223, 89, 23);
+		confirmButton();
 
 		backButton.setFont(new Font("Times New Roman", Font.PLAIN, 11));
 		backButton.setBounds(101, 223, 89, 23);
+		backButton.addActionListener(actionEvent -> frame.dispose());
 
 		displayTotal.setBounds(101, 25, 235, 82);
 		displayTotal.setOpaque(true);
@@ -91,7 +95,7 @@ public class CustomerPayment implements ActionListener {
 		frame.add(backgroundLabel);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
@@ -103,40 +107,41 @@ public class CustomerPayment implements ActionListener {
 		});
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == confirmButton) {
+	private void confirmButton() {
+		confirmButton.addActionListener(actionEvent -> {
 			windowEventSource = "confirmButton";
-			frame.dispose();
-			BigDecimal amount;
+			BigDecimal amountInput;
 			try {
-				amount = new BigDecimal(Integer.parseInt(amountTextField.getText()));
+				String amountText = amountTextField.getText();
+				amountText = amountText != null && !amountText.isBlank() ? amountText.replace(",", "") : "0.00";
+				amountInput = BigDecimal.valueOf(Double.parseDouble(amountText))
+						.setScale(2, RoundingMode.HALF_UP);
+				if (amount.compareTo(amountInput) != 0) {
+					throw new NumberFormatException();
+				}
 			} catch (NumberFormatException e2) {
 				JOptionPane.showMessageDialog(null, "Invalid amount. Please enter amount.", "Payment Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
+
 			Long reservationId = null;
-			
+
 			if (createReservationDto instanceof CreateRoomReservationDto createRoomReservationDto) {
 				CreateRoomReservationDto newRoomReservationDto = createRoomReservationDto
-						.amount(amount)
 						.createdAt(Instant.now());
 				reservationId = this.reservationService.createRoomReservation(newRoomReservationDto);
 			} else if (createReservationDto instanceof CreateCottageReservationDto createCottageReservationDto) {
 				CreateCottageReservationDto newCottageReservationDto = createCottageReservationDto
-						.amount(amount)
 						.createdAt(Instant.now());
 				reservationId = this.reservationService.createCottageReservation(newCottageReservationDto);
 			}
-			
+
 			if (reservationId == null || reservationId == 0) {
 				JOptionPane.showMessageDialog(null, "Reservation was not successful. Please try again.", "Reservation Error", JOptionPane.ERROR_MESSAGE);
-			} else {			
+			} else {
+				frame.dispose();
 				new ConfirmationMessage();
 			}
-		} else if (e.getSource() == backButton) {
-			frame.dispose();
-		}
+		});
 	}
 }

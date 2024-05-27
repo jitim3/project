@@ -38,10 +38,8 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 	public Optional<ResortDto> getResortById(long id) {
 		 return this.resortDao.getResortById(id)
 				 .map(resort -> {
-					 int townId = resort.townId();
-					 Optional<Town> townOptional = this.townDao.getTownById(townId);
 					 List<Room> rooms = this.roomDao.getRoomsByResortId(id);
-					 return this.mapToResortDto(resort, rooms, townOptional.orElse(null));
+					 return this.mapToResortDto(resort, rooms);
 				 });
 	}
 
@@ -49,10 +47,8 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 	public Optional<ResortDto> getResortByUserId(long userId) {
 		return this.resortDao.getResortByUserId(userId)
 				.map(resort -> {
-					 int townId = resort.townId();
-					 Optional<Town> townOptional = this.townDao.getTownById(townId);
 					 List<Room> rooms = this.roomDao.getRoomsByResortId(resort.id());
-					 return this.mapToResortDto(resort, rooms, townOptional.orElse(null));
+					 return this.mapToResortDto(resort, rooms);
 				 });
 	}
 
@@ -60,21 +56,19 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 	public Optional<ResortDto> getResortByUserIdAndTownId(long userId, int townId) {
 		return this.resortDao.getResortByUserIdAndTownId(userId, townId)
 				.map(resort -> {
-					 Optional<Town> townOptional = this.townDao.getTownById(townId);
 					 List<Room> rooms = this.roomDao.getRoomsByResortId(resort.id());
-					 return this.mapToResortDto(resort, rooms, townOptional.orElse(null));
+					 return this.mapToResortDto(resort, rooms);
 				 });
 	}
 
 	@Override
-	public List<ResortDto> getResortsByTownId(int townId, boolean approved) {
-		List<Resort> resorts = this.resortDao.getResortsByTownId(townId, approved);
+	public List<ResortDto> getResortsByTownId(int townId) {
+		List<Resort> resorts = this.resortDao.getResortsByTownId(townId);
 		
 		return resorts.stream()
 				.map(resort -> {
-					 Optional<Town> townOptional = this.townDao.getTownById(resort.townId());
 					 List<Room> rooms = this.roomDao.getRoomsByResortId(resort.id());
-					 return this.mapToResortDto(resort, rooms, townOptional.orElse(null));
+					 return this.mapToResortDto(resort, rooms);
 				})
 				.toList();
 	}
@@ -94,7 +88,7 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 		return this.resortDao.updatePermitImage(resortId, permitImage, updatedAt);
 	}
 
-	private ResortDto mapToResortDto(Resort resort, List<Room> rooms, Town town) {
+	private ResortDto mapToResortDto(Resort resort, List<Room> rooms) {
 		return new ResortDto(
 				resort.id(), 
 				resort.name(), 
@@ -109,12 +103,8 @@ public class DefaultResortService extends DtoMapper implements ResortService {
 				resort.cottageImage(),
 				rooms.stream()
 					.map(super::mapToRoomDto)
-					.toList(), 
-				super.mapToTownDto(town),
+					.toList(),
 				resort.permitImage(),
-				resort.approved(),
-				resort.approvedBy(),
-				resort.approvedAt(), 
 				resort.createdAt(), 
 				resort.updatedAt()
 			);

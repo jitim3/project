@@ -14,12 +14,8 @@ public record CreateCottageReservationDto(
 		BigDecimal amount,
 		Instant createdAt) implements CreateReservationDto {	
 	
-	public CreateCottageReservationDto(long userId, long resortId, ReservationStatus status) {
-		this(userId, resortId, null, status, new BigDecimal(0), Instant.now());
-	}
-	
-	public CreateCottageReservationDto amount(BigDecimal amount) {
-		return new CreateCottageReservationDto(userId, resortId, reservationDate, status, amount, createdAt);
+	public CreateCottageReservationDto(long userId, long resortId, ReservationStatus status, BigDecimal amount) {
+		this(userId, resortId, null, status, amount, Instant.now());
 	}
 	
 	public CreateCottageReservationDto createdAt(Instant createdAt) {

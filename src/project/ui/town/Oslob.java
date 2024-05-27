@@ -1,31 +1,37 @@
 package project.ui.town;
 
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.List;
+import project.dto.ResortDto;
+import project.dto.UserDto;
+import project.service.ResortService;
+import project.service.impl.DefaultResortService;
+import project.ui.ResortView;
+import project.util.AppUtils;
+import project.util.ResortViewEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
-import project.dto.ResortDto;
-import project.dto.UserDto;
-import project.service.ResortService;
-import project.service.impl.DefaultResortService;
-import project.ui.DisplayFrame;
-import project.util.UserTypes;
+import javax.swing.WindowConstants;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Oslob implements Town {
 	private final int townId = 6;
 	private final UserDto userDto;
 	private final ResortService resortService;
 	private final List<ResortDto> resortDtos;
-	private JFrame frame = new JFrame("Oslob");
-	private JFrame parentFrame;
-	private JButton back = new JButton("Back");
+	private final JFrame frame = new JFrame("Oslob");
+	private final JFrame parentFrame;
+	private final JButton back = new JButton("Back");
+	private final List<String> windowEventSources = new ArrayList<>();
+	private String windowEventSource = "";
 
 	public Oslob(UserDto userDto, JFrame parentFrame) {
 		this(userDto, parentFrame, null);
@@ -54,15 +60,20 @@ public class Oslob implements Town {
 		frame.setIconImage(icon.getImage());
 		frame.add(backgroundLabel);
 		frame.setSize(500, 500);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				parentFrame.setVisible(true);
+				Optional<String> windowEventSourceOptional = windowEventSources.stream()
+						.filter(wes -> wes.equals(windowEventSource))
+						.findFirst();
+				if (windowEventSourceOptional.isEmpty()) {
+					parentFrame.setVisible(true);
+				}
 			}
 		});
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 	}
 
 	@Override
@@ -81,12 +92,20 @@ public class Oslob implements Town {
 		backgroundLabel.setBounds(0, 0, 500, 600);
 
 		int y = 65;
-		for (ResortDto resortDto : this.resortDtos) {
+		for (int i = 0; i < this.resortDtos.size(); i++) {
+			String buttonName = "button" + i;
+			AtomicReference<String> windowEventSourceRef = new AtomicReference<>(buttonName);
+			windowEventSources.add(buttonName);
+			ResortDto resortDto = this.resortDtos.get(i);
 			JButton resortButton = new JButton(resortDto.name());
 			resortButton.setBounds(50, y, 400, 75);
 			resortButton.setOpaque(false);
 			resortButton.setFocusable(false);
-			resortButton.addActionListener(e -> new DisplayFrame(this.resortService, this.userDto.getId(), resortDto.id()));
+			resortButton.addActionListener(e -> {
+				windowEventSource = windowEventSourceRef.get();
+				frame.dispose();
+				new ResortView(frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
+			});
 			frame.getContentPane().add(resortButton);
 			frame.add(resortButton);
 
@@ -101,7 +120,7 @@ public class Oslob implements Town {
 	private List<ResortDto> getRegisteredResorts(Long resortId) {
 		if (this.userDto != null) {
 			int userTypeId = this.userDto.getUserType().id();
-			if (UserTypes.ADMIN.id() == userTypeId) {
+			if (AppUtils.isUserTypeAdmin(userTypeId)) {
 				if (resortId != null) {
 					return this.resortService.getResortById(resortId)
 							.map(List::of)
@@ -111,9 +130,8 @@ public class Oslob implements Town {
 							.map(List::of)
 							.orElse(List.of());
 				}
-			} else if (UserTypes.CUSTOMER.id() == userTypeId) {
-				// only approved resort available to customers
-				return this.resortService.getResortsByTownId(this.townId, true);
+			} else if (AppUtils.isUserTypeCustomer(userTypeId)) {
+				return this.resortService.getResortsByTownId(this.townId);
 			} else {
 				return List.of();
 			}

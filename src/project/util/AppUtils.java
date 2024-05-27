@@ -1,11 +1,18 @@
 package project.util;
 
+import javax.swing.JFormattedTextField;
+import javax.swing.JTextField;
+import javax.swing.text.InternationalFormatter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -58,8 +65,43 @@ public class AppUtils {
 		
 		return Optional.empty();
 	}
-	
+
+	public static boolean isUserTypeSuperAdmin(int userTypeId) {
+		return UserTypes.SUPER_ADMIN.id() == userTypeId;
+	}
+
+	public static boolean isUserTypeAdmin(int userTypeId) {
+		return UserTypes.ADMIN.id() == userTypeId;
+	}
+
 	public static boolean isUserTypeCustomer(int userTypeId) {
 		return UserTypes.CUSTOMER.id() == userTypeId;
+	}
+
+	public static void currency(JFormattedTextField field) {
+		field.setFormatterFactory(new JFormattedTextField.AbstractFormatterFactory() {
+			@Override
+			public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
+				NumberFormat format = NumberFormat.getInstance();
+				format.setMinimumFractionDigits(2);
+				format.setMaximumFractionDigits(2);
+				format.setRoundingMode(RoundingMode.HALF_UP);
+				InternationalFormatter formatter = new InternationalFormatter(format);
+				formatter.setAllowsInvalid(false);
+				return formatter;
+			}
+		});
+	}
+
+	public static void numeric(JTextField field) {
+		field.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
+					e.consume(); // if it's not a number, ignore the event
+				}
+			}
+		});
 	}
 }

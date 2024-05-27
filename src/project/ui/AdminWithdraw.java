@@ -80,7 +80,7 @@ class AdminWithdraw extends JFrame implements ActionListener{
 			new AdminWithdraw_Confirmation();
 		} else if (e.getSource() == exitbutton) {
 			frame.dispose();
-			new AdminDatabaseSignup(new DefaultUserService());
+			new AdminSignup(new DefaultUserService());
 		} else {
 			frame.dispose();
 		}	

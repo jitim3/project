@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +23,7 @@ import project.util.ReservationStatus;
 public class DisplayCottageResort implements ActionListener {
 	private final long userId;
 	private final ResortDto resortDto;
+	private final BigDecimal amount;
 	private final JFrame frame = new JFrame("Cottage Information");
 	private final JLabel cottagesLabel = new JLabel("COTTAGES");
 	private final JLabel cottageFeeLabel = new JLabel("COTTAGE FEE");
@@ -30,6 +33,11 @@ public class DisplayCottageResort implements ActionListener {
 	public DisplayCottageResort(long userId, ResortDto resortDto) {
 		this.userId = userId;
 		this.resortDto = resortDto;
+
+		amount = (this.resortDto.cottageFee() != null
+				? this.resortDto.cottageFee()
+				: BigDecimal.ZERO
+		).setScale(2, RoundingMode.HALF_UP);
 		
 		reserveNowButton.setBounds(315, 530, 220, 25);
 		reserveNowButton.setFocusable(false);
@@ -41,8 +49,7 @@ public class DisplayCottageResort implements ActionListener {
 		exitButton.addActionListener(this);
 		exitButton.setOpaque(false);
 
-		String cFee = this.resortDto.cottageFee() != null ? this.resortDto.cottageFee().toString() : "";
-		JLabel displayLabel3 = new JLabel(cFee); // COTTAGE FEE
+		JLabel displayLabel3 = new JLabel(amount.toString()); // COTTAGE FEE
 		displayLabel3.setBounds(300, 470, 250, 45);
 		displayLabel3.setFont(new Font("Times New Roman", Font.BOLD, 23));
 		displayLabel3.setForeground(Color.black);
@@ -91,8 +98,8 @@ public class DisplayCottageResort implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == reserveNowButton) {
 			frame.dispose();
-			CreateReservationDto createReservationDto = new CreateCottageReservationDto(userId, resortDto.id(), ReservationStatus.PENDING);
-			CustomerInformation window = new CustomerInformation(userId, resortDto, createReservationDto);
+			CreateReservationDto createReservationDto = new CreateCottageReservationDto(userId, resortDto.id(), ReservationStatus.PENDING, amount);
+			new CustomerInformation(userId, resortDto, createReservationDto);
 		}
 	}
 }

@@ -80,7 +80,7 @@ class AdminWallet extends JFrame implements ActionListener {
 		} else if (e.getSource() == exitbutton) {
 			this.windowEventSource = "exitbutton";
 			frame.dispose();
-			new AdminDatabaseSignup(new DefaultUserService());
+			new AdminSignup(new DefaultUserService());
 		} else {
 			frame.dispose();
 		}	
