@@ -90,7 +90,6 @@ public class Login extends JFrame implements ActionListener {
         frame.add(passwordField);
         frame.add(loginButton);
         frame.add(signupButton);
-        frame.add(iconButton);
         frame.add(backgroundLabel);
         frame.setIconImage(icon.getImage());
         frame.setVisible(true);
@@ -101,7 +100,7 @@ public class Login extends JFrame implements ActionListener {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (!"iconButton".equals(windowEventSource) && !"signupButton".equals(windowEventSource) && !"loginButton".equals(windowEventSource)) {
+                if (!"signupButton".equals(windowEventSource) && !"loginButton".equals(windowEventSource)) {
                     launchPageFrame.setVisible(true);
                 }
             }
@@ -111,20 +110,16 @@ public class Login extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == iconButton) {
-            windowEventSource = "iconButton";
-            frame.dispose();
-            new CoverPage(launchPageFrame, frame, userService);
-        } else if (source == signupButton) {
+        if (source == signupButton) {
             windowEventSource = "signupButton";
             frame.dispose();
-            new CustomerSignup(launchPageFrame, userService, frame);
+            new Signup(launchPageFrame, userService, frame);
         } else if (source == loginButton) {
             windowEventSource = "loginButton";
             boolean loginSuccessful = false;
             while (!loginSuccessful) {
                 String username = usernameField.getText();
-                String password = new String(passwordField.getPassword());
+                String password = String.valueOf(passwordField.getPassword());
                 Optional<UserDto> userDtOptional = this.userService.getUserByUsernameAndPassword(username, password);
                 if (userDtOptional.isPresent()) {
                     JOptionPane.showMessageDialog(this, "Login successful!", "Login", JOptionPane.INFORMATION_MESSAGE);

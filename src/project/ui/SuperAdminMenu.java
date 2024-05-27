@@ -88,7 +88,7 @@ public class SuperAdminMenu implements ActionListener {
         if (e.getSource() == viewRegisteredResortButton) {
             windowEventSource = "viewRegisteredResortButton";
             frame.dispose();
-            new SuperAdminRegisteredResort(frame, userDto);
+            new SuperAdminRegisteredResortView(frame, userDto);
         } else if (e.getSource() == approvalButton) {
             windowEventSource = "approvalButton";
             frame.dispose();
