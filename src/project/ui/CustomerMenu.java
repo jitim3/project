@@ -71,7 +71,7 @@ public class CustomerMenu implements ActionListener {
 		if (e.getSource() == viewResortsButton) { // For the Log in menu
 			windowEventSource = "viewResortsButton";
 			frame.dispose();
-			new Towns(frame, userDto);
+			new CustomerRegisteredResortView(frame, userDto);
 		} else if (e.getSource() == profileButton) { // For the sign up menu
 			windowEventSource = "profileButton";
 			frame.dispose();

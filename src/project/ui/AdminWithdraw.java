@@ -1,7 +1,5 @@
 package project.ui;
 
-import project.service.impl.DefaultUserService;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +12,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 class AdminWithdraw extends JFrame implements ActionListener {
     private final JFrame launchPageFrame;
@@ -23,9 +23,12 @@ class AdminWithdraw extends JFrame implements ActionListener {
     private final JLabel label = new JLabel("WITHDRAW", SwingConstants.CENTER);
     private final JButton widbutton = new JButton(" CONFIRM WITHDRAW");
     private final JButton exitbutton = new JButton("EXIT");
+    private final JFrame adminRegisteredResortMenuFrame;
+    private String windowEventSource = "";
 
-    public AdminWithdraw(JFrame launchPageFrame) {
+    public AdminWithdraw(JFrame launchPageFrame, JFrame adminRegisteredResortMenuFrame) {
         this.launchPageFrame = launchPageFrame;
+        this.adminRegisteredResortMenuFrame = adminRegisteredResortMenuFrame;
 
         balance.setBounds(100, 150, 300, 30);
         balance.setFont(new Font("Times New Roman", Font.BOLD, 17));
@@ -66,18 +69,25 @@ class AdminWithdraw extends JFrame implements ActionListener {
         frame.add(backgroundLabel);
         frame.setSize(700, 500);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (!"widbutton".equals(windowEventSource)) {
+                    adminRegisteredResortMenuFrame.setVisible(true);
+                }
+            }
+        });
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == widbutton) {
+            windowEventSource = "widbutton";
             frame.dispose();
             new AdminWithdraw_Confirmation();
-        } else if (e.getSource() == exitbutton) {
-            frame.dispose();
-            new AdminSignup(launchPageFrame, new DefaultUserService());
         } else {
             frame.dispose();
+            adminRegisteredResortMenuFrame.setVisible(true);
         }
     }
 }

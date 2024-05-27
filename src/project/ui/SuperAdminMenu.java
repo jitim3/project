@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -19,7 +20,6 @@ public class SuperAdminMenu implements ActionListener {
     private final JFrame frame = new JFrame("Super Admin");
     private final JLabel label = new JLabel("Welcome Super Admin!");
     private final JButton viewRegisteredResortButton = new JButton("View Registered Resort");
-    private final JButton approvalButton = new JButton("Approval");
     private final JButton viewWalletButton = new JButton("View Wallet");
     private final JButton viewTransactionButton = new JButton("View Transaction");
     private final JButton exitButton = new JButton("Exit");
@@ -32,15 +32,11 @@ public class SuperAdminMenu implements ActionListener {
         viewRegisteredResortButton.setFocusable(false);
         viewRegisteredResortButton.addActionListener(this);
 
-        approvalButton.setBounds(220, 160, 230, 40);
-        approvalButton.setFocusable(false);
-        approvalButton.addActionListener(this);
-
-        viewWalletButton.setBounds(220, 220, 230, 40);
+        viewWalletButton.setBounds(220, 160, 230, 40);
         viewWalletButton.setFocusable(false);
         viewWalletButton.addActionListener(this);
 
-        viewTransactionButton.setBounds(220, 280, 230, 40);
+        viewTransactionButton.setBounds(220, 220, 230, 40);
         viewTransactionButton.setFocusable(false);
         viewTransactionButton.addActionListener(this);
 
@@ -61,12 +57,11 @@ public class SuperAdminMenu implements ActionListener {
         frame.add(exitButton);
         frame.add(viewTransactionButton);
         frame.add(viewWalletButton);
-        frame.add(approvalButton);
         frame.add(viewRegisteredResortButton);
         frame.add(label);
         frame.add(backgroundLabel);
         frame.setIconImage(icon.getImage());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(700, 500);
         frame.setLayout(null);
         frame.setLocationRelativeTo(null);
@@ -75,8 +70,9 @@ public class SuperAdminMenu implements ActionListener {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (!"viewRegisteredResortButton".equals(windowEventSource) && !"approvalButton".equals(windowEventSource)
-                        && !"viewWalletButton".equals(windowEventSource) && !"viewTransactionButton".equals(windowEventSource)) {
+                if (!"viewRegisteredResortButton".equals(windowEventSource)
+                        && !"viewWalletButton".equals(windowEventSource)
+                        && !"viewTransactionButton".equals(windowEventSource)) {
                     launchPageFrame.setVisible(true);
                 }
             }
@@ -88,11 +84,7 @@ public class SuperAdminMenu implements ActionListener {
         if (e.getSource() == viewRegisteredResortButton) {
             windowEventSource = "viewRegisteredResortButton";
             frame.dispose();
-            new SuperAdminRegisteredResort(frame, userDto);
-        } else if (e.getSource() == approvalButton) {
-            windowEventSource = "approvalButton";
-            frame.dispose();
-            new SuperAdminResortApproval(frame, userDto);
+            new SuperAdminRegisteredResortView(frame, userDto);
         } else if (e.getSource() == viewWalletButton) {
             windowEventSource = "viewWalletButton";
             frame.dispose();
