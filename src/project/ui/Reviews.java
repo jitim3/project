@@ -1,8 +1,10 @@
 package project.ui;
 
 import project.dto.ReviewDto;
+import project.dto.UserDto;
 import project.service.ReviewService;
 import project.service.impl.DefaultReviewService;
+import project.util.AppUtils;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Reviews implements ActionListener {
-    private final Long userId;
+    private final UserDto userDto;
     private final Long resortId;
     private final ReviewService reviewService;
     private final JFrame frame = new JFrame("REVIEWS");
@@ -35,9 +37,9 @@ public class Reviews implements ActionListener {
     private final JFrame parentFrame;
     private String windowEventSource = "";
 
-    public Reviews(JFrame parentFrame, Long userId, Long resortId) {
+    public Reviews(JFrame parentFrame, UserDto userDto, Long resortId) {
         this.parentFrame = parentFrame;
-        this.userId = userId;
+        this.userDto = userDto;
         this.resortId = resortId;
         this.reviewService = new DefaultReviewService();
 
@@ -94,7 +96,9 @@ public class Reviews implements ActionListener {
         frame.add(lblTitle);
         frame.add(reviewsBackgroundLabel);
         frame.add(scrollBar);
-        frame.add(createReviewButton);
+        if (AppUtils.isUserTypeCustomer(userDto.getUserType().id())) {
+            frame.add(createReviewButton);
+        }
         frame.add(exitButton);
         frame.add(backgroundLabel);
         frame.add(backgroundLabel);
@@ -120,7 +124,7 @@ public class Reviews implements ActionListener {
         if (e.getSource() == createReviewButton) {
             this.windowEventSource = "createReviewButton";
             frame.dispose();
-            new WriteReview(parentFrame, userId, resortId, reviewService);
+            new WriteReview(parentFrame, userDto, resortId, reviewService);
         } else {
             frame.dispose();
         }

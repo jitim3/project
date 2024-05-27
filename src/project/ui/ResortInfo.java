@@ -726,7 +726,7 @@ public class ResortInfo implements ActionListener {
 			RoomDto createdFamilyRoom = this.roomService.createRoom(familyRoom);
 			LOGGER.log(Level.INFO, "Created family room: " + (createdFamilyRoom != null));
 
-			new ResortView(parentFrame, ResortViewEvent.RESORT_CREATED, resortService, userDto, resortId);
+			new ResortView(parentFrame, ResortViewEvent.ADMIN_RESORT_CREATED_VIEW, resortService, userDto, resortId);
 		}
 	}
 }

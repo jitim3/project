@@ -1,5 +1,5 @@
 package project.util;
 
 public enum ResortViewEvent {
-    RESORT_CREATED, CUSTOMER_VIEW
+    SUPER_ADMIN_VIEW, ADMIN_RESORT_CREATED_VIEW, CUSTOMER_VIEW
 }

@@ -6,21 +6,27 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class NewWindow_Admin implements ActionListener {
+public class AdminSignupAndLoginMenu implements ActionListener {
     private final JFrame launchPageFrame;
+    private final JFrame coverPageFrame;
     private final UserService userService;
     private final JFrame frame = new JFrame("Admin");
     private final JLabel label = new JLabel();
     private final JButton loginButton = new JButton("Log in");
     private final JButton signupButton = new JButton("Sign up");
     private final JButton exitButton = new JButton("EXIT");
+    private String windowEventSource = "";
 
-    public NewWindow_Admin(JFrame launchPageFrame, final UserService userService) {
+    public AdminSignupAndLoginMenu(JFrame launchPageFrame, JFrame coverPageFrame, final UserService userService) {
         this.launchPageFrame = launchPageFrame;
+        this.coverPageFrame = coverPageFrame;
         this.userService = userService;
 
         // Import logo for the Customer frame
@@ -45,7 +51,7 @@ public class NewWindow_Admin implements ActionListener {
         exitButton.addActionListener(this);
 
         frame.add(label);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(350, 300);
         frame.setIconImage(icon.getImage());
         frame.add(loginButton);
@@ -56,19 +62,29 @@ public class NewWindow_Admin implements ActionListener {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (!"loginButton".equals(windowEventSource) && !"signupButton".equals(windowEventSource)) {
+                    coverPageFrame.setVisible(true);
+                }
+            }
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
+            windowEventSource = "loginButton";
             frame.dispose();
             new AdminLogin(launchPageFrame, userService);
         } else if (e.getSource() == signupButton) {
+            windowEventSource = "signupButton";
             frame.dispose();
             new AdminSignup(launchPageFrame, userService);
         } else {
             frame.dispose();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            coverPageFrame.setVisible(true);
         }
     }
 }

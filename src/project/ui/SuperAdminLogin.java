@@ -17,7 +17,8 @@ import javax.swing.JPasswordField;
 import project.dto.UserDto;
 import project.service.UserService;
 
-public class NewWindow_SuperAdmin implements ActionListener {
+public class SuperAdminLogin implements ActionListener {
+	private final JFrame launchPageFrame;
 	private final UserService userService;
 	private final JPasswordField passwordField = new JPasswordField();
 	private final JFrame frame = new JFrame("Super Admin");
@@ -26,8 +27,9 @@ public class NewWindow_SuperAdmin implements ActionListener {
 	private final JButton enterButton = new JButton("Enter");
 	private final JButton exitButton = new JButton("Exit");
 
-	public NewWindow_SuperAdmin(final UserService userService) {
-		this.userService = userService;
+	public SuperAdminLogin(JFrame launchPageFrame, final UserService userService) {
+        this.launchPageFrame = launchPageFrame;
+        this.userService = userService;
 
 		enterButton.setBounds(80, 165, 100, 30);
 		enterButton.setFocusable(false);
@@ -76,7 +78,7 @@ public class NewWindow_SuperAdmin implements ActionListener {
 			if (userDtOptional.isPresent()) {
 				JOptionPane.showMessageDialog(null, "Log in Successfully!", "Log in", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
-				new SuperAdmin_NextPage(userDtOptional.get());
+				new SuperAdminMenu(launchPageFrame, userDtOptional.get());
 			} else {
 				JOptionPane.showMessageDialog(null, "Incorrect password!", "Error", JOptionPane.ERROR_MESSAGE);
 			}

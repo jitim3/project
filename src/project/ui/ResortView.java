@@ -128,21 +128,6 @@ public class ResortView implements ActionListener {
 				poolImageLabel.getHeight(), Image.SCALE_SMOOTH);
 		poolImageLabel.setIcon(new ImageIcon(poolImage));
 
-		reservationButton.setBounds(360, 940, 150, 25);
-		reservationButton.setFocusable(false);
-		reservationButton.addActionListener(this);
-		reservationButton.setOpaque(false);
-
-		viewReviewsButton.setBounds(360, 985, 150, 25);
-		viewReviewsButton.setFocusable(false);
-		viewReviewsButton.addActionListener(this);
-		viewReviewsButton.setOpaque(false);
-
-		transactionButton.setBounds(360, 1025, 150, 25);
-		transactionButton.setFocusable(false);
-		transactionButton.addActionListener(this);
-		transactionButton.setOpaque(false);
-
 		exitButton.setBounds(380, 1075, 110, 25);
 		exitButton.setFocusable(false);
 		exitButton.addActionListener(this);
@@ -162,7 +147,30 @@ public class ResortView implements ActionListener {
 		panel.add(resortEntranceFeeLabel);
 		panel.add(resortFeeLabel);
 		panel.add(exitButton);
+		if (ResortViewEvent.SUPER_ADMIN_VIEW == event) {
+			viewReviewsButton.setBounds(360, 1025, 150, 25);
+			viewReviewsButton.setFocusable(false);
+			viewReviewsButton.addActionListener(this);
+			transactionButton.setOpaque(false);
+
+			panel.add(viewReviewsButton);
+		}
 		if (ResortViewEvent.CUSTOMER_VIEW == event) {
+			transactionButton.setBounds(360, 1025, 150, 25);
+			transactionButton.setFocusable(false);
+			transactionButton.addActionListener(this);
+			transactionButton.setOpaque(false);
+
+			viewReviewsButton.setBounds(360, 985, 150, 25);
+			viewReviewsButton.setFocusable(false);
+			viewReviewsButton.addActionListener(this);
+			viewReviewsButton.setOpaque(false);
+
+			reservationButton.setBounds(360, 940, 150, 25);
+			reservationButton.setFocusable(false);
+			reservationButton.addActionListener(this);
+			reservationButton.setOpaque(false);
+
 			panel.add(transactionButton);
 			panel.add(viewReviewsButton);
 			panel.add(reservationButton);
@@ -209,7 +217,7 @@ public class ResortView implements ActionListener {
 		} else if (e.getSource() == viewReviewsButton) {
 			this.windowEventSource = "viewReviewsButton";
 			frame.dispose();
-			new Reviews(frame, userDto.getId(), resortDto.id());
+			new Reviews(frame, userDto, resortDto.id());
 		} else if (e.getSource() == transactionButton) {
 			this.windowEventSource = "transactionButton";
 			new AdminTransaction(frame);
