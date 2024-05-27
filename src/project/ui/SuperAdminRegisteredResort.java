@@ -1,17 +1,5 @@
 package project.ui;
 
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
 import project.dto.UserDto;
 import project.ui.town.Alcoy;
 import project.ui.town.Barili;
@@ -20,121 +8,137 @@ import project.ui.town.Moalboal;
 import project.ui.town.Oslob;
 import project.ui.town.SanTander;
 
-public class Towns extends JFrame implements ActionListener { // Prompts after user log in
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.WindowConstants;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+public class SuperAdminRegisteredResort implements ActionListener {
     private final UserDto userDto;
-    private final JFrame frame = new JFrame("Where to?");
-    private final JLabel townLabel = new JLabel("TOWN");
+    private final JFrame frame = new JFrame("Registered Resort");
+    private final JLabel label = new JLabel("VIEW ALL RESORT");
     private final JButton carcarButton = new JButton("Carcar"); // CARCAR BUTTON id: 3
     private final JButton bariliButton = new JButton("Barili");// Barili BUTTON id: 2
     private final JButton moalBoalButton = new JButton("Moalboal");// Moalboal BUTTON id: 4
     private final JButton alcoyButton = new JButton("Alcoy");// Alcoy BUTTON id: 1
     private final JButton sanTanderButton = new JButton("SanTander");// SAN TANDER BUTTON id: 6
     private final JButton oslobButton = new JButton("Oslob");// OSLOB BUTTON id: 5
-    private final JButton backButton = new JButton("BACK");// EXIT BUTTON
-    private final JFrame customerMenuFrame;
+    private final JButton exitButton = new JButton("BACK");
+    private final JFrame superAdminMenu;
     private String windowEventSource = "";
 
-    public Towns(JFrame customerMenuFrame, UserDto userDto) {
-        this.customerMenuFrame = customerMenuFrame;
+    public SuperAdminRegisteredResort(JFrame superAdminMenu, UserDto userDto) {
+        this.superAdminMenu = superAdminMenu;
         this.userDto = userDto;
-        // Set logo to the frame
-        ImageIcon icon = new ImageIcon("beach2.png");
 
-        ImageIcon background = new ImageIcon("beach3.jpg");
-        Image backgroundImage = background.getImage().getScaledInstance(500, 600, Image.SCALE_DEFAULT);
-        JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-        backgroundLabel.setBounds(0, 0, 500, 600);
-        // Add components to the frame
+        label.setBounds(210, 40, 500, 30);
+        label.setFont(new Font("Times New Roman", Font.BOLD, 30));
 
-        townLabel.setBounds(200, 35, 200, 125);
-        townLabel.setFont(new Font("+", Font.PLAIN, 28));
-
-        carcarButton.setBounds(70, 180, 150, 40);
+        carcarButton.setBounds(170, 100, 150, 40);
         carcarButton.setFocusable(false);
         carcarButton.addActionListener(this);
 
-        bariliButton.setBounds(250, 180, 150, 40);
+        bariliButton.setBounds(375, 100, 150, 40);
         bariliButton.setFocusable(false);
         bariliButton.addActionListener(this);
 
-        moalBoalButton.setBounds(70, 240, 150, 40);
+        moalBoalButton.setBounds(170, 180, 150, 40);
         moalBoalButton.setFocusable(false);
         moalBoalButton.addActionListener(this);
 
-        alcoyButton.setBounds(250, 240, 150, 40);
+        alcoyButton.setBounds(375, 180, 150, 40);
         alcoyButton.setFocusable(false);
         alcoyButton.addActionListener(this);
 
-        sanTanderButton.setBounds(70, 300, 150, 40);
+        sanTanderButton.setBounds(170, 240, 150, 40);
         sanTanderButton.setFocusable(false);
         sanTanderButton.addActionListener(this);
 
-        oslobButton.setBounds(250, 300, 150, 40);
+        oslobButton.setBounds(375, 240, 150, 40);
         oslobButton.setFocusable(false);
         oslobButton.addActionListener(this);
 
-        backButton.setBounds(160, 370, 150, 40);
-        backButton.setFocusable(false);
-        backButton.addActionListener(this);
+        exitButton.setBounds(275, 350, 150, 40);
+        exitButton.addActionListener(this);
+        exitButton.setFocusable(false);
 
-        frame.setLocation(300, 250);
+        ImageIcon icon = new ImageIcon("beach2.png");
+
+        ImageIcon background = new ImageIcon("figma.jpg");
+        Image backgroundImage = background.getImage().getScaledInstance(700, 500, Image.SCALE_DEFAULT);
+        JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
+        backgroundLabel.setBounds(0, 0, 700, 500);
+
+        frame.add(label);
         frame.add(carcarButton);
-        frame.add(backButton);
         frame.add(oslobButton);
         frame.add(sanTanderButton);
         frame.add(alcoyButton);
         frame.add(moalBoalButton);
         frame.add(bariliButton);
-        frame.add(townLabel);
-        frame.setIconImage(icon.getImage());
+        frame.add(exitButton);
         frame.add(backgroundLabel);
-        frame.setSize(500, 550);
+        frame.setIconImage(icon.getImage());
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setSize(700, 500);
+        frame.setLayout(null);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (!"carcarButton".equals(windowEventSource) && !"bariliButton".equals(windowEventSource)
                         && !"moalBoalButton".equals(windowEventSource) && !"alcoyButton".equals(windowEventSource)
                         && !"sanTanderButton".equals(windowEventSource) && !"oslobButton".equals(windowEventSource)) {
-                    customerMenuFrame.setVisible(true);
+                    superAdminMenu.setVisible(true);
                 }
             }
         });
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
     }
 
+    /*
+     * diri na part is katong sa document so once na mo click siya sa resort name
+     * then makita na niya ang document na gi send ni admin nga na verify na sa
+     * super admin.
+     */
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == carcarButton) {
-            this.windowEventSource = "carcarButton";
+            windowEventSource = "carcarButton";
             frame.dispose();
             new Carcar(this.userDto, frame);
         } else if (e.getSource() == bariliButton) {
-            this.windowEventSource = "bariliButton";
+            windowEventSource = "bariliButton";
             frame.dispose();
             new Barili(this.userDto, frame);
         } else if (e.getSource() == moalBoalButton) {
-            this.windowEventSource = "moalBoalButton";
+            windowEventSource = "moalBoalButton";
             frame.dispose();
             new Moalboal(this.userDto, frame);
         } else if (e.getSource() == alcoyButton) {
-            this.windowEventSource = "alcoyButton";
+            windowEventSource = "alcoyButton";
             frame.dispose();
             new Alcoy(this.userDto, frame);
         } else if (e.getSource() == sanTanderButton) {
-            this.windowEventSource = "sanTanderButton";
+            windowEventSource = "sanTanderButton";
             frame.dispose();
             new SanTander(this.userDto, frame);
         } else if (e.getSource() == oslobButton) {
-            this.windowEventSource = "oslobButton";
+            windowEventSource = "oslobButton";
             frame.dispose();
             new Oslob(this.userDto, frame);
         } else {
-            this.windowEventSource = "unknown";
             frame.dispose();
-            customerMenuFrame.setVisible(true);
+            superAdminMenu.setVisible(true);
         }
     }
 }

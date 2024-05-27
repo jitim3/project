@@ -114,7 +114,7 @@ public class Login extends JFrame implements ActionListener {
         if (source == iconButton) {
             windowEventSource = "iconButton";
             frame.dispose();
-            new CoverPage(launchPageFrame, userService, frame);
+            new CoverPage(launchPageFrame, frame, userService);
         } else if (source == signupButton) {
             windowEventSource = "signupButton";
             frame.dispose();
@@ -132,7 +132,7 @@ public class Login extends JFrame implements ActionListener {
                     UserDto loggedInUserDto = userDtOptional.get();
                     int userTypeId = loggedInUserDto.getUserType().id();
                     if (AppUtils.isUserTypeSuperAdmin(userTypeId)) {
-                        new SuperAdmin_NextPage(loggedInUserDto);
+                        new SuperAdminMenu(launchPageFrame, loggedInUserDto);
                     } else if (AppUtils.isUserTypeAdmin(userTypeId)) {
                         new AdminMenu(launchPageFrame, loggedInUserDto);
                     } else if (AppUtils.isUserTypeCustomer(userTypeId)) {

@@ -2,6 +2,7 @@ package project.ui;
 
 import project.dto.CreateReviewDto;
 import project.dto.ReviewDto;
+import project.dto.UserDto;
 import project.service.ReviewService;
 
 import javax.swing.ImageIcon;
@@ -27,7 +28,7 @@ import java.awt.event.WindowEvent;
 import java.time.Instant;
 
 public class WriteReview {
-    private final Long userId;
+    private final UserDto userDto;
     private final Long resortId;
     private final ReviewService reviewService;
     private final JFrame frame = new JFrame("Write Reviews");
@@ -36,9 +37,9 @@ public class WriteReview {
     private final JButton saveButton = new JButton("SAVE");
     private final JFrame displayFrame;
 
-    public WriteReview(JFrame displayFrame, Long userId, Long resortId, ReviewService reviewService) {
+    public WriteReview(JFrame displayFrame, UserDto userDto, Long resortId, ReviewService reviewService) {
         this.displayFrame = displayFrame;
-        this.userId = userId;
+        this.userDto = userDto;
         this.resortId = resortId;
         this.reviewService = reviewService;
 
@@ -99,7 +100,7 @@ public class WriteReview {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                new Reviews(displayFrame, userId, resortId);
+                new Reviews(displayFrame, userDto, resortId);
             }
         });
     }
@@ -194,7 +195,7 @@ public class WriteReview {
             int rate = Integer.parseInt(rateTextField.getText());
             String comment = commentTextArea.getText();
             if (comment != null && !comment.isBlank()) {
-                CreateReviewDto createReviewDto = new CreateReviewDto(userId, resortId, rate, comment, Instant.now());
+                CreateReviewDto createReviewDto = new CreateReviewDto(userDto.getId(), resortId, rate, comment, Instant.now());
                 ReviewDto createdReviewDto = reviewService.createReview(createReviewDto);
                 if (createdReviewDto != null) {
                     JOptionPane.showMessageDialog(null, "Review successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);

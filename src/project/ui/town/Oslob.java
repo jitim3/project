@@ -104,7 +104,12 @@ public class Oslob implements Town {
 			resortButton.addActionListener(e -> {
 				windowEventSource = windowEventSourceRef.get();
 				frame.dispose();
-				new ResortView(frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
+				int userTypeId = this.userDto.getUserType().id();
+				if (AppUtils.isUserTypeSuperAdmin(userTypeId)) {
+					new ResortView(frame, ResortViewEvent.SUPER_ADMIN_VIEW, this.resortService, this.userDto, resortDto.id());
+				} else if (AppUtils.isUserTypeCustomer(userTypeId)) {
+					new ResortView(frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
+				}
 			});
 			frame.getContentPane().add(resortButton);
 			frame.add(resortButton);
@@ -118,25 +123,21 @@ public class Oslob implements Town {
 	}
 
 	private List<ResortDto> getRegisteredResorts(Long resortId) {
-		if (this.userDto != null) {
-			int userTypeId = this.userDto.getUserType().id();
-			if (AppUtils.isUserTypeAdmin(userTypeId)) {
-				if (resortId != null) {
-					return this.resortService.getResortById(resortId)
-							.map(List::of)
-							.orElse(List.of());
-				} else {
-					return this.resortService.getResortByUserIdAndTownId(this.userDto.getId(), this.townId)
-							.map(List::of)
-							.orElse(List.of());
-				}
-			} else if (AppUtils.isUserTypeCustomer(userTypeId)) {
-				return this.resortService.getResortsByTownId(this.townId);
+		int userTypeId = this.userDto.getUserType().id();
+		if (AppUtils.isUserTypeSuperAdmin(userTypeId) || AppUtils.isUserTypeCustomer(userTypeId)) {
+			return this.resortService.getResortsByTownId(this.townId);
+		} else if (AppUtils.isUserTypeAdmin(userTypeId)) {
+			if (resortId != null) {
+				return this.resortService.getResortById(resortId)
+						.map(List::of)
+						.orElse(List.of());
 			} else {
-				return List.of();
+				return this.resortService.getResortByUserIdAndTownId(this.userDto.getId(), this.townId)
+						.map(List::of)
+						.orElse(List.of());
 			}
+		} else {
+			return List.of();
 		}
-
-		return List.of();
 	}
 }
