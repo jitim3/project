@@ -1,12 +1,11 @@
 package project.ui;
 
-import project.service.impl.DefaultUserService;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -22,12 +21,12 @@ class AdminWallet extends JFrame implements ActionListener {
     private final JLabel label = new JLabel("VIEW WALLET", SwingConstants.CENTER);
     private final JLabel balance = new JLabel("BALANCE: ", SwingConstants.CENTER);
     private final JLabel money = new JLabel("0.00 ", SwingConstants.CENTER);
-    private final JFrame parentFrame;
+    private final JFrame adminRegisteredResortMenuFrame;
     private String windowEventSource = "";
 
-    public AdminWallet(JFrame launchPageFrame, JFrame parentFrame) {
+    public AdminWallet(JFrame launchPageFrame, JFrame adminRegisteredResortMenuFrame) {
         this.launchPageFrame = launchPageFrame;
-        this.parentFrame = parentFrame;
+        this.adminRegisteredResortMenuFrame = adminRegisteredResortMenuFrame;
         money.setBounds(200, 150, 300, 30);
         money.setFont(new Font("Times New Roman", Font.BOLD, 17));
         balance.setBounds(100, 150, 300, 30);
@@ -62,12 +61,12 @@ class AdminWallet extends JFrame implements ActionListener {
         frame.setSize(700, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (!"widbutton".equals(windowEventSource) && !"exitbutton".equals(windowEventSource)) {
-                    parentFrame.setVisible(true);
+                if (!"widbutton".equals(windowEventSource)) {
+                    adminRegisteredResortMenuFrame.setVisible(true);
                 }
             }
         });
@@ -77,13 +76,10 @@ class AdminWallet extends JFrame implements ActionListener {
         if (e.getSource() == widbutton) {
             this.windowEventSource = "widbutton";
             frame.dispose();
-            new AdminWithdraw(launchPageFrame);
-        } else if (e.getSource() == exitbutton) {
-            this.windowEventSource = "exitbutton";
-            frame.dispose();
-            new AdminSignup(launchPageFrame, new DefaultUserService());
+            new AdminWithdraw(launchPageFrame, frame);
         } else {
             frame.dispose();
+            adminRegisteredResortMenuFrame.setVisible(true);
         }
     }
 }
