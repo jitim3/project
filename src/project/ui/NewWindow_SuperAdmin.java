@@ -76,7 +76,7 @@ public class NewWindow_SuperAdmin implements ActionListener {
 			if (userDtOptional.isPresent()) {
 				JOptionPane.showMessageDialog(null, "Log in Successfully!", "Log in", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
-				SuperAdmin_NextPage window = new SuperAdmin_NextPage();
+				new SuperAdmin_NextPage(userDtOptional.get());
 			} else {
 				JOptionPane.showMessageDialog(null, "Incorrect password!", "Error", JOptionPane.ERROR_MESSAGE);
 			}

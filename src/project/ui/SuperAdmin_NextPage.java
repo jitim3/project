@@ -1,5 +1,7 @@
 package project.ui;
 
+import project.dto.UserDto;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -11,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 public class SuperAdmin_NextPage implements ActionListener {
+	private final UserDto userDto;
 	private final JFrame frame = new JFrame("Super Admin");
 	private final JLabel label = new JLabel("Welcome Super Admin!");
 	private final JButton viewRegisteredResortButton = new JButton("View Registered Resort");
@@ -19,8 +22,9 @@ public class SuperAdmin_NextPage implements ActionListener {
 	private final JButton viewTransactionButton = new JButton("View Transaction");
 	private final JButton exitButton = new JButton("Exit");
 
-	public SuperAdmin_NextPage() {
-		viewRegisteredResortButton.setBounds(220, 100, 230, 40);
+	public SuperAdmin_NextPage(UserDto userDto) {
+        this.userDto = userDto;
+        viewRegisteredResortButton.setBounds(220, 100, 230, 40);
 		viewRegisteredResortButton.setFocusable(false);
 		viewRegisteredResortButton.addActionListener(this);
 
@@ -70,10 +74,10 @@ public class SuperAdmin_NextPage implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == viewRegisteredResortButton) {
 			frame.dispose();
-			new Superadmin_Registered_Resort(frame);
+			new Superadmin_Registered_Resort(frame, userDto);
 		} else if (e.getSource() == approvalButton) {
 			frame.dispose();
-			new ApprovalResort(frame);
+			new ApprovalResort(frame, userDto);
 		} else if (e.getSource() == viewWalletButton) {
 			frame.dispose();
 			new SuperAdminWallet(frame);

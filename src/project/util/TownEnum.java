@@ -1,8 +1,5 @@
 package project.util;
 
-/**
- * @author Julian Jupiter
- */
 public enum TownEnum {
     CARCAR(1, "Carcar"),
     BARILI(2, "Barili"),

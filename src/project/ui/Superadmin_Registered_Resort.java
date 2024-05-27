@@ -1,5 +1,7 @@
 package project.ui;
 
+import project.dto.UserDto;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -11,15 +13,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 public class Superadmin_Registered_Resort implements ActionListener {
+	private final UserDto userDto;
 	private final JFrame frame = new JFrame("Registered Resort");
 	private final JLabel label = new JLabel("VIEW ALL RESORT");
 	private final JButton exitButton = new JButton("BACK");
 	private final JFrame superAdminNextPagFrame;
 
-	public Superadmin_Registered_Resort(JFrame superAdminNextPagFrame) {
+	public Superadmin_Registered_Resort(JFrame superAdminNextPagFrame, UserDto userDto) {
 		this.superAdminNextPagFrame = superAdminNextPagFrame;
+		this.userDto = userDto;
 
 		exitButton.setBounds(275, 350, 150, 40);
 		exitButton.addActionListener(this);
@@ -39,7 +44,7 @@ public class Superadmin_Registered_Resort implements ActionListener {
 		frame.add(exitButton);
 		frame.add(backgroundLabel);
 		frame.setIconImage(icon.getImage());
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.setSize(700, 500);
 		frame.setLayout(null);
 		frame.addWindowListener(new WindowAdapter() {
@@ -48,7 +53,7 @@ public class Superadmin_Registered_Resort implements ActionListener {
 				if (superAdminNextPagFrame != null) {
 					superAdminNextPagFrame.setVisible(true);
 				} else {
-					new SuperAdmin_NextPage();
+					new SuperAdmin_NextPage(userDto);
 				}
 			}
 		});
@@ -70,7 +75,7 @@ public class Superadmin_Registered_Resort implements ActionListener {
 			if (superAdminNextPagFrame != null) {
 				superAdminNextPagFrame.setVisible(true);
 			} else {
-				new SuperAdmin_NextPage();
+				new SuperAdmin_NextPage(userDto);
 			}
 		}
 	}

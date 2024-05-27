@@ -1,5 +1,7 @@
 package project.ui;
 
+import project.dto.UserDto;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -14,12 +16,14 @@ import javax.swing.JLabel;
 
 public class ApprovalResort implements ActionListener {
 	private final JFrame frame = new JFrame("APPROVAL"); //DAPAT DITO MAPUNTA ANG GENERATED BUTTONS PARA SA REGISTERED RESORT (ONCE MA APPROVE, MAPOST)
+	private final UserDto userDto;
 	private final JLabel resortsToBeApprovedLabel = new JLabel("RESORTS TO BE APPROVED");
 	private final JButton exitButton = new JButton("Exit");
 	private final JFrame superAdminNextPagFrame;
 
-	public ApprovalResort(JFrame superAdminNextPagFrame) {
-		this.superAdminNextPagFrame = superAdminNextPagFrame;
+	public ApprovalResort(JFrame superAdminNextPagFrame, UserDto userDto) {
+        this.superAdminNextPagFrame = superAdminNextPagFrame;
+		this.userDto = userDto;
  
 		exitButton.setBounds(275, 350, 150, 40);
 		exitButton.addActionListener(this);
@@ -48,7 +52,7 @@ public class ApprovalResort implements ActionListener {
 				if (superAdminNextPagFrame != null) {
 					superAdminNextPagFrame.setVisible(true);
 				} else {
-					new SuperAdmin_NextPage();
+					new SuperAdmin_NextPage(userDto);
 				}
 			}
 		});
@@ -64,7 +68,7 @@ public class ApprovalResort implements ActionListener {
 			if (superAdminNextPagFrame != null) {
 				superAdminNextPagFrame.setVisible(true);
 			} else {
-				new SuperAdmin_NextPage();
+				new SuperAdmin_NextPage(userDto);
 			}
 		}
 	}
