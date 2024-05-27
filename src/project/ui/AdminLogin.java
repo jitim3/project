@@ -19,12 +19,14 @@ import project.dto.UserDto;
 import project.service.UserService;
 
 public class AdminLogin extends JFrame implements ActionListener {
+	private final JFrame launchPageFrame;
 	private final UserService userService;
 	JFrame frame = new JFrame("Admin Log in");
 	private JTextField usernameField;
 	private JPasswordField passwordField;
 
-	AdminLogin(final UserService userService) {
+	public AdminLogin(JFrame launchPageFrame, UserService userService) {
+		this.launchPageFrame = launchPageFrame;
 		this.userService = userService;
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -89,7 +91,7 @@ public class AdminLogin extends JFrame implements ActionListener {
 				if (userDtOptional.isPresent()) {
 					JOptionPane.showMessageDialog(this, "Login successful!", "Login", JOptionPane.INFORMATION_MESSAGE);
 					loginSuccessful = true;
-					AdminMenu adminMenu = new AdminMenu(userDtOptional.get());
+					new AdminMenu(launchPageFrame, userDtOptional.get());
 					frame.dispose();
 				} else {
 					JOptionPane.showMessageDialog(this, "Invalid username or password. Please try again.", "Login Error", JOptionPane.ERROR_MESSAGE);
