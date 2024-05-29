@@ -75,7 +75,7 @@ public class CustomerMenu implements ActionListener {
 		} else if (e.getSource() == profileButton) { // For the sign up menu
 			windowEventSource = "profileButton";
 			frame.dispose();
-			new CustomerViewOrUpdateInformaton(userDto.getId(), frame);
+			new CustomerViewOrUpdateInformation(userDto.getId(), frame);
 		} else {
 			frame.dispose();
 			launchPageFrame.setVisible(true);

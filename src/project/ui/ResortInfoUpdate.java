@@ -8,7 +8,6 @@ import project.dto.UpdateRoomDto;
 import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.RoomService;
-import project.service.impl.DefaultRoomService;
 import project.util.AppUtils;
 import project.util.RoomAvailabilityTypes;
 import project.util.RoomTypes;
@@ -141,12 +140,12 @@ public class ResortInfoUpdate implements ActionListener {
     private RoomDto normalRoomDto;
     private RoomDto familyRoomDto;
 
-    public ResortInfoUpdate(JFrame parentFrame, UserDto userDto, ResortDto resortDto, final ResortService resortService) {
+    public ResortInfoUpdate(JFrame parentFrame, UserDto userDto, ResortDto resortDto, ResortService resortService) {
         this.parentFrame = parentFrame;
         this.userDto = userDto;
         this.resortDto = resortDto;
         this.resortService = resortService;
-        this.roomService = new DefaultRoomService();
+        this.roomService = new RoomService();
 
         // ==> FOR LABELS
         label.setBounds(250, 15, 400, 80);

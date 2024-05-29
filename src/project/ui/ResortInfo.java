@@ -6,7 +6,6 @@ import project.dto.UpdateResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.RoomService;
-import project.service.impl.DefaultRoomService;
 import project.util.AppUtils;
 import project.util.RoomAvailabilityTypes;
 import project.util.RoomTypes;
@@ -143,7 +142,7 @@ public class ResortInfo implements ActionListener {
         this.resortId = resortId;
         this.resortNameCreated = resortNameCreated;
         this.resortService = resortService;
-        this.roomService = new DefaultRoomService();
+        this.roomService = new RoomService();
 
         this.resortNameTextField.setText(this.resortNameCreated);
 

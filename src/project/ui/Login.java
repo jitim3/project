@@ -2,7 +2,6 @@ package project.ui;
 
 import project.dto.UserDto;
 import project.service.UserService;
-import project.service.impl.DefaultUserService;
 import project.util.AppUtils;
 
 import javax.swing.ImageIcon;
@@ -38,7 +37,7 @@ public class Login extends JFrame implements ActionListener {
 
     public Login(JFrame launchPageFrame) {
         this.launchPageFrame = launchPageFrame;
-        this.userService = new DefaultUserService();
+        this.userService = new UserService();
 
         frame.setLayout(null); // Use null layout for absolute positioning
 
