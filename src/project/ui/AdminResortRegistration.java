@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public class AdminResortRegistration implements ActionListener {
+    private final JFrame launchPageFrame;
     private final UserDto userDto;
     private final ResortService resortService;
     private final JFrame frame = new JFrame("Select Town to Register");
@@ -46,7 +47,8 @@ public class AdminResortRegistration implements ActionListener {
     private final JFrame adminMenuFrame;
     private String windowEventSource = "unknown";
 
-    AdminResortRegistration(JFrame adminMenuFrame, UserDto userDto, ResortService resortService) {
+    AdminResortRegistration(JFrame launchPageFrame, JFrame adminMenuFrame, UserDto userDto, ResortService resortService) {
+        this.launchPageFrame = launchPageFrame;
         this.adminMenuFrame = adminMenuFrame;
         this.userDto = userDto;
         this.resortService = resortService;
@@ -118,7 +120,7 @@ public class AdminResortRegistration implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Information successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 frame.dispose();
                 field.setText(null);
-                new ResortInfo(adminMenuFrame, userDto, resortId, resortName, this.resortService);
+                new ResortInfo(launchPageFrame, userDto, resortId, resortName, this.resortService);
             }
         }
     }

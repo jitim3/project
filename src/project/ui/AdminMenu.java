@@ -83,11 +83,11 @@ public class AdminMenu implements ActionListener {
         if (e.getSource() == registerResortButton) { // For the Log in menu
             windowEventSource = "registerResortButton";
             frame.dispose();
-            new AdminResortRegistration(frame, this.userDto, this.resortService);
+            new AdminResortRegistration(launchPageFrame, frame, this.userDto, this.resortService);
         } else if (e.getSource() == viewRegisteredResortButton) { // For the sign up menu
             windowEventSource = "viewRegisteredResortButton";
             frame.dispose();
-            new AdminRegisteredResortMenu(launchPageFrame, frame, this.userDto.getId(), this.registeredResort, this.resortService);
+            new AdminRegisteredResortMenu(launchPageFrame, frame, this.userDto, this.registeredResort, this.resortService);
         } else {
             frame.dispose();
             launchPageFrame.setVisible(true);

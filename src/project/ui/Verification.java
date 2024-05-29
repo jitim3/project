@@ -23,11 +23,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
+import project.dto.UserDto;
 import project.service.ResortService;
 import project.util.AppUtils;
 
 public class Verification extends JFrame implements ActionListener {
 	private static final Logger LOGGER = System.getLogger(Verification.class.getName());
+	private final JFrame launchPageFrame;
+	private final UserDto userDto;
 	private final long resortId;
 	private final ResortService resortService;
 	private final JFrame frame = new JFrame("");
@@ -38,11 +41,11 @@ public class Verification extends JFrame implements ActionListener {
 	private final JButton uploadImage = new JButton("UPLOAD IMAGE");
 	private final JButton submitImage = new JButton("SUBMIT IMAGE");
 	private final JButton exit = new JButton("EXIT");
-	private final JFrame parentFrame;
 	private String windowEventSource = "";
 
-	public Verification(JFrame parentFrame, long resortId, ResortService resortService) {
-		this.parentFrame = parentFrame;
+	public Verification(JFrame launchPageFrame, UserDto userDto, long resortId, ResortService resortService) {
+		this.launchPageFrame = launchPageFrame;
+		this.userDto = userDto;
 		this.resortId = resortId;
 		this.resortService = resortService;
 
@@ -94,7 +97,7 @@ public class Verification extends JFrame implements ActionListener {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				parentFrame.setVisible(true);
+				new AdminMenu(launchPageFrame, userDto);
 			}
 		});
 	}
@@ -154,7 +157,6 @@ public class Verification extends JFrame implements ActionListener {
 			if (savedInDatabase) {
 				JOptionPane.showMessageDialog(this, "SUDMITTED.", "VERIFICATION", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
-				parentFrame.setVisible(true);
 			} else {
 				JOptionPane.showMessageDialog(null, "Permit image was not saved. Please try again",
 						"Upload Error", JOptionPane.ERROR_MESSAGE);
