@@ -22,7 +22,7 @@ import project.util.DatabaseConnectionFactory;
 public class DefaultRoomDao implements RoomDao {
 	private static final Logger LOGGER = System.getLogger(DefaultRoomDao.class.getName());
 	private static final String SQL_SELECT_ROOM_BY_ID = """
-			SELECT 
+			SELECT
 			    r.id, r.resort_id, r.room_type, r.num_of_pax, r.rate_per_night, r.description, r.room_image1, r.room_image2, r.created_at, r.updated_at,
 			    rat.id AS room_availability_type_id, rat.name AS room_availability_type_name,
 			    rat.created_at AS room_availability_type_created_at, rat.updated_at AS room_availability_type_updated_at
@@ -31,7 +31,7 @@ public class DefaultRoomDao implements RoomDao {
 			WHERE r.id = ?
 			""";
 	private static final String SQL_SELECT_ROOM_BY_RESORT_ID = """
-			SELECT 
+			SELECT
 			    r.id, r.resort_id, r.room_type, r.num_of_pax, r.rate_per_night, r.description, r.room_image1, r.room_image2, r.created_at, r.updated_at,
 			    rat.id AS room_availability_type_id, rat.name AS room_availability_type_name,
 			    rat.created_at AS room_availability_type_created_at, rat.updated_at AS room_availability_type_updated_at
@@ -41,13 +41,13 @@ public class DefaultRoomDao implements RoomDao {
 			""";
 	private static final String SQL_INSERT_ROOM = """
 			INSERT INTO room (
-				resort_id, room_availability_type_id, room_type, num_of_pax, 
-				rate_per_night, description, room_image1, room_image2, created_at
+			    resort_id, room_availability_type_id, room_type, num_of_pax,
+			    rate_per_night, description, room_image1, room_image2, created_at
 			)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 			""";
 	private static final String SQL_UPDATE_ROOM = """
-			UPDATE room SET room_availability_type_id = ?, num_of_pax = ?, rate_per_night = ?, 
+			UPDATE room SET room_availability_type_id = ?, num_of_pax = ?, rate_per_night = ?,
 			description = ?, room_image1 = ?, room_image2 = ?, updated_at = ?
 			WHERE id = ?
 			""";
@@ -116,7 +116,7 @@ public class DefaultRoomDao implements RoomDao {
 			
 			try (ResultSet rs = statement.getGeneratedKeys()) {
 			    if (rs.next()) {
-			    	Long id = rs.getLong(1);
+			    	long id = rs.getLong(1);
 			    	LOGGER.log(Level.DEBUG, "Room ID generated: " + id);
 			        return this.getRoomById(id).orElse(null);
 			    } else {
@@ -144,7 +144,7 @@ public class DefaultRoomDao implements RoomDao {
 			statement.setTimestamp(i++, Timestamp.from(updateRoomDto.updatedAt()));
 			statement.setLong(i++, roomId);
 			if (statement.executeUpdate() == 0) {
-				throw new SQLException("Updatihg room failed, no rows affected.");
+				throw new SQLException("Updating room failed, no rows affected.");
 			}
 			
 			return this.getRoomById(roomId).orElse(null);

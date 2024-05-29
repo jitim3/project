@@ -527,7 +527,7 @@ public class ResortInfo implements ActionListener {
 
             BigDecimal resortFee;
             try {
-                resortFee = new BigDecimal(resortEntranceFeeTextField.getText());
+                resortFee = new BigDecimal(resortEntranceFeeTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 resortFee = BigDecimal.ZERO;
             }
@@ -536,7 +536,7 @@ public class ResortInfo implements ActionListener {
 
             BigDecimal cottageFee;
             try {
-                cottageFee = new BigDecimal(resortCottageFeeTextField.getText());
+                cottageFee = new BigDecimal(resortCottageFeeTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 cottageFee = BigDecimal.ZERO;
             }
@@ -545,7 +545,7 @@ public class ResortInfo implements ActionListener {
 
             BigDecimal poolFee;
             try {
-                poolFee = new BigDecimal(resortPoolFeeTextField.getText());
+                poolFee = new BigDecimal(resortPoolFeeTextField.getText().replace(",", ""));
             } catch (Exception e2) {
                 poolFee = BigDecimal.ZERO;
             }
@@ -621,7 +621,7 @@ public class ResortInfo implements ActionListener {
 
             BigDecimal normalRoomRatePerNight;
             try {
-                normalRoomRatePerNight = new BigDecimal(normalRoomRatePerNightTextField.getText());
+                normalRoomRatePerNight = new BigDecimal(normalRoomRatePerNightTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 normalRoomRatePerNight = BigDecimal.ZERO;
             }
@@ -678,7 +678,7 @@ public class ResortInfo implements ActionListener {
 
             BigDecimal familyRoomRatePerNight;
             try {
-                familyRoomRatePerNight = new BigDecimal(familyRoomRatePerNightTextField.getText());
+                familyRoomRatePerNight = new BigDecimal(familyRoomRatePerNightTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 familyRoomRatePerNight = BigDecimal.ZERO;
             }
