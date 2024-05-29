@@ -1,6 +1,7 @@
 package project.ui;
 
 import project.dto.ResortDto;
+import project.dto.UserDto;
 import project.service.ResortService;
 
 import javax.swing.ImageIcon;
@@ -17,7 +18,7 @@ import java.awt.event.WindowEvent;
 
 public class AdminRegisteredResortMenu implements ActionListener {
     private final JFrame launchPageFrame;
-    private final long userId;
+    private final UserDto userDto;
     private final ResortDto resortDto;
     private final ResortService resortService;
     private final JFrame frame = new JFrame("MENU");
@@ -30,10 +31,10 @@ public class AdminRegisteredResortMenu implements ActionListener {
     private final JFrame parentFrame;
     private String windowEventSource = "";
 
-    public AdminRegisteredResortMenu(JFrame launchPageFrame, JFrame parentFrame, long userId, ResortDto resortDto, ResortService resortService) {
+    public AdminRegisteredResortMenu(JFrame launchPageFrame, JFrame parentFrame, UserDto userDto, ResortDto resortDto, ResortService resortService) {
         this.launchPageFrame = launchPageFrame;
         this.parentFrame = parentFrame;
-        this.userId = userId;
+        this.userDto = userDto;
         this.resortDto = resortDto;
         this.resortService = resortService;
 
@@ -105,7 +106,7 @@ public class AdminRegisteredResortMenu implements ActionListener {
         if (e.getSource() == btnEditInfo) {
             this.windowEventSource = "btnEditInfo";
             frame.dispose();
-            new ResortInfoUpdate(frame, userId, resortDto, this.resortService);
+            new ResortInfoUpdate(frame, userDto, resortDto, this.resortService);
         } else if (e.getSource() == btnViewReviews) {
             this.windowEventSource = "btnViewReviews";
             frame.dispose();

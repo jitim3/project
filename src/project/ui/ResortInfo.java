@@ -8,7 +8,6 @@ import project.service.ResortService;
 import project.service.RoomService;
 import project.service.impl.DefaultRoomService;
 import project.util.AppUtils;
-import project.util.ResortViewEvent;
 import project.util.RoomAvailabilityTypes;
 import project.util.RoomTypes;
 
@@ -45,6 +44,7 @@ import java.util.Optional;
 
 public class ResortInfo implements ActionListener {
     private static final Logger LOGGER = System.getLogger(ResortInfo.class.getName());
+    private final JFrame launchPageFrame;
     private final UserDto userDto;
     private final long resortId;
     private final String resortNameCreated;
@@ -135,11 +135,10 @@ public class ResortInfo implements ActionListener {
     private File normalRoomImage2File;
     private File familyRoomImage1File;
     private File familyRoomImage2File;
-    private final JFrame parentFrame;
     private String windowEventSource = "";
 
-    public ResortInfo(JFrame parentFrame, UserDto userDto, long resortId, String resortNameCreated, final ResortService resortService) {
-        this.parentFrame = parentFrame;
+    public ResortInfo(JFrame launchPageFrame, UserDto userDto, long resortId, String resortNameCreated, final ResortService resortService) {
+        this.launchPageFrame = launchPageFrame;
         this.userDto = userDto;
         this.resortId = resortId;
         this.resortNameCreated = resortNameCreated;
@@ -426,7 +425,7 @@ public class ResortInfo implements ActionListener {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (!"saveButton".equals(windowEventSource)) {
-                    parentFrame.setVisible(true);
+                    new AdminMenu(launchPageFrame, userDto);
                 }
             }
 
@@ -726,7 +725,8 @@ public class ResortInfo implements ActionListener {
             RoomDto createdFamilyRoom = this.roomService.createRoom(familyRoom);
             LOGGER.log(Level.INFO, "Created family room: " + (createdFamilyRoom != null));
 
-            new ResortView(parentFrame, ResortViewEvent.ADMIN_RESORT_CREATED_VIEW, resortService, userDto, resortId);
+//            new ResortView(parentFrame, ResortViewEvent.ADMIN_RESORT_CREATED_VIEW, resortService, userDto, resortId);
+            new Verification(launchPageFrame, userDto, resortId, resortService);
         }
     }
 }
