@@ -1,27 +1,96 @@
 package project.service;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-
+import project.dao.ResortDao;
+import project.dao.RoomDao;
+import project.dao.entity.Resort;
+import project.dao.entity.Room;
 import project.dto.CreateResortDto;
 import project.dto.ResortDto;
 import project.dto.UpdateResortDto;
 
-public interface ResortService {
-	boolean isResortExists(String name);
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
-	Optional<ResortDto> getResortById(long id);
-	
-	Optional<ResortDto> getResortByUserId(long userId);
+public class ResortService extends DtoMapper {
+    private final ResortDao resortDao;
+    private final RoomDao roomDao;
 
-	Optional<ResortDto> getResortByUserIdAndTownId(long userId, int townId);
+    public ResortService() {
+        this.resortDao = new ResortDao();
+        this.roomDao = new RoomDao();
+    }
 
-	List<ResortDto> getResortsByTownId(int townId);
+    public boolean isResortExists(String name) {
+        return this.resortDao.isResortExists(name);
+    }
 
-	Long createResort(CreateResortDto createResortDto);
-	
-	boolean updateResort(UpdateResortDto updateResortDto);
-	
-	boolean updatePermitImage(long resortId, String permitImage, Instant updatedAt);
+    public Optional<ResortDto> getResortById(long id) {
+        return this.resortDao.getResortById(id)
+                .map(resort -> {
+                    List<Room> rooms = this.roomDao.getRoomsByResortId(id);
+                    return this.mapToResortDto(resort, rooms);
+                });
+    }
+
+    public Optional<ResortDto> getResortByUserId(long userId) {
+        return this.resortDao.getResortByUserId(userId)
+                .map(resort -> {
+                    List<Room> rooms = this.roomDao.getRoomsByResortId(resort.id());
+                    return this.mapToResortDto(resort, rooms);
+                });
+    }
+
+    public Optional<ResortDto> getResortByUserIdAndTownId(long userId, int townId) {
+        return this.resortDao.getResortByUserIdAndTownId(userId, townId)
+                .map(resort -> {
+                    List<Room> rooms = this.roomDao.getRoomsByResortId(resort.id());
+                    return this.mapToResortDto(resort, rooms);
+                });
+    }
+
+    public List<ResortDto> getResortsByTownId(int townId) {
+        List<Resort> resorts = this.resortDao.getResortsByTownId(townId);
+
+        return resorts.stream()
+                .map(resort -> {
+                    List<Room> rooms = this.roomDao.getRoomsByResortId(resort.id());
+                    return this.mapToResortDto(resort, rooms);
+                })
+                .toList();
+    }
+
+    public Long createResort(CreateResortDto createResortDto) {
+        return this.resortDao.createResort(createResortDto);
+    }
+
+    public boolean updateResort(UpdateResortDto updateResortDto) {
+        return this.resortDao.updateResort(updateResortDto);
+    }
+
+    public boolean updatePermitImage(long resortId, String permitImage, Instant updatedAt) {
+        return this.resortDao.updatePermitImage(resortId, permitImage, updatedAt);
+    }
+
+    private ResortDto mapToResortDto(Resort resort, List<Room> rooms) {
+        return new ResortDto(
+                resort.id(),
+                resort.name(),
+                resort.description(),
+                resort.location(),
+                resort.howToGetThere(),
+                resort.resortFee(),
+                resort.cottageFee(),
+                resort.poolFee(),
+                resort.resortImage(),
+                resort.poolImage(),
+                resort.cottageImage(),
+                rooms.stream()
+                        .map(super::mapToRoomDto)
+                        .toList(),
+                resort.permitImage(),
+                resort.createdAt(),
+                resort.updatedAt()
+        );
+    }
 }

@@ -23,11 +23,9 @@ import javax.swing.JTextField;
 import project.dto.CreateCustomerDto;
 import project.dto.CustomerDto;
 import project.dto.UpdateCustomerDto;
-import project.dto.UserDto;
 import project.service.CustomerService;
-import project.service.impl.DefaultCustomerService;
 
-public class CustomerViewOrUpdateInformaton implements ActionListener {
+public class CustomerViewOrUpdateInformation implements ActionListener {
 	private final long userId;
 	private final CustomerService customerService;
 	private final JFrame frame = new JFrame("Customer Information");
@@ -45,10 +43,10 @@ public class CustomerViewOrUpdateInformaton implements ActionListener {
 	private final JFrame parentFrame;
 	private String windowEventSource = "";
 
-	public CustomerViewOrUpdateInformaton(long userId, JFrame parentFrame) {
+	public CustomerViewOrUpdateInformation(long userId, JFrame parentFrame) {
 		this.userId = userId;
 		this.parentFrame = parentFrame;
-		this.customerService = new DefaultCustomerService();
+		this.customerService = new CustomerService();
 		
 		Optional<CustomerDto> customerDtoOptional = this.customerService.getCustomerById(this.userId);
 		customerDtoOptional.ifPresent(customerDto -> {

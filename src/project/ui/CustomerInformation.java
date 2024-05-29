@@ -18,7 +18,6 @@ import project.dto.CreateReservationDto;
 import project.dto.CustomerDto;
 import project.dto.ResortDto;
 import project.service.CustomerService;
-import project.service.impl.DefaultCustomerService;
 
 public class CustomerInformation implements ActionListener {
 	private final long userId;
@@ -41,7 +40,7 @@ public class CustomerInformation implements ActionListener {
 		this.userId = userId;
 		this.resortDto = resortDto;
 		this.createReservationDto = createReservationDto;
-		this.customerService = new DefaultCustomerService();
+		this.customerService = new CustomerService();
 		
 		Optional<CustomerDto> customerDtoOptional = this.customerService.getCustomerById(this.userId);
 		customerDtoOptional.ifPresent(customerDto -> {

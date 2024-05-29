@@ -3,7 +3,6 @@ package project.ui;
 import project.dto.ReviewDto;
 import project.dto.UserDto;
 import project.service.ReviewService;
-import project.service.impl.DefaultReviewService;
 import project.util.AppUtils;
 
 import javax.swing.ImageIcon;
@@ -41,7 +40,7 @@ public class Reviews implements ActionListener {
         this.parentFrame = parentFrame;
         this.userDto = userDto;
         this.resortId = resortId;
-        this.reviewService = new DefaultReviewService();
+        this.reviewService = new ReviewService();
 
         this.getReviews();
 

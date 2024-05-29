@@ -3,7 +3,6 @@ package project.ui.town;
 import project.dto.ResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
-import project.service.impl.DefaultResortService;
 import project.ui.ResortView;
 import project.util.AppUtils;
 import project.util.ResortViewEvent;
@@ -39,7 +38,7 @@ public class Oslob implements Town {
 
 	public Oslob(UserDto userDto, JFrame parentFrame, Long resortId) {
 		this.userDto = userDto;
-		this.resortService = new DefaultResortService();
+		this.resortService = new ResortService();
 		this.parentFrame = parentFrame;
 
 		this.resortDtos = this.getRegisteredResorts(resortId);

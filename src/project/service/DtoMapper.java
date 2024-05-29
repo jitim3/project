@@ -1,4 +1,4 @@
-package project.service.impl;
+package project.service;
 
 import project.dao.entity.Room;
 import project.dao.entity.RoomAvailabilityType;

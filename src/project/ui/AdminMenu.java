@@ -3,7 +3,6 @@ package project.ui;
 import project.dto.ResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
-import project.service.impl.DefaultResortService;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,7 +29,7 @@ public class AdminMenu implements ActionListener {
     public AdminMenu(JFrame launchPageFrame, UserDto userDto) {
         this.launchPageFrame = launchPageFrame;
         this.userDto = userDto;
-        this.resortService = new DefaultResortService();
+        this.resortService = new ResortService();
 
         this.resortService.getResortByUserId(this.userDto.getId())
                 .ifPresentOrElse(resortDto -> {

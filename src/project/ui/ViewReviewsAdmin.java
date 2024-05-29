@@ -17,11 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 import project.dto.ReviewDto;
 import project.service.ReviewService;
-import project.service.impl.DefaultReviewService;
 
 public class ViewReviewsAdmin implements ActionListener {
 	private final ReviewService reviewService;
@@ -35,7 +36,7 @@ public class ViewReviewsAdmin implements ActionListener {
 
 	public ViewReviewsAdmin(JFrame parentFrame, long resortId) {
 		this.parentFrame = parentFrame;
-		this.reviewService = new DefaultReviewService();
+		this.reviewService = new ReviewService();
 		
 		List<ReviewDto> reviewDtos = this.reviewService.getReviewsByResortId(resortId);
 		String reviews = reviewDtos.stream()
@@ -49,7 +50,7 @@ public class ViewReviewsAdmin implements ActionListener {
 		JTextArea textArea = new JTextArea(reviews); 
         textArea.setWrapStyleWord(true); 
         textArea.setLineWrap(true); 
-        JScrollPane scrollPane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 		  
+        JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollBar = scrollPane.getVerticalScrollBar(); 
 		scrollBar.setBounds(629, 64, 17, 267);
 
@@ -85,7 +86,7 @@ public class ViewReviewsAdmin implements ActionListener {
 		frame.add(backgroundLabel);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {

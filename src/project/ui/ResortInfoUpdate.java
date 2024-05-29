@@ -8,7 +8,6 @@ import project.dto.UpdateRoomDto;
 import project.dto.UserDto;
 import project.service.ResortService;
 import project.service.RoomService;
-import project.service.impl.DefaultRoomService;
 import project.util.AppUtils;
 import project.util.RoomAvailabilityTypes;
 import project.util.RoomTypes;
@@ -141,12 +140,12 @@ public class ResortInfoUpdate implements ActionListener {
     private RoomDto normalRoomDto;
     private RoomDto familyRoomDto;
 
-    public ResortInfoUpdate(JFrame parentFrame, UserDto userDto, ResortDto resortDto, final ResortService resortService) {
+    public ResortInfoUpdate(JFrame parentFrame, UserDto userDto, ResortDto resortDto, ResortService resortService) {
         this.parentFrame = parentFrame;
         this.userDto = userDto;
         this.resortDto = resortDto;
         this.resortService = resortService;
-        this.roomService = new DefaultRoomService();
+        this.roomService = new RoomService();
 
         // ==> FOR LABELS
         label.setBounds(250, 15, 400, 80);
@@ -615,7 +614,7 @@ public class ResortInfoUpdate implements ActionListener {
 
             BigDecimal resortFee;
             try {
-                resortFee = new BigDecimal(resortEntranceFeeTextField.getText());
+                resortFee = new BigDecimal(resortEntranceFeeTextField.getText().replace(",", ""));
             } catch (Exception mfe) {
                 resortFee = BigDecimal.ZERO;
             }
@@ -624,7 +623,7 @@ public class ResortInfoUpdate implements ActionListener {
 
             BigDecimal cottageFee;
             try {
-                cottageFee = new BigDecimal(resortCottageFeeTextField.getText());
+                cottageFee = new BigDecimal(resortCottageFeeTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 cottageFee = BigDecimal.ZERO;
             }
@@ -633,7 +632,7 @@ public class ResortInfoUpdate implements ActionListener {
 
             BigDecimal poolFee;
             try {
-                poolFee = new BigDecimal(resortPoolFeeTextField.getText());
+                poolFee = new BigDecimal(resortPoolFeeTextField.getText().replace(",", ""));
             } catch (Exception e2) {
                 poolFee = BigDecimal.ZERO;
             }
@@ -714,7 +713,7 @@ public class ResortInfoUpdate implements ActionListener {
 
             BigDecimal normalRoomRatePerNight;
             try {
-                normalRoomRatePerNight = new BigDecimal(normalRoomRatePerNightTextField.getText());
+                normalRoomRatePerNight = new BigDecimal(normalRoomRatePerNightTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 normalRoomRatePerNight = BigDecimal.ZERO;
             }
@@ -785,7 +784,7 @@ public class ResortInfoUpdate implements ActionListener {
 
             BigDecimal familyRoomRatePerNight;
             try {
-                familyRoomRatePerNight = new BigDecimal(familyRoomRatePerNightTextField.getText());
+                familyRoomRatePerNight = new BigDecimal(familyRoomRatePerNightTextField.getText().replace(",", ""));
             } catch (NumberFormatException nfe) {
                 familyRoomRatePerNight = BigDecimal.ZERO;
             }
