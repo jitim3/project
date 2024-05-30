@@ -1,12 +1,9 @@
 package project.service;
 
 import project.dao.ReservationDao;
-import project.dao.entity.CottageReservation;
-import project.dao.entity.RoomReservation;
-import project.dto.CottageReservationDto;
-import project.dto.CreateCottageReservationDto;
-import project.dto.CreateRoomReservationDto;
-import project.dto.RoomReservationDto;
+import project.dao.entity.Reservation;
+import project.dto.CreateReservationDto;
+import project.dto.ReservationDto;
 import project.util.ReservationStatus;
 
 import java.time.Instant;
@@ -20,80 +17,47 @@ public class ReservationService {
         this.reservationDao = new ReservationDao();
     }
 
-    public Optional<RoomReservationDto> getRoomReservationById(long id) {
-        return this.reservationDao.getRoomReservationById(id)
-                .map(this::mapToRoomReservationDto);
+    public Optional<ReservationDto> getReservationById(long id) {
+        return this.reservationDao.getReservationById(id)
+                .map(this::mapToReservationDto);
     }
 
-    public List<RoomReservationDto> getRoomReservations() {
-        return this.reservationDao.getRoomReservations().stream()
-                .map(this::mapToRoomReservationDto)
+    public List<ReservationDto> getReservations() {
+        return this.reservationDao.getReservations().stream()
+                .map(this::mapToReservationDto)
                 .toList();
     }
 
-    public List<RoomReservationDto> getRoomReservationsByCustomerId(long customerId) {
-        return this.reservationDao.getRoomReservationsByCustomerId(customerId).stream()
-                .map(this::mapToRoomReservationDto)
+    public List<ReservationDto> getReservationsByCustomerId(long customerId) {
+        return this.reservationDao.getReservationsByCustomerId(customerId).stream()
+                .map(this::mapToReservationDto)
                 .toList();
     }
 
-    public Optional<CottageReservationDto> getCottageReservationById(long id) {
-        return this.reservationDao.getCottageReservationById(id)
-                .map(this::mapToCottageReservationDto);
+    public Long createReservation(CreateReservationDto createReservationDto) {
+        return this.reservationDao.createReservation(createReservationDto);
     }
 
-    public List<CottageReservationDto> getCottageReservations() {
-        return this.reservationDao.getCottageReservations().stream()
-                .map(this::mapToCottageReservationDto)
-                .toList();
+    public boolean updateReservationStatus(long reservationId, ReservationStatus status, Instant updatedAt) {
+        return this.reservationDao.updateReservationStatus(reservationId, status, updatedAt);
     }
 
-    public List<CottageReservationDto> getCottageReservationsByCustomerId(long customerId) {
-        return this.reservationDao.getCottageReservationsByCustomerId(customerId).stream()
-                .map(this::mapToCottageReservationDto)
-                .toList();
-    }
-
-    public Long createRoomReservation(CreateRoomReservationDto createRoomReservationDto) {
-        return this.reservationDao.createRoomReservation(createRoomReservationDto);
-    }
-
-    public Long createCottageReservation(CreateCottageReservationDto createCottageReservationDto) {
-        return this.reservationDao.createCottageReservation(createCottageReservationDto);
-    }
-
-    public boolean updateRoomReservationStatus(long reservationRoomId, ReservationStatus status, Instant updatedAt) {
-        return this.reservationDao.updateRoomReservationStatus(reservationRoomId, status, updatedAt);
-    }
-
-    public boolean updateCottageReservationStatus(long reservationCottagetId, ReservationStatus status, Instant updatedAt) {
-        return this.reservationDao.updateCottageReservationStatus(reservationCottagetId, status, updatedAt);
-    }
-
-    private RoomReservationDto mapToRoomReservationDto(RoomReservation roomReservation) {
-        return new RoomReservationDto(
-                roomReservation.id(),
-                roomReservation.userId(),
-                roomReservation.roomId(),
-                roomReservation.startDate(),
-                roomReservation.endDate(),
-                roomReservation.status(),
-                roomReservation.amount(),
-                roomReservation.createdAt(),
-                roomReservation.updatedAt()
-        );
-    }
-
-    private CottageReservationDto mapToCottageReservationDto(CottageReservation cottageReservation) {
-        return new CottageReservationDto(
-                cottageReservation.id(),
-                cottageReservation.userId(),
-                cottageReservation.resortId(),
-                cottageReservation.reservationDate(),
-                cottageReservation.status(),
-                cottageReservation.amount(),
-                cottageReservation.createdAt(),
-                cottageReservation.updatedAt()
+    private ReservationDto mapToReservationDto(Reservation reservation) {
+        return new ReservationDto(
+                reservation.id(),
+                reservation.userId(),
+                reservation.resortId(),
+                reservation.resortName(),
+                reservation.roomResortId(),
+                reservation.roomResortName(),
+                reservation.roomId(),
+                reservation.roomType(),
+                reservation.reservationDate(),
+                reservation.endDate(),
+                reservation.status(),
+                reservation.amount(),
+                reservation.createdAt(),
+                reservation.updatedAt()
         );
     }
 }

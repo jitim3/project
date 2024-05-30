@@ -1,5 +1,10 @@
 package project.util;
 
+import org.jdatepicker.JDatePicker;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.SqlDateModel;
+
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
 import javax.swing.text.InternationalFormatter;
@@ -13,13 +18,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
 public class AppUtils {
 	public static final String UPLOADED_IMAGE = "./uploaded_images/";
+	public static final String DATE_FORMAT = "dd-MMM-yyyy";
 	
 	private AppUtils() {
 	}
@@ -101,6 +110,33 @@ public class AppUtils {
 				if (((c < '0') || (c > '9')) && (c != KeyEvent.VK_BACK_SPACE)) {
 					e.consume(); // if it's not a number, ignore the event
 				}
+			}
+		});
+	}
+
+	public static JDatePickerImpl createJDatePicker(String dateFormat) {
+		SqlDateModel model = new SqlDateModel();
+		Properties p = new Properties();
+		p.put("text.day", "Day");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl panel = new JDatePanelImpl(model, p);
+		return new JDatePickerImpl(panel, new JFormattedTextField.AbstractFormatter() {
+			@Override
+			public String valueToString(Object value) {
+				if (value != null) {
+					Calendar calendar = (Calendar) value;
+					String format = (dateFormat == null || dateFormat.isBlank()) ? DATE_FORMAT : dateFormat;
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+					return simpleDateFormat.format(calendar.getTime());
+				}
+
+				return "";
+			}
+
+			@Override
+			public Object stringToValue(String text) {
+				return "";
 			}
 		});
 	}

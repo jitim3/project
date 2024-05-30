@@ -1,9 +1,7 @@
 package project.dao;
 
-import project.dao.entity.CottageReservation;
-import project.dao.entity.RoomReservation;
-import project.dto.CreateCottageReservationDto;
-import project.dto.CreateRoomReservationDto;
+import project.dao.entity.Reservation;
+import project.dto.CreateReservationDto;
 import project.util.DatabaseConnectionFactory;
 import project.util.ReservationStatus;
 
@@ -22,291 +20,184 @@ import java.util.List;
 import java.util.Optional;
 
 public class ReservationDao {
-	private static final Logger LOGGER = System.getLogger(ReservationDao.class.getName());
-	private static final String SQL_SELECT_ROOM_RESERVATIONS = """
-			SELECT id, user_id, room_id, start_date, end_date, status, amount, created_at, updated_at
-			FROM room_reservation
-			"""; 
-	private static final String SQL_SELECT_ROOM_RESERVATION_BY_ID = SQL_SELECT_ROOM_RESERVATIONS + " WHERE id = ?"; 
-	private static final String SQL_SELECT_ROOM_RESERVATIONS_BY_CUSTOMER_ID = SQL_SELECT_ROOM_RESERVATIONS + " WHERE user_id = ?"; 
-	private static final String SQL_INSERT_ROOM_RESERVATION = """
-			INSERT INTO room_reservation (user_id, room_id, start_date, end_date, status, amount, created_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
-			""";
-	private static final String SQL_SELECT_COTTAGE_RESERVATIONS = """
-			INSERT id, user_id, resort_id, reservation_date, status, amount, created_at, updated_at
-			FROM cottage_reservation
-			""";
-	private static final String SQL_SELECT_COTTAGE_RESERVATION_BY_ID = SQL_SELECT_COTTAGE_RESERVATIONS + " WHERE id = ?";
-	private static final String SQL_SELECT_COTTAGE_RESERVATIONS_BY_CUSTOMER_ID = SQL_SELECT_COTTAGE_RESERVATIONS + " WHERE user_id = ?";
-	private static final String SQL_INSERT_COTTAGE_RESERVATION = """
-			INSERT INTO cottage_reservation (user_id, resort_id, reservation_date, status, amount, created_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
-			""";
-	private static final String SQL_UPDATE_ROOM_RESERVATION_STATUS = "UPDATE reservation_room SET status = ? WHERE id = ?";
-	private static final String SQL_UPDATE_COTTAGE_RESERVATION_STATUS = "UPDATE reservation_cottage SET status = ? WHERE id = ?";
-	private final Connection connection;
-	
+    private static final Logger LOGGER = System.getLogger(ReservationDao.class.getName());
+    private static final String SQL_SELECT_RESERVATIONS = """
+            SELECT
+                rsv.id AS reservation_id, rsv.user_id, rst.id AS resort_id, rst.name AS resort_name,
+                rst2.id AS room_resort_id, rst2.name AS room_resort_name, rm.id as room_id, rm.room_type,
+                rsv.reservation_date, rsv.end_date, rsv.status, rsv.amount, rsv.created_at, rsv.updated_at
+            FROM reservation rsv
+            LEFT JOIN resort rst on rst.id = rsv.resort_id
+            LEFT JOIN room rm on rm.id = rsv.room_id
+            LEFT JOIN resort rst2 on rst2.id = rm.resort_id
+            """;
+    private static final String SQL_SELECT_RESERVATION_BY_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.id = ?";
+    private static final String SQL_SELECT_RESERVATIONS_BY_CUSTOMER_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.user_id = ?";
+    private static final String SQL_INSERT_COTTAGE_RESERVATION = """
+            INSERT INTO reservation (user_id, resort_id, reservation_date, status, amount, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """;
+    private static final String SQL_INSERT_ROOM_RESERVATION = """
+            INSERT INTO reservation (user_id, room_id, reservation_date, end_date, status, amount, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """;
+    private static final String SQL_UPDATE_RESERVATION_STATUS = "UPDATE reservation SET status = ? WHERE id = ?";
+    private final Connection connection;
 
-	public ReservationDao() {
-		this.connection = DatabaseConnectionFactory.getConnection();
-	}
 
-	public Optional<RoomReservation> getRoomReservationById(long id) {
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_ROOM_RESERVATION_BY_ID)) {
-			int i = 1;
-			statement.setLong(i++, id);
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				return Optional.of(mapToRoomReservation(rs));
-			} else {
-				LOGGER.log(Level.INFO, "No room reservation with ID " + id + " found");
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
+    public ReservationDao() {
+        this.connection = DatabaseConnectionFactory.getConnection();
+    }
 
-		return Optional.empty();
-	}
+    public Optional<Reservation> getReservationById(long id) {
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESERVATION_BY_ID)) {
+            int i = 1;
+            statement.setLong(i++, id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return Optional.of(mapToReservation(rs));
+            } else {
+                LOGGER.log(Level.INFO, "No reservation with ID " + id + " found");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
 
-	public List<RoomReservation> getRoomReservations() {
-		final List<RoomReservation> roomReservations = new ArrayList<>();
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_ROOM_RESERVATIONS)) {
-			try (ResultSet rs = statement.executeQuery()) {
-				while (rs.next()) {
-					roomReservations.add(mapToRoomReservation(rs));
-				}
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
-		
-		if (roomReservations.isEmpty()) {
-			LOGGER.log(Level.INFO, "No room reservations found");
-		}
+        return Optional.empty();
+    }
 
-		return roomReservations;
-	}
+    public List<Reservation> getReservations() {
+        final List<Reservation> reservations = new ArrayList<>();
 
-	public List<RoomReservation> getRoomReservationsByCustomerId(long customerId) {
-		final List<RoomReservation> roomReservations = new ArrayList<>();
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_ROOM_RESERVATIONS_BY_CUSTOMER_ID)) {
-			int i = 1;
-			statement.setLong(i++, customerId);
-			try (ResultSet rs = statement.executeQuery()) {
-				while (rs.next()) {
-					roomReservations.add(mapToRoomReservation(rs));
-				}
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
-		
-		if (roomReservations.isEmpty()) {
-			LOGGER.log(Level.INFO, "No room reservations found");
-		}
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESERVATIONS)) {
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapToReservation(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
 
-		return roomReservations;
-	}
+        if (reservations.isEmpty()) {
+            LOGGER.log(Level.INFO, "No room reservations found");
+        }
 
-	public Optional<CottageReservation> getCottageReservationById(long id) {
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_COTTAGE_RESERVATION_BY_ID)) {
-			int i = 1;
-			statement.setLong(i++, id);
-			ResultSet rs = statement.executeQuery();
-			if (rs.next()) {
-				return Optional.of(mapToCottageReservation(rs));
-			} else {
-				LOGGER.log(Level.INFO, "No cottage reservation with ID " + id + " found");
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
+        return reservations;
+    }
 
-		return Optional.empty();
-	}
+    public List<Reservation> getReservationsByCustomerId(long customerId) {
+        final List<Reservation> reservations = new ArrayList<>();
 
-	public List<CottageReservation> getCottageReservations() {
-		final List<CottageReservation> cottageReservations = new ArrayList<>();
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_COTTAGE_RESERVATIONS)) {
-			try (ResultSet rs = statement.executeQuery()) {
-				while (rs.next()) {
-					cottageReservations.add(mapToCottageReservation(rs));
-				}
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
-		
-		if (cottageReservations.isEmpty()) {
-			LOGGER.log(Level.INFO, "No cottage reservations found");
-		}
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESERVATIONS_BY_CUSTOMER_ID)) {
+            int i = 1;
+            statement.setLong(i++, customerId);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapToReservation(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
 
-		return cottageReservations;
-	}
+        if (reservations.isEmpty()) {
+            LOGGER.log(Level.INFO, "No room reservations found");
+        }
 
-	public List<CottageReservation> getCottageReservationsByCustomerId(long customerId) {
-		final List<CottageReservation> cottageReservations = new ArrayList<>();
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_COTTAGE_RESERVATIONS_BY_CUSTOMER_ID)) {
-			int i = 1;
-			statement.setLong(i++, customerId);
-			try (ResultSet rs = statement.executeQuery()) {
-				while (rs.next()) {
-					cottageReservations.add(mapToCottageReservation(rs));
-				}
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
-		
-		if (cottageReservations.isEmpty()) {
-			LOGGER.log(Level.INFO, "No cottage reservations found");
-		}
+        return reservations;
+    }
 
-		return cottageReservations;
-	}
+    public Long createReservation(CreateReservationDto createReservationDto) {
+        Long resortId = createReservationDto.resortId();
+        Long roomId = createReservationDto.roomId();
+        String query;
+        if (resortId != null) {
+            query = SQL_INSERT_COTTAGE_RESERVATION;
+        } else if (roomId != null) {
+            query = SQL_INSERT_ROOM_RESERVATION;
+        } else {
+            throw new IllegalArgumentException("Invalid reservation; no resort ID or roomId");
+        }
 
-	public Long createRoomReservation(CreateRoomReservationDto createRoomReservationDto) {
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_ROOM_RESERVATION, Statement.RETURN_GENERATED_KEYS)) {
-			int i = 1;
-			statement.setLong(i++, createRoomReservationDto.userId());
-			statement.setLong(i++, createRoomReservationDto.roomId());
-			statement.setDate(i++, Date.valueOf(createRoomReservationDto.startDate()));
-			statement.setDate(i++, Date.valueOf(createRoomReservationDto.endDate()));
-			statement.setString(i++, createRoomReservationDto.status().value());
-			statement.setBigDecimal(i++, createRoomReservationDto.amount());
-			statement.setTimestamp(i++, Timestamp.from(createRoomReservationDto.createdAt()));
-			if (statement.executeUpdate() == 0) {
-				throw new SQLException("Creating resort rservation failed, no rows affected.");
-			}
+        try (PreparedStatement statement = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            int i = 1;
+            statement.setLong(i++, createReservationDto.userId());
+            if (resortId != null) {
+                statement.setLong(i++, createReservationDto.resortId());
+                statement.setDate(i++, Date.valueOf(createReservationDto.reservationDate()));
+            }
+            if (roomId != null) {
+                statement.setLong(i++, createReservationDto.roomId());
+                statement.setDate(i++, Date.valueOf(createReservationDto.reservationDate()));
+                statement.setDate(i++, Date.valueOf(createReservationDto.endDate()));
+            }
+            statement.setString(i++, createReservationDto.status().value());
+            statement.setBigDecimal(i++, createReservationDto.amount());
+            statement.setTimestamp(i++, Timestamp.from(createReservationDto.createdAt()));
+            if (statement.executeUpdate() == 0) {
+                throw new SQLException("Creating reservation failed, no rows affected.");
+            }
 
-			try (ResultSet rs = statement.getGeneratedKeys()) {
-			    if (rs.next()) {
-			    	Long id = rs.getLong(1);
-			    	LOGGER.log(Level.DEBUG, "Resort reservation ID generated: " + id);
-			        return id;
-			    } else {
-			    	LOGGER.log(Level.INFO, "No resort reservation ID genereted");
-			    }
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}	
-		
-		return null;
-	}
+            try (ResultSet rs = statement.getGeneratedKeys()) {
+                if (rs.next()) {
+                    Long id = rs.getLong(1);
+                    LOGGER.log(Level.DEBUG, "Resort reservation ID generated: " + id);
+                    return id;
+                } else {
+                    LOGGER.log(Level.INFO, "No resort reservation ID generated");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
 
-	public Long createCottageReservation(CreateCottageReservationDto createCottageReservationDto) {
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_COTTAGE_RESERVATION, Statement.RETURN_GENERATED_KEYS)) {
-			int i = 1;
-			statement.setLong(i++, createCottageReservationDto.userId());
-			statement.setLong(i++, createCottageReservationDto.resortId());
-			statement.setDate(i++, Date.valueOf(createCottageReservationDto.reservationDate()));
-			statement.setString(i++, createCottageReservationDto.status().value());
-			statement.setBigDecimal(i++, createCottageReservationDto.amount());
-			statement.setTimestamp(i++, Timestamp.from(createCottageReservationDto.createdAt()));
-			if (statement.executeUpdate() == 0) {
-				throw new SQLException("Creating resort rservation failed, no rows affected.");
-			}
+        return null;
+    }
 
-			try (ResultSet rs = statement.getGeneratedKeys()) {
-			    if (rs.next()) {
-			    	Long id = rs.getLong(1);
-			    	LOGGER.log(Level.DEBUG, "Resort reservation ID generated: " + id);
-			        return id;
-			    } else {
-			    	LOGGER.log(Level.INFO, "No resort reservation ID genereted");
-			    }
-			}
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}	
-		
-		return null;
-	}
+    public boolean updateReservationStatus(long reservationId, ReservationStatus status, Instant updatedAt) {
+        if (status == null) {
+            return false;
+        }
 
-	public boolean updateRoomReservationStatus(long reservationRoomId, ReservationStatus status, Instant updatedAt) {
-		if (status == null) {
-			return false;
-		}
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_UPDATE_ROOM_RESERVATION_STATUS)) {
-			int i = 1;
-			statement.setString(i++, status.value());
-			statement.setTimestamp(i++, Timestamp.from(updatedAt));
-			statement.setLong(i++, reservationRoomId);
-			if (statement.executeUpdate() == 0) {
-				throw new SQLException("Updatihg room reservation failed, no rows affected.");
-			}
-			
-			return true;
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_UPDATE_RESERVATION_STATUS)) {
+            int i = 1;
+            statement.setString(i++, status.value());
+            statement.setTimestamp(i++, Timestamp.from(updatedAt));
+            statement.setLong(i++, reservationId);
+            if (statement.executeUpdate() == 0) {
+                throw new SQLException("Updating reservation failed, no rows affected.");
+            }
 
-		return false;
-	}
+            return true;
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
 
-	public boolean updateCottageReservationStatus(long reservationCottagetId, ReservationStatus status, Instant updatedAt) {
-		if (status == null) {
-			return false;
-		}
-		
-		try (PreparedStatement statement = this.connection.prepareStatement(SQL_UPDATE_COTTAGE_RESERVATION_STATUS)) {
-			int i = 1;
-			statement.setString(i++, status.value());
-			statement.setTimestamp(i++, Timestamp.from(updatedAt));
-			statement.setLong(i++, reservationCottagetId);
-			if (statement.executeUpdate() == 0) {
-				throw new SQLException("Updatihg cottage reservation failed, no rows affected.");
-			}
-			
-			return true;
-		} catch (SQLException e) {
-			LOGGER.log(Level.ERROR, e);
-		}
+        return false;
+    }
 
-		return false;
-	}
+    private static Reservation mapToReservation(ResultSet rs) throws SQLException {
+        var reservationDate = rs.getDate("reservation_date");
+        var endDate = rs.getDate("end_date");
+        var createdAt = rs.getTimestamp("created_at");
+        var updatedAt = rs.getTimestamp("updated_at");
 
-	private static RoomReservation mapToRoomReservation(ResultSet rs) throws SQLException {
-		var startDate = rs.getDate("start_date");
-		var endDate = rs.getDate("end_date");		
-		var createdAt = rs.getTimestamp("created_at");
-		var updatedAt = rs.getTimestamp("updated_at");
-		
-		return new RoomReservation(
-				rs.getLong("id"),  
-				rs.getLong("user_id"),
-				rs.getLong("room_id"),
-				startDate != null ? startDate.toLocalDate() : null,
-				endDate != null ? endDate.toLocalDate() : null, 
-				rs.getString("status"),
-				rs.getBigDecimal("amount"),
-				createdAt != null ? createdAt.toInstant() : null,
-				updatedAt != null ? updatedAt.toInstant() : null
-			);
-	}
-
-	private static CottageReservation mapToCottageReservation(ResultSet rs) throws SQLException {
-		var reservationDate = rs.getDate("reservation_date");
-		var createdAt = rs.getTimestamp("created_at");
-		var updatedAt = rs.getTimestamp("updated_at");
-		
-		return new CottageReservation(
-				rs.getLong("id"),  
-				rs.getLong("user_id"),
-				rs.getLong("resort_id"),
-				reservationDate != null ? reservationDate.toLocalDate() : null,
-				rs.getString("status"),
-				rs.getBigDecimal("amount"),
-				createdAt != null ? createdAt.toInstant() : null,
-				updatedAt != null ? updatedAt.toInstant() : null
-			);
-	}
-
+        return new Reservation(
+                rs.getLong("reservation_id"),
+                rs.getLong("user_id"),
+                rs.getLong("resort_id"),
+                rs.getString("resort_name"),
+                rs.getLong("room_resort_id"),
+                rs.getString("room_resort_name"),
+                rs.getLong("room_id"),
+                rs.getString("room_type"),
+                reservationDate != null ? reservationDate.toLocalDate() : null,
+                endDate != null ? endDate.toLocalDate() : null,
+                rs.getString("status"),
+                rs.getBigDecimal("amount"),
+                createdAt != null ? createdAt.toInstant() : null,
+                updatedAt != null ? updatedAt.toInstant() : null
+        );
+    }
 }
