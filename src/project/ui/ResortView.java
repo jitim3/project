@@ -146,12 +146,18 @@ public class ResortView implements ActionListener {
         panel.add(resortFeeLabel);
         panel.add(exitButton);
         if (ResortViewEvent.SUPER_ADMIN_VIEW == event) {
-            viewReviewsButton.setBounds(360, 1030, 150, 25);
+            viewReviewsButton.setBounds(360, 985, 150, 25);
             viewReviewsButton.setFocusable(false);
             viewReviewsButton.addActionListener(this);
+            viewReviewsButton.setOpaque(false);
+
+            transactionButton.setBounds(360, 1030, 150, 25);
+            transactionButton.setFocusable(false);
+            transactionButton.addActionListener(this);
             transactionButton.setOpaque(false);
 
             panel.add(viewReviewsButton);
+            panel.add(transactionButton);
         }
         if (ResortViewEvent.CUSTOMER_VIEW == event) {
             reservationButton.setBounds(360, 985, 150, 25);
@@ -209,7 +215,7 @@ public class ResortView implements ActionListener {
             new Reviews(frame, userDto, resortDto.id());
         } else if (e.getSource() == transactionButton) {
             this.windowEventSource = "transactionButton";
-            new AdminTransaction(frame);
+            new SuperAdminTransaction(frame, resortDto);
         } else if (e.getSource() == exitButton) {
             this.windowEventSource = "exitButton";
             frame.dispose();
