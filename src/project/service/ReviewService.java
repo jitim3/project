@@ -35,7 +35,9 @@ public class ReviewService {
 	private ReviewDto mapToReviewDto(Review review) {
 		return new ReviewDto(
 				review.id(), 
-				review.userId(), 
+				review.userId(),
+				review.firstName(),
+				review.lastName(),
 				review.resortId(), 
 				review.rate(),
 				review.comment(), 

@@ -110,7 +110,7 @@ public class AdminRegisteredResortMenu implements ActionListener {
         } else if (e.getSource() == btnViewReviews) {
             this.windowEventSource = "btnViewReviews";
             frame.dispose();
-            new ViewReviewsAdmin(frame, resortDto.id());
+            new Reviews(frame, userDto, resortDto.id());
         } else if (e.getSource() == btnViewReservation) {
             this.windowEventSource = "btnViewReservation";
             frame.dispose();
