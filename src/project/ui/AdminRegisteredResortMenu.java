@@ -122,7 +122,7 @@ public class AdminRegisteredResortMenu implements ActionListener {
         } else if (e.getSource() == btnViewTransaction) {
             this.windowEventSource = "btnViewTransaction";
             frame.dispose();
-            new AdminTransaction(frame);
+            new AdminTransaction(frame, userDto);
         } else if (e.getSource() == btnExit) {
             frame.dispose();
             parentFrame.setVisible(true);

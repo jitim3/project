@@ -1,9 +1,15 @@
 package project.ui;
 
+import project.dto.ReservationDto;
+import project.dto.ResortDto;
+import project.service.ReservationService;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.WindowConstants;
 import java.awt.Font;
 import java.awt.Image;
@@ -11,18 +17,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 public class SuperAdminTransaction implements ActionListener {
     private final JFrame frame = new JFrame("SUPER ADMIN TRANSACTION");
     private final JLabel viewTransactionLabel = new JLabel("VIEW TRANSACTION");
     private final JLabel transactionDetailsLabel = new JLabel("Transaction Details: ");
-    private final JLabel dateLabel = new JLabel("Date");
-    private final JLabel timeLabel = new JLabel("Time");
-    private final JLabel descriptionLabel = new JLabel("Description");
     private final JButton exitButton = new JButton("Back");
     private final JFrame superAdminMenu;
 
     public SuperAdminTransaction(JFrame superAdminMenu) {
+        this(superAdminMenu, null);
+    }
+
+    public SuperAdminTransaction(JFrame superAdminMenu, ResortDto resortDto) {
         this.superAdminMenu = superAdminMenu;
 
         viewTransactionLabel.setFont(new Font("Times New Roman", Font.BOLD, 30));
@@ -31,16 +39,36 @@ public class SuperAdminTransaction implements ActionListener {
         transactionDetailsLabel.setBounds(270, 70, 500, 40);
         transactionDetailsLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
 
-        dateLabel.setBounds(250, 100, 150, 40);
-        dateLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
+        ReservationService reservationService = new ReservationService();
+        List<ReservationDto> reservationDtos;
+        if (resortDto == null) {
+            reservationDtos = reservationService.getReservations();
+        }  else {
+            reservationDtos = reservationService.getReservationsByResortId(resortDto.id());
+        }
+        Object[][] data = reservationDtos.stream()
+                .map(reservationDto -> {
+                    String type;
+                    if (reservationDto.resortId() != null && reservationDto.resortId() > 0) {
+                        type = "Resort: " + reservationDto.resortName();
+                    } else {
+                        type = "Room: " + reservationDto.roomType() + " Room from " + reservationDto.roomResortName();
+                    }
+                    return new Object[] {
+                            type,
+                            reservationDto.reservationDate(),
+                            reservationDto.endDate(),
+                            reservationDto.amount(),
+                            reservationDto.createdAt()
+                    };
+                })
+                .toArray(size -> new Object[size][1]);
+        String[] columnNames = { "Type", "Reservation Date", "End Date", "Amount", "Created Date"};
+        JTable transactionTable = new JTable(data, columnNames);
+        JScrollPane transactionScrollPane = new JScrollPane(transactionTable);
+        transactionScrollPane.setBounds(20, 110, 645, 280);
 
-        timeLabel.setBounds(320, 100, 500, 40);
-        timeLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
-
-        descriptionLabel.setBounds(370, 100, 500, 40);
-        descriptionLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
-
-        exitButton.setBounds(275, 370, 150, 40);
+        exitButton.setBounds(310, 410, 100, 30);
         exitButton.addActionListener(this);
         exitButton.setFocusable(false);
 
@@ -51,11 +79,9 @@ public class SuperAdminTransaction implements ActionListener {
         JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
         backgroundLabel.setBounds(0, 0, 700, 500);
 
-        frame.add(timeLabel);
-        frame.add(descriptionLabel);
         frame.add(transactionDetailsLabel);
-        frame.add(dateLabel);
         frame.add(viewTransactionLabel);
+        frame.add(transactionScrollPane);
         frame.add(exitButton);
         frame.add(backgroundLabel);
         frame.setIconImage(icon.getImage());

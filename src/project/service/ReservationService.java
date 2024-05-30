@@ -34,6 +34,18 @@ public class ReservationService {
                 .toList();
     }
 
+    public List<ReservationDto> getReservationsByUserId(long userId) {
+        return this.reservationDao.getReservationsByUserId(userId).stream()
+                .map(this::mapToReservationDto)
+                .toList();
+    }
+
+    public List<ReservationDto> getReservationsByResortId(long resortId) {
+        return this.reservationDao.getReservationsByResortId(resortId).stream()
+                .map(this::mapToReservationDto)
+                .toList();
+    }
+
     public Long createReservation(CreateReservationDto createReservationDto) {
         return this.reservationDao.createReservation(createReservationDto);
     }

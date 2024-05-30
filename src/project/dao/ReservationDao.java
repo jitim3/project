@@ -33,6 +33,8 @@ public class ReservationDao {
             """;
     private static final String SQL_SELECT_RESERVATION_BY_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.id = ?";
     private static final String SQL_SELECT_RESERVATIONS_BY_CUSTOMER_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.user_id = ?";
+    private static final String SQL_SELECT_RESERVATIONS_BY_USER_ID = SQL_SELECT_RESERVATIONS + " WHERE rst.user_id = ? OR rst2.user_id = ?";
+    private static final String SQL_SELECT_RESERVATIONS_BY_RESORT_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.resort_id = ? OR rst2.id = ?";
     private static final String SQL_INSERT_COTTAGE_RESERVATION = """
             INSERT INTO reservation (user_id, resort_id, reservation_date, status, amount, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -92,6 +94,52 @@ public class ReservationDao {
         try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESERVATIONS_BY_CUSTOMER_ID)) {
             int i = 1;
             statement.setLong(i++, customerId);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapToReservation(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
+
+        if (reservations.isEmpty()) {
+            LOGGER.log(Level.INFO, "No room reservations found");
+        }
+
+        return reservations;
+    }
+
+    public List<Reservation> getReservationsByUserId(long userId) {
+        final List<Reservation> reservations = new ArrayList<>();
+
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESERVATIONS_BY_USER_ID)) {
+            int i = 1;
+            statement.setLong(i++, userId);
+            statement.setLong(i++, userId);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapToReservation(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
+
+        if (reservations.isEmpty()) {
+            LOGGER.log(Level.INFO, "No room reservations found");
+        }
+
+        return reservations;
+    }
+
+    public List<Reservation> getReservationsByResortId(long resortId) {
+        final List<Reservation> reservations = new ArrayList<>();
+
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_RESERVATIONS_BY_RESORT_ID)) {
+            int i = 1;
+            statement.setLong(i++, resortId);
+            statement.setLong(i++, resortId);
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     reservations.add(mapToReservation(rs));

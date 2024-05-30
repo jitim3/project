@@ -20,7 +20,6 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class CustomerTransaction implements ActionListener {
-	private final ReservationService reservationService = new ReservationService();
 	private final JFrame frame = new JFrame("CUSTOMER TRANSACTION");
 	private final JLabel viewTransactionLabel = new JLabel("VIEW TRANSACTION");
 	private final JLabel transactionDetailsLabel = new JLabel("Transaction Details: ");
@@ -36,26 +35,25 @@ public class CustomerTransaction implements ActionListener {
 		transactionDetailsLabel.setBounds(270, 70, 500, 40);
 		transactionDetailsLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
 
+		ReservationService reservationService = new ReservationService();
 		List<ReservationDto> reservationDtos = reservationService.getReservationsByCustomerId(userDto.getId());
-		String[][] data = reservationDtos.stream()
+		Object[][] data = reservationDtos.stream()
 				.map(reservationDto -> {
-					String type = "";
-					String endDate = "";
+					String type;
 					if (reservationDto.resortId() != null && reservationDto.resortId() > 0) {
 						type = "Resort: " + reservationDto.resortName();
 					} else {
 						type = "Room: " + reservationDto.roomType() + " Room from " + reservationDto.roomResortName();
-						endDate = reservationDto.endDate().toString();
 					}
-					return new String[] {
+					return new Object[] {
 							type,
-							reservationDto.reservationDate().toString(),
-							endDate,
-							reservationDto.amount().toString(),
-							reservationDto.createdAt().toString()
+							reservationDto.reservationDate(),
+							reservationDto.endDate(),
+							reservationDto.amount(),
+							reservationDto.createdAt()
 					};
 				})
-				.toArray(size -> new String[size][1]);
+				.toArray(size -> new Object[size][1]);
 		String[] columnNames = { "Type", "Reservation Date", "End Date", "Amount", "Created Date"};
 		JTable transactionTable = new JTable(data, columnNames);
 		JScrollPane transactionScrollPane = new JScrollPane(transactionTable);
