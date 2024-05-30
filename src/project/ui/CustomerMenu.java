@@ -14,71 +14,83 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class CustomerMenu implements ActionListener {
-	private final JFrame launchPageFrame;
-	private final UserDto userDto;
-	private final JFrame frame = new JFrame("Customer Menu");
-	private final JButton viewResortsButton = new JButton("View Resorts");
-	private final JButton profileButton = new JButton("Profile");
-	private final JButton exitButton = new JButton("EXIT");
-	private String windowEventSource = "";
+    private final JFrame launchPageFrame;
+    private final UserDto userDto;
+    private final JFrame frame = new JFrame("Customer Menu");
+    private final JButton viewResortsButton = new JButton("View Resorts");
+    private final JButton transactionsButton = new JButton("Transactions");
+    private final JButton profileButton = new JButton("Profile");
+    private final JButton exitButton = new JButton("EXIT");
+    private String windowEventSource = "";
 
-	public CustomerMenu(JFrame launchPageFrame, UserDto userDto) {
-		this.launchPageFrame = launchPageFrame;
-		this.userDto = userDto;
+    public CustomerMenu(JFrame launchPageFrame, UserDto userDto) {
+        this.launchPageFrame = launchPageFrame;
+        this.userDto = userDto;
 
-		ImageIcon icon = new ImageIcon("beach2.png");
+        ImageIcon icon = new ImageIcon("beach2.png");
 
-		ImageIcon background = new ImageIcon("beach3.jpg");
-		Image backgroundImage = background.getImage().getScaledInstance(350, 300, Image.SCALE_DEFAULT);
-		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
-		backgroundLabel.setBounds(0, 0, 350, 300);
+        ImageIcon background = new ImageIcon("beach3.jpg");
+        Image backgroundImage = background.getImage().getScaledInstance(350, 300, Image.SCALE_DEFAULT);
+        JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
+        backgroundLabel.setBounds(0, 0, 350, 300);
 
-		viewResortsButton.setBounds(75, 50, 200, 40);
-		viewResortsButton.setFocusable(false);
-		viewResortsButton.addActionListener(this);
+        viewResortsButton.setBounds(75, 50, 200, 40);
+        viewResortsButton.setFocusable(false);
+        viewResortsButton.addActionListener(this);
 
-		profileButton.setBounds(75, 100, 200, 40);
-		profileButton.setFocusable(false);
-		profileButton.addActionListener(this);
+        transactionsButton.setBounds(75, 100, 200, 40);
+        transactionsButton.setFocusable(false);
+        transactionsButton.addActionListener(this);
 
-		exitButton.setBounds(75, 150, 200, 40);
-		exitButton.setFocusable(false);
-		exitButton.addActionListener(this);
+        profileButton.setBounds(75, 150, 200, 40);
+        profileButton.setFocusable(false);
+        profileButton.addActionListener(this);
 
-		frame.add(viewResortsButton);
-		frame.add(profileButton);
-		frame.add(exitButton);
-		frame.setResizable(false);
-		frame.add(backgroundLabel);
-		frame.setIconImage(icon.getImage());
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.setSize(350, 300);
-		frame.setLayout(null);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(WindowEvent e) {
-				if (!"viewResortsButton".equals(windowEventSource) && !"profileButton".equals(windowEventSource)) {
-					launchPageFrame.setVisible(true);
-				}
-			}
-		});
-	}
+        exitButton.setBounds(75, 200, 200, 40);
+        exitButton.setFocusable(false);
+        exitButton.addActionListener(this);
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == viewResortsButton) { // For the Log in menu
-			windowEventSource = "viewResortsButton";
-			frame.dispose();
-			new CustomerRegisteredResortView(frame, userDto);
-		} else if (e.getSource() == profileButton) { // For the sign up menu
-			windowEventSource = "profileButton";
-			frame.dispose();
-			new CustomerViewOrUpdateInformation(userDto.getId(), frame);
-		} else {
-			frame.dispose();
-			launchPageFrame.setVisible(true);
-		}
-	}
+        frame.add(viewResortsButton);
+        frame.add(transactionsButton);
+        frame.add(profileButton);
+        frame.add(exitButton);
+        frame.setResizable(false);
+        frame.add(backgroundLabel);
+        frame.setIconImage(icon.getImage());
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setSize(350, 350);
+        frame.setLayout(null);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (!"viewResortsButton".equals(windowEventSource)
+                        && !"transactionsButton".equals(windowEventSource)
+                        && !"profileButton".equals(windowEventSource)) {
+                    launchPageFrame.setVisible(true);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == viewResortsButton) {
+            windowEventSource = "viewResortsButton";
+            frame.dispose();
+            new CustomerRegisteredResortView(frame, userDto);
+        } else if (e.getSource() == transactionsButton) {
+            windowEventSource = "transactionsButton";
+            frame.dispose();
+            new CustomerTransaction(frame, userDto);
+        } else if (e.getSource() == profileButton) {
+            windowEventSource = "profileButton";
+            frame.dispose();
+            new CustomerViewOrUpdateInformation(userDto.getId(), frame);
+        } else {
+            frame.dispose();
+            launchPageFrame.setVisible(true);
+        }
+    }
 }

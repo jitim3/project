@@ -72,6 +72,7 @@ public class AdminTransaction implements ActionListener {
 		});
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == exitButton) {
 			frame.dispose();

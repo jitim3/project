@@ -1,8 +1,6 @@
 package project.ui;
 
-import project.dto.CreateCottageReservationDto;
 import project.dto.CreateReservationDto;
-import project.dto.CreateRoomReservationDto;
 import project.dto.ResortDto;
 import project.service.ReservationService;
 import project.util.AppUtils;
@@ -45,13 +43,7 @@ public class CustomerPayment {
         this.createReservationDto = createReservationDto;
         this.parentFrame = parentFrame;
 
-        if (createReservationDto instanceof CreateRoomReservationDto createRoomReservationDto) {
-            amount = createRoomReservationDto.amount();
-        } else if (createReservationDto instanceof CreateCottageReservationDto createCottageReservationDto) {
-            amount = createCottageReservationDto.amount();
-        } else {
-            amount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        }
+        amount = createReservationDto.amount();
 
         frame.setTitle("Amount: PHP " + amount.toString());
 
@@ -122,19 +114,9 @@ public class CustomerPayment {
                 JOptionPane.showMessageDialog(null, "Invalid amount. Please enter amount.", "Payment Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            Long reservationId = null;
-
-            if (createReservationDto instanceof CreateRoomReservationDto createRoomReservationDto) {
-                CreateRoomReservationDto newRoomReservationDto = createRoomReservationDto
-                        .createdAt(Instant.now());
-                reservationId = this.reservationService.createRoomReservation(newRoomReservationDto);
-            } else if (createReservationDto instanceof CreateCottageReservationDto createCottageReservationDto) {
-                CreateCottageReservationDto newCottageReservationDto = createCottageReservationDto
-                        .createdAt(Instant.now());
-                reservationId = this.reservationService.createCottageReservation(newCottageReservationDto);
-            }
-
+            
+            CreateReservationDto newReservationDto = createReservationDto.createdAt(Instant.now());
+            Long reservationId = this.reservationService.createReservation(newReservationDto);
             if (reservationId == null || reservationId == 0) {
                 JOptionPane.showMessageDialog(null, "Reservation was not successful. Please try again.", "Reservation Error", JOptionPane.ERROR_MESSAGE);
             } else {

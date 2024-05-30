@@ -132,43 +132,29 @@ CREATE TABLE IF NOT EXISTS review (
 	CONSTRAINT fk_review_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
 );
 
-CREATE TABLE IF NOT EXISTS room_reservation (
+CREATE TABLE IF NOT EXISTS reservation (
 	id BIGINT NOT NULL AUTO_INCREMENT,
-	user_id BIGINT NOT NULL,
-	room_id BIGINT NULL,
-	start_date DATE NOT NULL,
-	end_date DATE NULL,
-	status ENUM('Pending', 'Confirmed', 'Declined', 'Cancelled') NOT NULL DEFAULT 'Pending',
+    user_id BIGINT NOT NULL,
+    resort_id BIGINT NULL,
+    room_id BIGINT NULL,
+    reservation_date DATE NOT NULL,
+    end_date DATE NULL,
+    status ENUM('Pending', 'Confirmed', 'Declined', 'Cancelled') NOT NULL DEFAULT 'Pending',
 	amount DECIMAL(19,2) NOT NULL DEFAULT 0.00,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
-	CONSTRAINT fk_room_reservation_user_id FOREIGN KEY (user_id) REFERENCES user (id),
-	CONSTRAINT fk_room_reservation_room_id FOREIGN KEY (room_id) REFERENCES room (id)
-);
-
-CREATE TABLE IF NOT EXISTS cottage_reservation (
-	id BIGINT NOT NULL AUTO_INCREMENT,
-	user_id BIGINT NOT NULL,
-	resort_id BIGINT NOT NULL,
-	reservation_date DATE NULL,
-	status ENUM('Pending', 'Confirmed', 'Declined', 'Cancelled') NOT NULL DEFAULT 'Pending',
-	amount DECIMAL(19,2) NOT NULL DEFAULT 0.00,
-	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
-	PRIMARY KEY (id),
-	CONSTRAINT fk_cottage_reservation_user_id FOREIGN KEY (user_id) REFERENCES user (id),
-	CONSTRAINT fk_cottage_reservation_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
+	CONSTRAINT fk_reservation_user_id FOREIGN KEY (user_id) REFERENCES user (id),
+	CONSTRAINT fk_reservation_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id),
+	CONSTRAINT fk_reservation_room_id FOREIGN KEY (room_id) REFERENCES room (id)
 );
 
 CREATE TABLE IF NOT EXISTS payment (
 	id BIGINT NOT NULL AUTO_INCREMENT,
-	room_reservation_id BIGINT NULL,
-	cottage_reservation_id BIGINT NULL,
+	reservation_id BIGINT NULL,
 	amount DECIMAL(19, 2) NOT NULL DEFAULT 0.00,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
-	CONSTRAINT fk_payment_room_reservation_id FOREIGN KEY (room_reservation_id) REFERENCES room_reservation (id),
-	CONSTRAINT fk_payment_cottage_reservation_id FOREIGN KEY (cottage_reservation_id) REFERENCES cottage_reservation (id)
+	CONSTRAINT fk_payment_reservation_id FOREIGN KEY (reservation_id) REFERENCES reservation (id)
 );
