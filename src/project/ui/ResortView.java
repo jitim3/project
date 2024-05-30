@@ -5,7 +5,6 @@ import project.dto.UserDto;
 import project.service.ResortService;
 import project.util.AppUtils;
 import project.util.ResortViewEvent;
-import project.util.UserTypes;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -147,7 +146,7 @@ public class ResortView implements ActionListener {
         panel.add(resortFeeLabel);
         panel.add(exitButton);
         if (ResortViewEvent.SUPER_ADMIN_VIEW == event) {
-            viewReviewsButton.setBounds(360, 1025, 150, 25);
+            viewReviewsButton.setBounds(360, 1030, 150, 25);
             viewReviewsButton.setFocusable(false);
             viewReviewsButton.addActionListener(this);
             transactionButton.setOpaque(false);
@@ -155,22 +154,16 @@ public class ResortView implements ActionListener {
             panel.add(viewReviewsButton);
         }
         if (ResortViewEvent.CUSTOMER_VIEW == event) {
-            transactionButton.setBounds(360, 1025, 150, 25);
-            transactionButton.setFocusable(false);
-            transactionButton.addActionListener(this);
-            transactionButton.setOpaque(false);
-
-            viewReviewsButton.setBounds(360, 985, 150, 25);
-            viewReviewsButton.setFocusable(false);
-            viewReviewsButton.addActionListener(this);
-            viewReviewsButton.setOpaque(false);
-
-            reservationButton.setBounds(360, 940, 150, 25);
+            reservationButton.setBounds(360, 985, 150, 25);
             reservationButton.setFocusable(false);
             reservationButton.addActionListener(this);
             reservationButton.setOpaque(false);
 
-            panel.add(transactionButton);
+            viewReviewsButton.setBounds(360, 1030, 150, 25);
+            viewReviewsButton.setFocusable(false);
+            viewReviewsButton.addActionListener(this);
+            viewReviewsButton.setOpaque(false);
+
             panel.add(viewReviewsButton);
             panel.add(reservationButton);
         }
@@ -198,10 +191,7 @@ public class ResortView implements ActionListener {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (!"reservationButton".equals(windowEventSource) && !"viewReviewsButton".equals(windowEventSource) && !"transactionButton".equals(windowEventSource) && !"exitButton".equals(windowEventSource)) {
-                    String userType = userDto.getUserType().name();
-                    if (UserTypes.CUSTOMER.name().equals(userType)) {
-                        parentFrame.setVisible(true);
-                    }
+                    parentFrame.setVisible(true);
                 }
             }
         });
@@ -223,10 +213,7 @@ public class ResortView implements ActionListener {
         } else if (e.getSource() == exitButton) {
             this.windowEventSource = "exitButton";
             frame.dispose();
-            String userType = userDto.getUserType().name();
-            if (UserTypes.CUSTOMER.name().equals(userType)) {
-                parentFrame.setVisible(true);
-            }
+            parentFrame.setVisible(true);
         }
     }
 }

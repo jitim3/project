@@ -18,9 +18,13 @@ import java.util.Optional;
 
 public class ReviewDao {
     private static final Logger LOGGER = System.getLogger(ReviewDao.class.getName());
-    private static final String SQL_SELECT_REVIEWS = "SELECT id, user_id, resort_id, rate, comment, created_at, updated_at FROM review";
-    private static final String SQL_SELECT_REVIEW_BY_ID = SQL_SELECT_REVIEWS + " WHERE id = ?";
-    private static final String SQL_SELECT_REVIEW_BY_RESORT_ID = SQL_SELECT_REVIEWS + " WHERE resort_id = ?";
+    private static final String SQL_SELECT_REVIEWS = """
+            SELECT r.id AS review_id, r.user_id, c.first_name, c.last_name, r.resort_id, r.rate, r.comment, r.created_at, r.updated_at
+            FROM review r
+            LEFT JOIN customer c ON c.id = r.user_id
+            """;
+    private static final String SQL_SELECT_REVIEW_BY_ID = SQL_SELECT_REVIEWS + " WHERE r.id = ?";
+    private static final String SQL_SELECT_REVIEW_BY_RESORT_ID = SQL_SELECT_REVIEWS + " WHERE r.resort_id = ?";
     private static final String SQL_INSERT_REVIEW = "INSERT INTO review(user_id, resort_id, rate, comment, created_at) VALUES(?, ?, ?, ?, ?)";
     private final Connection connection;
 
@@ -99,8 +103,10 @@ public class ReviewDao {
         var updatedAt = rs.getTimestamp("updated_at");
 
         return new Review(
-                rs.getLong("id"),
+                rs.getLong("review_id"),
                 rs.getLong("user_id"),
+                rs.getString("first_name"),
+                rs.getString("last_name"),
                 rs.getLong("resort_id"),
                 rs.getInt("rate"),
                 rs.getString("comment"),

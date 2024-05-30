@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -44,20 +45,19 @@ public class Reviews implements ActionListener {
 
         this.getReviews();
 
-        String reviews = this.reviewDtos.stream()
-                .map(reviewDto -> """
-                        User ID: %s
-                        Rate:    %d
-                        Comment: %s
-                        """.formatted(reviewDto.userId(), reviewDto.rate(), reviewDto.comment()))
-                .peek(System.out::println)
-                .collect(Collectors.joining("\n\n"));
-        JTextArea textArea = new JTextArea(reviews);
-        textArea.setWrapStyleWord(true);
-        textArea.setLineWrap(true);
-        JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
-        scrollBar.setBounds(635, 63, 17, 256);
+        Object[][] data = this.reviewDtos.stream()
+                .map(reviewDto -> new Object[]{
+                                reviewDto.firstName() + " " + reviewDto.lastName(),
+                                "*".repeat(reviewDto.rate()),
+                                reviewDto.comment(),
+                                reviewDto.createdAt()
+                        }
+                )
+                .toArray(size -> new Object[size][1]);
+        String[] columnNames = {"User", "Rating", "Comment", "Date"};
+        JTable reviewTable = new JTable(data, columnNames);
+        JScrollPane reviewScrollPane = new JScrollPane(reviewTable);
+        reviewScrollPane.setBounds(20, 50, 645, 280);
 
         JLabel lblTitle = new JLabel("REVIEWS");
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -94,7 +94,7 @@ public class Reviews implements ActionListener {
         frame.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         frame.add(lblTitle);
         frame.add(reviewsBackgroundLabel);
-        frame.add(scrollBar);
+        frame.add(reviewScrollPane);
         if (AppUtils.isUserTypeCustomer(userDto.getUserType().id())) {
             frame.add(createReviewButton);
         }
