@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS town_resort (
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     CONSTRAINT uq_town_resort_town_id_resort_id UNIQUE (town_id, resort_id),
-    CONSTRAINT fk_town_resort_town_id FOREIGN KEY (town_id) REFERENCES user (id),
+    CONSTRAINT fk_town_resort_town_id FOREIGN KEY (town_id) REFERENCES town (id),
     CONSTRAINT fk_town_resort_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
 );
 
