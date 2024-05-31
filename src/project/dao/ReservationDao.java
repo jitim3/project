@@ -162,9 +162,9 @@ public class ReservationDao {
         Long resortId = createReservationDto.resortId();
         Long roomId = createReservationDto.roomId();
         String query;
-        if (resortId != null) {
+        if (resortId != null && resortId > 0) {
             query = SQL_INSERT_COTTAGE_RESERVATION;
-        } else if (roomId != null) {
+        } else if (roomId != null && roomId > 0) {
             query = SQL_INSERT_ROOM_RESERVATION;
         } else {
             throw new IllegalArgumentException("Invalid reservation; no resort ID or roomId");
@@ -173,11 +173,11 @@ public class ReservationDao {
         try (PreparedStatement statement = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             int i = 1;
             statement.setLong(i++, createReservationDto.userId());
-            if (resortId != null) {
+            if (resortId != null && resortId > 0) {
                 statement.setLong(i++, createReservationDto.resortId());
                 statement.setDate(i++, Date.valueOf(createReservationDto.reservationDate()));
             }
-            if (roomId != null) {
+            if (roomId != null && roomId > 0) {
                 statement.setLong(i++, createReservationDto.roomId());
                 statement.setDate(i++, Date.valueOf(createReservationDto.reservationDate()));
                 statement.setDate(i++, Date.valueOf(createReservationDto.endDate()));
