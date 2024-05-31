@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS commission_rate (
 	PRIMARY KEY (id)
 );
 
-INSERT INTO commission_rate (id, percent_rate) VALUES (1, 5);
+INSERT INTO commission_rate (id, rate) VALUES (1, 5);
 
 CREATE TABLE IF NOT EXISTS resort (
 	id BIGINT NOT NULL AUTO_INCREMENT,
