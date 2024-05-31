@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import project.ui.LaunchPage;
 import project.util.AppUtils;
 
-public class FirstPagePrototype {
+public class ResortApplication {
 
 	public static void main(String[] args) throws IOException {
         Files.createDirectories(Paths.get(AppUtils.UPLOADED_IMAGE));

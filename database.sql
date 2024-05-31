@@ -55,6 +55,16 @@ INSERT INTO town (id, name) VALUES(4, 'Alcoy');
 INSERT INTO town (id, name) VALUES(5, 'SanTander');
 INSERT INTO town (id, name) VALUES(6, 'Oslob');
 
+CREATE TABLE IF NOT EXISTS commission_rate (
+	id INT NOT NULL AUTO_INCREMENT,
+    rate DECIMAL(19,2) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+
+INSERT INTO commission_config (id, percent_rate) VALUES (1, 5);
+
 CREATE TABLE IF NOT EXISTS resort (
 	id BIGINT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
@@ -141,12 +151,14 @@ CREATE TABLE IF NOT EXISTS reservation (
     end_date DATE NULL,
     status ENUM('Pending', 'Confirmed', 'Declined', 'Cancelled') NOT NULL DEFAULT 'Pending',
 	amount DECIMAL(19,2) NOT NULL DEFAULT 0.00,
+	commission_rate_id INT NOT NULL,
 	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT fk_reservation_user_id FOREIGN KEY (user_id) REFERENCES user (id),
 	CONSTRAINT fk_reservation_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id),
-	CONSTRAINT fk_reservation_room_id FOREIGN KEY (room_id) REFERENCES room (id)
+    CONSTRAINT fk_reservation_room_id FOREIGN KEY (room_id) REFERENCES room (id),
+    CONSTRAINT fk_reservation_commission_rate_id FOREIGN KEY (commission_rate_id) REFERENCES commission_rate (id)
 );
 
 CREATE TABLE IF NOT EXISTS payment (
@@ -157,4 +169,36 @@ CREATE TABLE IF NOT EXISTS payment (
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT fk_payment_reservation_id FOREIGN KEY (reservation_id) REFERENCES reservation (id)
+);
+
+CREATE VIEW super_admin_total_sales AS
+SELECT
+	SUM(rsv.amount * (cr.rate / 100)) AS total
+FROM reservation rsv
+LEFT JOIN resort rst on rst.id = rsv.resort_id
+LEFT JOIN room rm on rm.id = rsv.room_id
+LEFT JOIN resort rst2 on rst2.id = rm.resort_id
+LEFT JOIN user u ON u.id = rst.user_id OR u.id = rst2.user_id
+LEFT JOIN commission_rate cr ON cr.id = rsv.commission_rate_id
+ORDER BY total;
+
+CREATE VIEW admin_total_sales AS
+SELECT
+	u.id AS admin_id, SUM((rsv.amount * ((100 - cr.rate) / 100))) AS total
+FROM reservation rsv
+LEFT JOIN resort rst on rst.id = rsv.resort_id
+LEFT JOIN room rm on rm.id = rsv.room_id
+LEFT JOIN resort rst2 on rst2.id = rm.resort_id
+LEFT JOIN user u ON u.id = rst.user_id OR u.id = rst2.user_id
+LEFT JOIN commission_rate cr ON cr.id = rsv.commission_rate_id
+GROUP BY admin_id ORDER BY total;
+
+CREATE TABLE IF NOT EXISTS withdrawal (
+	id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+	amount DECIMAL(19, 2) NOT NULL DEFAULT 0.00,
+	created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	CONSTRAINT fk_withdrawal_user_id FOREIGN KEY (user_id) REFERENCES user (id)
 );

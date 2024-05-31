@@ -1,5 +1,8 @@
 package project.ui;
 
+import project.dto.UserDto;
+import project.service.WalletService;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -8,78 +11,86 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.math.BigDecimal;
 
-class AdminWallet extends JFrame implements ActionListener {
-    private final JFrame launchPageFrame;
+public class AdminWallet {
+    private final WalletService walletService = new WalletService();
+    private final BigDecimal balance;
+    private final UserDto userDto;
     private final JFrame frame = new JFrame("ADMIN WALLET");
-    private final JButton widbutton = new JButton("WITHDRAW");
-    private final JButton exitbutton = new JButton("EXIT");
-    private final JLabel label = new JLabel("VIEW WALLET", SwingConstants.CENTER);
-    private final JLabel balance = new JLabel("BALANCE: ", SwingConstants.CENTER);
-    private final JLabel money = new JLabel("0.00 ", SwingConstants.CENTER);
+    private final JLabel viewWalletLabel = new JLabel("VIEW WALLET", SwingConstants.CENTER);
+    private final JLabel balanceLabel = new JLabel("BALANCE: ", SwingConstants.CENTER);
+    private final JLabel moneyLabel = new JLabel("0.00 ", SwingConstants.CENTER);
+    private final JButton withdrawButton = new JButton("WITHDRAW");
+    private final JButton exitButton = new JButton("EXIT");
     private final JFrame adminRegisteredResortMenuFrame;
-    private String windowEventSource = "";
+    private String closeSource;
 
-    public AdminWallet(JFrame launchPageFrame, JFrame adminRegisteredResortMenuFrame) {
-        this.launchPageFrame = launchPageFrame;
+    public AdminWallet(JFrame adminRegisteredResortMenuFrame, UserDto userDto) {
         this.adminRegisteredResortMenuFrame = adminRegisteredResortMenuFrame;
-        money.setBounds(200, 150, 300, 30);
-        money.setFont(new Font("Times New Roman", Font.BOLD, 17));
-        balance.setBounds(100, 150, 300, 30);
-        balance.setFont(new Font("Times New Roman", Font.BOLD, 17));
-        label.setBounds(195, 80, 300, 30);
-        label.setFont(new Font("Times New Roman", Font.BOLD, 30));
-        widbutton.setBounds(270, 250, 150, 30);
-        widbutton.setFont(new Font("Times New Roman", Font.BOLD, 15));
-        widbutton.setFocusable(false);
-        exitbutton.setBounds(270, 300, 150, 30);
-        exitbutton.setFont(new Font("Times New Roman", Font.BOLD, 15));
-        exitbutton.setFocusable(false);
+        this.userDto = userDto;
 
-        frame.setResizable(false);
+        balance = walletService.getAdminBalance(userDto.getId());
+        moneyLabel.setText(balance.toString());
+        moneyLabel.setBounds(200, 150, 300, 30);
+        moneyLabel.setFont(new Font("Times New Roman", Font.BOLD, 17));
+
+        balanceLabel.setBounds(100, 150, 300, 30);
+        balanceLabel.setFont(new Font("Times New Roman", Font.BOLD, 17));
+
+        viewWalletLabel.setBounds(195, 80, 300, 30);
+        viewWalletLabel.setFont(new Font("Times New Roman", Font.BOLD, 30));
+
+        withdrawButton.setBounds(270, 250, 150, 30);
+        withdrawButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
+        withdrawButton.setFocusable(false);
+        withdrawButton.setEnabled(balance.compareTo(BigDecimal.ZERO) > 0);
+        withdrawButton.addActionListener(e -> withdrawButton());
+
+        exitButton.setBounds(270, 300, 150, 30);
+        exitButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
+        exitButton.setFocusable(false);
+        exitButton.addActionListener(e -> {
+            frame.dispose();
+            adminRegisteredResortMenuFrame.setVisible(true);
+        });
 
         // cover imageIcon
         ImageIcon icon = new ImageIcon("beach2.png");
 
         // for the background
-        ImageIcon coverbackground = new ImageIcon("background.jpg");
+        ImageIcon coverbackground = new ImageIcon("figma.jpg");
         Image backgroundImage = coverbackground.getImage().getScaledInstance(700, 500, Image.SCALE_DEFAULT);
         JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
         backgroundLabel.setBounds(0, 0, 700, 500);
 
-        frame.add(balance);
-        frame.add(money);
-        frame.add(widbutton);
-        frame.add(exitbutton);
-        frame.add(label);
+        frame.add(balanceLabel);
+        frame.add(moneyLabel);
+        frame.add(withdrawButton);
+        frame.add(exitButton);
+        frame.add(viewWalletLabel);
         frame.setIconImage(icon.getImage());
         frame.add(backgroundLabel);
         frame.setSize(700, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (!"widbutton".equals(windowEventSource)) {
+                if (!"withdrawButton".equals(closeSource)) {
                     adminRegisteredResortMenuFrame.setVisible(true);
                 }
             }
         });
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == widbutton) {
-            this.windowEventSource = "widbutton";
-            frame.dispose();
-            new AdminWithdraw(launchPageFrame, frame);
-        } else {
-            frame.dispose();
-            adminRegisteredResortMenuFrame.setVisible(true);
-        }
+    private void withdrawButton() {
+        this.closeSource = "withdrawButton";
+        frame.dispose();
+        new SuperAdminWithdraw(adminRegisteredResortMenuFrame, frame, userDto, walletService, balance);
     }
 }
