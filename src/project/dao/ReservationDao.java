@@ -39,7 +39,7 @@ public class ReservationDao {
     private static final String SQL_SELECT_COMMISSION_RATE = "SELECT cr.id FROM commission_rate cr WHERE cr.created_at < ? ORDER BY cr.created_at DESC LIMIT 1";
     private static final String SQL_INSERT_COTTAGE_RESERVATION = """
             INSERT INTO reservation (user_id, resort_id, reservation_date, status, amount, commission_rate_id, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """;
     private static final String SQL_INSERT_ROOM_RESERVATION = """
             INSERT INTO reservation (user_id, room_id, reservation_date, end_date, status, amount, commission_rate_id, created_at)
