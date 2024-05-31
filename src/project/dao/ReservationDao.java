@@ -7,6 +7,7 @@ import project.util.ReservationStatus;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -35,13 +36,14 @@ public class ReservationDao {
     private static final String SQL_SELECT_RESERVATIONS_BY_CUSTOMER_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.user_id = ?";
     private static final String SQL_SELECT_RESERVATIONS_BY_USER_ID = SQL_SELECT_RESERVATIONS + " WHERE rst.user_id = ? OR rst2.user_id = ?";
     private static final String SQL_SELECT_RESERVATIONS_BY_RESORT_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.resort_id = ? OR rst2.id = ?";
+    private static final String SQL_SELECT_COMMISSION_RATE = "SELECT cr.id FROM commission_rate cr WHERE cr.created_at < ? ORDER BY cr.created_at DESC LIMIT 1";
     private static final String SQL_INSERT_COTTAGE_RESERVATION = """
-            INSERT INTO reservation (user_id, resort_id, reservation_date, status, amount, created_at)
+            INSERT INTO reservation (user_id, resort_id, reservation_date, status, amount, commission_rate_id, created_at)
             VALUES (?, ?, ?, ?, ?, ?)
             """;
     private static final String SQL_INSERT_ROOM_RESERVATION = """
-            INSERT INTO reservation (user_id, room_id, reservation_date, end_date, status, amount, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO reservation (user_id, room_id, reservation_date, end_date, status, amount, commission_rate_id, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """;
     private static final String SQL_UPDATE_RESERVATION_STATUS = "UPDATE reservation SET status = ? WHERE id = ?";
     private final Connection connection;
@@ -167,7 +169,7 @@ public class ReservationDao {
         } else {
             throw new IllegalArgumentException("Invalid reservation; no resort ID or roomId");
         }
-
+        Optional<Integer> commissionRateId = this.getCommissionRate(createReservationDto.createdAt());
         try (PreparedStatement statement = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             int i = 1;
             statement.setLong(i++, createReservationDto.userId());
@@ -182,6 +184,7 @@ public class ReservationDao {
             }
             statement.setString(i++, createReservationDto.status().value());
             statement.setBigDecimal(i++, createReservationDto.amount());
+            statement.setInt(i++, commissionRateId.orElse(1));
             statement.setTimestamp(i++, Timestamp.from(createReservationDto.createdAt()));
             if (statement.executeUpdate() == 0) {
                 throw new SQLException("Creating reservation failed, no rows affected.");
@@ -223,6 +226,23 @@ public class ReservationDao {
         }
 
         return false;
+    }
+
+    public Optional<Integer> getCommissionRate(Instant createdAt) {
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_COMMISSION_RATE)) {
+            int i = 1;
+            statement.setTimestamp(i++, Timestamp.from(createdAt));
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return Optional.of(rs.getInt("id"));
+            } else {
+                LOGGER.log(Level.INFO, "No commission rate available");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
+
+        return Optional.empty();
     }
 
     private static Reservation mapToReservation(ResultSet rs) throws SQLException {

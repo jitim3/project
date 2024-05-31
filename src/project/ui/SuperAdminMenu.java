@@ -88,7 +88,7 @@ public class SuperAdminMenu implements ActionListener {
         } else if (e.getSource() == viewWalletButton) {
             windowEventSource = "viewWalletButton";
             frame.dispose();
-            new SuperAdminWallet(frame);
+            new SuperAdminWallet(frame, userDto);
         } else if (e.getSource() == viewTransactionButton) {
             windowEventSource = "viewTransactionButton";
             frame.dispose();

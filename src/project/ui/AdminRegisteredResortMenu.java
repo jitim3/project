@@ -28,12 +28,12 @@ public class AdminRegisteredResortMenu implements ActionListener {
     private final JButton btnViewWallet = new JButton("View Wallet");
     private final JButton btnViewTransaction = new JButton("View Transaction");
     private final JButton btnExit = new JButton("EXIT");
-    private final JFrame parentFrame;
+    private final JFrame adminMenu;
     private String windowEventSource = "";
 
-    public AdminRegisteredResortMenu(JFrame launchPageFrame, JFrame parentFrame, UserDto userDto, ResortDto resortDto, ResortService resortService) {
+    public AdminRegisteredResortMenu(JFrame launchPageFrame, JFrame adminMenu, UserDto userDto, ResortDto resortDto, ResortService resortService) {
         this.launchPageFrame = launchPageFrame;
-        this.parentFrame = parentFrame;
+        this.adminMenu = adminMenu;
         this.userDto = userDto;
         this.resortDto = resortDto;
         this.resortService = resortService;
@@ -95,7 +95,7 @@ public class AdminRegisteredResortMenu implements ActionListener {
                 if (!"btnEditInfo".equals(windowEventSource) && !"btnViewReviews".equals(windowEventSource)
                         && !"btnViewReservation".equals(windowEventSource) && !"btnViewWallet".equals(windowEventSource)
                         && !"btnViewTransaction".equals(windowEventSource)) {
-                    parentFrame.setVisible(true);
+                    adminMenu.setVisible(true);
                 }
             }
         });
@@ -118,14 +118,14 @@ public class AdminRegisteredResortMenu implements ActionListener {
         } else if (e.getSource() == btnViewWallet) {
             this.windowEventSource = "btnViewWallet";
             frame.dispose();
-            new AdminWallet(launchPageFrame, frame);
+            new AdminWallet(frame, userDto);
         } else if (e.getSource() == btnViewTransaction) {
             this.windowEventSource = "btnViewTransaction";
             frame.dispose();
             new AdminTransaction(frame, userDto);
         } else if (e.getSource() == btnExit) {
             frame.dispose();
-            parentFrame.setVisible(true);
+            adminMenu.setVisible(true);
         }
     }
 }
