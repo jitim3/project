@@ -1,4 +1,4 @@
-package project.ui.table;
+package project.ui;
 
 import java.math.BigDecimal;
 import java.time.Instant;
