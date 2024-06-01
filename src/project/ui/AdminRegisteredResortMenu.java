@@ -106,6 +106,10 @@ public class AdminRegisteredResortMenu implements ActionListener {
             frame.dispose();
 //            new ResortInfoUpdate(frame, userDto, resortDto, this.resortService);
             new AdminRegisteredResortView(adminMenu, userDto);
+        } else if (e.getSource() == btnViewReviews) {
+            this.windowEventSource = "btnViewReviews";
+            frame.dispose();
+            new AdminRegisteredResortReviews(adminMenu, userDto);
         } else if (e.getSource() == btnViewReservation) {
             this.windowEventSource = "btnViewReservation";
             frame.dispose();
