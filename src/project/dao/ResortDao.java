@@ -29,7 +29,7 @@ public class ResortDao {
     private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORTS + " WHERE r.id = ?";
     private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORTS + " WHERE r.user_id = ?";
     private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORTS + " WHERE r.user_id = ? AND r.town_id = ?";
-    private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " WHERE tr.town_id = ?";
+    private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " WHERE r.town_id = ?";
     private static final String SQL_INSERT_RESORT = """
             INSERT INTO resort (name, town_id, user_id, created_at)
             VALUES (?, ?, ?, ?)
