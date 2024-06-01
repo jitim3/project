@@ -1,7 +1,9 @@
 package project.ui;
 
+import project.dao.entity.CommissionRate;
 import project.dto.ResortDto;
 import project.dto.UserDto;
+import project.service.ReservationService;
 import project.service.ResortService;
 import project.util.AppUtils;
 import project.util.ResortViewEvent;
@@ -24,28 +26,36 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.math.BigDecimal;
 
 public class ResortView implements ActionListener {
     private final JFrame parentFrame;
     private final ResortViewEvent event;
     private final ResortService resortService;
+    private final ReservationService reservationService;
     private final UserDto userDto;
     private final ResortDto resortDto;
+    private final CommissionRate commissionRate;
     private final JFrame frame;
     private final JButton reservationButton = new JButton("Make a reservation");
     private final JButton viewReviewsButton = new JButton("View Reviews");
     private final JButton transactionButton = new JButton("Transaction");
-    private final JButton exitButton = new JButton("EXIT");
+    private final JButton backButton = new JButton("BACK");
     private final JLabel resortEntranceFeeLabel = new JLabel("Resort Entrance Fee:");
     private final JLabel poolEntranceFeeLabel = new JLabel("Pool Entrance Fee:");
     private String windowEventSource = "";
+    private final JFrame userMenuFrame;
 
-    public ResortView(JFrame parentFrame, ResortViewEvent event, ResortService resortService, UserDto userDto, long resortId) {
+    public ResortView(JFrame userMenuFrame, JFrame parentFrame, ResortViewEvent event, ResortService resortService, UserDto userDto, long resortId) {
+        this.userMenuFrame = userMenuFrame;
         this.parentFrame = parentFrame;
         this.event = event;
         this.resortService = resortService;
         this.userDto = userDto;
-        this.resortDto = this.resortService.getResortById(resortId).orElse(new ResortDto());
+        this.resortDto = resortService.getResortById(resortId).orElse(new ResortDto());
+        this.reservationService = new ReservationService();
+        this.commissionRate = this.reservationService.getCommissionRate();
+
         this.frame = new JFrame(resortDto.name());
 
         resortEntranceFeeLabel.setBounds(40, 515, 230, 30);
@@ -54,8 +64,8 @@ public class ResortView implements ActionListener {
         poolEntranceFeeLabel.setBounds(475, 515, 230, 30);
         poolEntranceFeeLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
 
-        String poolFee = this.resortDto.poolFee() != null ? this.resortDto.poolFee().toString() : "";
-        JLabel poolFeeLabel = new JLabel(poolFee); // POOL FEE LABEL
+        BigDecimal poolFee = AppUtils.computeRateWithCommissionFee(this.resortDto.poolFee(), this.commissionRate.rate());
+        JLabel poolFeeLabel = new JLabel(poolFee.toString()); // POOL FEE LABEL
         poolFeeLabel.setBounds(570, 515, 230, 30);
         poolFeeLabel.setForeground(Color.black);
         poolFeeLabel.setOpaque(false);
@@ -64,8 +74,8 @@ public class ResortView implements ActionListener {
         poolFeeLabel.setHorizontalAlignment(SwingConstants.CENTER);
         poolFeeLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        String resortFee = this.resortDto.resortFee() != null ? this.resortDto.resortFee().toString() : "";
-        JLabel resortFeeLabel = new JLabel(resortFee); // RESORT FEE
+        BigDecimal resortFee = AppUtils.computeRateWithCommissionFee(this.resortDto.resortFee(), this.commissionRate.rate());
+        JLabel resortFeeLabel = new JLabel(resortFee.toString()); // RESORT FEE
         resortFeeLabel.setBounds(135, 515, 230, 30);
         resortFeeLabel.setForeground(Color.black);
         resortFeeLabel.setOpaque(false);
@@ -126,10 +136,10 @@ public class ResortView implements ActionListener {
                 poolImageLabel.getHeight(), Image.SCALE_SMOOTH);
         poolImageLabel.setIcon(new ImageIcon(poolImage));
 
-        exitButton.setBounds(380, 1075, 110, 25);
-        exitButton.setFocusable(false);
-        exitButton.addActionListener(this);
-        exitButton.setOpaque(false);
+        backButton.setBounds(380, 1075, 110, 25);
+        backButton.setFocusable(false);
+        backButton.addActionListener(this);
+        backButton.setOpaque(false);
 
         ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -144,7 +154,7 @@ public class ResortView implements ActionListener {
         panel.add(poolEntranceFeeLabel);
         panel.add(resortEntranceFeeLabel);
         panel.add(resortFeeLabel);
-        panel.add(exitButton);
+        panel.add(backButton);
         if (ResortViewEvent.SUPER_ADMIN_VIEW == event) {
             viewReviewsButton.setBounds(360, 985, 150, 25);
             viewReviewsButton.setFocusable(false);
@@ -196,8 +206,9 @@ public class ResortView implements ActionListener {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (!"reservationButton".equals(windowEventSource) && !"viewReviewsButton".equals(windowEventSource) && !"transactionButton".equals(windowEventSource) && !"exitButton".equals(windowEventSource)) {
-                    parentFrame.setVisible(true);
+                if (!"reservationButton".equals(windowEventSource) && !"viewReviewsButton".equals(windowEventSource)
+                        && !"transactionButton".equals(windowEventSource) && !"backButton".equals(windowEventSource)) {
+                    userMenuFrame.setVisible(true);
                 }
             }
         });
@@ -208,7 +219,7 @@ public class ResortView implements ActionListener {
         if (e.getSource() == reservationButton) {
             this.windowEventSource = "reservationButton";
             frame.dispose();
-            new ReservationChoices(frame, this.userDto.getId(), this.resortDto);
+            new ReservationChoices(userMenuFrame, frame, this.userDto.getId(), this.resortDto, this.commissionRate);
         } else if (e.getSource() == viewReviewsButton) {
             this.windowEventSource = "viewReviewsButton";
             frame.dispose();
@@ -216,8 +227,8 @@ public class ResortView implements ActionListener {
         } else if (e.getSource() == transactionButton) {
             this.windowEventSource = "transactionButton";
             new SuperAdminTransaction(frame, resortDto);
-        } else if (e.getSource() == exitButton) {
-            this.windowEventSource = "exitButton";
+        } else if (e.getSource() == backButton) {
+            this.windowEventSource = "backButton";
             frame.dispose();
             parentFrame.setVisible(true);
         }

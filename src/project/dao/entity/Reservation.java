@@ -17,6 +17,7 @@ public record Reservation(
         LocalDate endDate,
         String status,
         BigDecimal amount,
+        int commissionRateId,
         Instant createdAt,
         Instant updatedAt) {
 }

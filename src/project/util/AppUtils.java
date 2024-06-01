@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -139,5 +141,24 @@ public class AppUtils {
 				return "";
 			}
 		});
+	}
+
+	public static BigDecimal computeRateWithCommissionFee(BigDecimal productRate, BigDecimal commissionRate) {
+		if (productRate == null) {
+			return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+		}
+
+		if (commissionRate == null) {
+			return productRate;
+		}
+
+		// ex: 5.00 / 100.00 + 1 = 1.05
+		var percentage = commissionRate.divide(BigDecimal.valueOf(100), new MathContext(2))
+				.add(BigDecimal.ONE)
+				.setScale(2, RoundingMode.HALF_UP);
+
+		// ex: 500 * 1.05 = 525.00
+		return productRate.multiply(percentage)
+				.setScale(2, RoundingMode.HALF_UP);
 	}
 }

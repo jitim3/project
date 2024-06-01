@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -98,7 +99,7 @@ public class CustomerRegisteredResortView extends JFrame implements ActionListen
                 }
             }
         });
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
@@ -109,27 +110,27 @@ public class CustomerRegisteredResortView extends JFrame implements ActionListen
         if (e.getSource() == carcarButton) {
             this.windowEventSource = "carcarButton";
             frame.dispose();
-            new Carcar(this.userDto, frame);
+            new Carcar(customerMenuFrame, this.userDto, frame);
         } else if (e.getSource() == bariliButton) {
             this.windowEventSource = "bariliButton";
             frame.dispose();
-            new Barili(this.userDto, frame);
+            new Barili(customerMenuFrame, this.userDto, frame);
         } else if (e.getSource() == moalBoalButton) {
             this.windowEventSource = "moalBoalButton";
             frame.dispose();
-            new Moalboal(this.userDto, frame);
+            new Moalboal(customerMenuFrame, this.userDto, frame);
         } else if (e.getSource() == alcoyButton) {
             this.windowEventSource = "alcoyButton";
             frame.dispose();
-            new Alcoy(this.userDto, frame);
+            new Alcoy(customerMenuFrame, this.userDto, frame);
         } else if (e.getSource() == sanTanderButton) {
             this.windowEventSource = "sanTanderButton";
             frame.dispose();
-            new SanTander(this.userDto, frame);
+            new SanTander(customerMenuFrame, this.userDto, frame);
         } else if (e.getSource() == oslobButton) {
             this.windowEventSource = "oslobButton";
             frame.dispose();
-            new Oslob(this.userDto, frame);
+            new Oslob(customerMenuFrame, this.userDto, frame);
         } else {
             this.windowEventSource = "unknown";
             frame.dispose();

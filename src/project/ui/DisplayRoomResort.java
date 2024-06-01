@@ -1,5 +1,6 @@
 package project.ui;
 
+import project.dao.entity.CommissionRate;
 import project.dto.CreateReservationDto;
 import project.dto.ResortDto;
 import project.dto.RoomDto;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class DisplayRoomResort implements ActionListener {
     private final long userId;
     private final ResortDto resortDto;
+    private final CommissionRate commissionRate;
     private final JFrame frame = new JFrame("Room Information");
     private final JLabel roomsLabel = new JLabel("Rooms");
     private final JLabel normalRoomLabel = new JLabel("Normal Room");
@@ -38,10 +40,13 @@ public class DisplayRoomResort implements ActionListener {
     private RoomDto familyRoomDto;
     private BigDecimal normalRoomRatePerNightValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
     private BigDecimal familyRoomRatePerNightValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    private final JFrame customerMenuFrame;
 
-    public DisplayRoomResort(Long userId, ResortDto resortDto) {
+    public DisplayRoomResort(JFrame customerMenuFrame, Long userId, ResortDto resortDto, CommissionRate commissionRate) {
+        this.customerMenuFrame = customerMenuFrame;
         this.userId = userId;
         this.resortDto = resortDto;
+        this.commissionRate = commissionRate;
 
         Optional<RoomDto> normalRoomDtoOptional = this.resortDto.roomDtos().stream()
                 .filter(roomDto -> RoomTypes.NORMAL.value().equals(roomDto.roomType())).findFirst();
@@ -81,7 +86,8 @@ public class DisplayRoomResort implements ActionListener {
         normalRoomReserveNowButton.addActionListener(this);
         normalRoomReserveNowButton.setOpaque(false);
 
-        JLabel familyRoomRatePerNight = new JLabel(familyRoomRatePerNightValue.toString()); // FAMILY ROOM FEE
+        BigDecimal familyRoomRatePerNightFee = AppUtils.computeRateWithCommissionFee(familyRoomRatePerNightValue, commissionRate.rate());
+        JLabel familyRoomRatePerNight = new JLabel(familyRoomRatePerNightFee.toString()); // FAMILY ROOM FEE
         familyRoomRatePerNight.setBounds(468, 515, 250, 35);
         familyRoomRatePerNight.setFont(new Font("Times New Roman", Font.BOLD, 15));
         familyRoomRatePerNight.setForeground(Color.black);
@@ -108,7 +114,8 @@ public class DisplayRoomResort implements ActionListener {
         normalRoomNumberOfPax.setHorizontalAlignment(SwingConstants.CENTER);
         normalRoomNumberOfPax.setVerticalAlignment(SwingConstants.CENTER);
 
-        JLabel normalRoomRatePerNight = new JLabel(normalRoomRatePerNightValue.toString()); // ROOM FEE
+        BigDecimal normalRoomRatePerNightFee = AppUtils.computeRateWithCommissionFee(normalRoomRatePerNightValue, commissionRate.rate());
+        JLabel normalRoomRatePerNight = new JLabel(normalRoomRatePerNightFee.toString()); // ROOM FEE
         normalRoomRatePerNight.setBounds(70, 515, 250, 35);
         normalRoomRatePerNight.setFont(new Font("Times New Roman", Font.BOLD, 15));
         normalRoomRatePerNight.setForeground(Color.black);
@@ -188,15 +195,15 @@ public class DisplayRoomResort implements ActionListener {
         if (e.getSource() == normalRoomReserveNowButton) {
             frame.dispose();
             CreateReservationDto createRoomReservationDto = CreateReservationDto.createRoomReservation(
-                    userId, normalRoomDto.id(), ReservationStatus.CONFIRMED
+                    userId, normalRoomDto.id(), ReservationStatus.PENDING, commissionRate.id()
             );
-            new Checkin(userId, resortDto, createRoomReservationDto, normalRoomRatePerNightValue);
+            new Checkin(customerMenuFrame, userId, resortDto, createRoomReservationDto, normalRoomRatePerNightValue, commissionRate);
         } else if (e.getSource() == familyRoomReserveNowButton) {
             frame.dispose();
             CreateReservationDto createRoomReservationDto = CreateReservationDto.createRoomReservation(
-                    userId, familyRoomDto.id(), ReservationStatus.CONFIRMED
+                    userId, familyRoomDto.id(), ReservationStatus.PENDING, commissionRate.id()
             );
-            new Checkin(userId, resortDto, createRoomReservationDto, familyRoomRatePerNightValue);
+            new Checkin(customerMenuFrame, userId, resortDto, createRoomReservationDto, familyRoomRatePerNightValue, commissionRate);
         }
     }
 }

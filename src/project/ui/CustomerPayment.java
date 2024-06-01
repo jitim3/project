@@ -1,5 +1,6 @@
 package project.ui;
 
+import project.dao.entity.CommissionRate;
 import project.dto.CreateReservationDto;
 import project.dto.ResortDto;
 import project.service.ReservationService;
@@ -27,6 +28,7 @@ public class CustomerPayment {
     private final ResortDto resortDto;
     private CreateReservationDto createReservationDto;
     private final BigDecimal amount;
+    private final BigDecimal computedAmount;
     private final JFrame frame = new JFrame();
     private final JLabel lblEnterAmount = new JLabel();
     private final JFormattedTextField amountTextField = new JFormattedTextField();
@@ -35,17 +37,20 @@ public class CustomerPayment {
     private final JLabel displayTotal = new JLabel();
     private final JFrame parentFrame;
     private String windowEventSource = "";
+    private final JFrame customerMenuFrame;
 
-    public CustomerPayment(Long userId, ResortDto resortDto, CreateReservationDto createReservationDto, JFrame parentFrame) {
+    public CustomerPayment(JFrame customerMenuFrame, JFrame parentFrame, Long userId, ResortDto resortDto, CreateReservationDto createReservationDto, BigDecimal computedAmount) {
+        this.customerMenuFrame = customerMenuFrame;
+        this.parentFrame = parentFrame;
         this.reservationService = new ReservationService();
         this.userId = userId;
         this.resortDto = resortDto;
         this.createReservationDto = createReservationDto;
-        this.parentFrame = parentFrame;
+        this.computedAmount = computedAmount;
 
         amount = createReservationDto.amount();
 
-        frame.setTitle("Amount: PHP " + amount.toString());
+        frame.setTitle("Amount: PHP " + computedAmount.toString());
 
         lblEnterAmount.setText("Enter exact amount: ");
         lblEnterAmount.setFont(new Font("Times New Roman", Font.BOLD, 12));
@@ -107,7 +112,7 @@ public class CustomerPayment {
                 amountText = amountText != null && !amountText.isBlank() ? amountText.replace(",", "") : "0.00";
                 amountInput = BigDecimal.valueOf(Double.parseDouble(amountText))
                         .setScale(2, RoundingMode.HALF_UP);
-                if (amount.compareTo(amountInput) != 0) {
+                if (computedAmount.compareTo(amountInput) != 0) {
                     throw new NumberFormatException();
                 }
             } catch (NumberFormatException e2) {
@@ -121,7 +126,7 @@ public class CustomerPayment {
                 JOptionPane.showMessageDialog(null, "Reservation was not successful. Please try again.", "Reservation Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 frame.dispose();
-                new ConfirmationMessage();
+                new ConfirmationMessage(customerMenuFrame);
             }
         });
     }

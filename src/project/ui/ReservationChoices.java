@@ -12,22 +12,27 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
+import project.dao.entity.CommissionRate;
 import project.dto.ResortDto;
 
 public class ReservationChoices implements ActionListener {
 	private final long userId;
 	private final ResortDto resortDto;
+	private final CommissionRate commissionRate;
 	private final JFrame frame = new JFrame("Select reservation choice");
 	private final JButton dailyUseButton = new JButton("DAILY USE");
 	private final JButton overnightButton = new JButton("OVERNIGHT");
-	private final JButton exitButton = new JButton("EXIT");
+	private final JButton backButton = new JButton("BACK");
 	private final JFrame parentFrame;
 	private String windowEventSource = "";
+	private final JFrame customerMenuFrame;
 
-	public ReservationChoices(JFrame parentFrame, long userId, ResortDto resortDto) {
+	public ReservationChoices(JFrame customerMenuFrame, JFrame parentFrame, long userId, ResortDto resortDto, CommissionRate commissionRate) {
+		this.customerMenuFrame = customerMenuFrame;
 		this.parentFrame = parentFrame;
 		this.userId = userId;
 		this.resortDto = resortDto;
+		this.commissionRate = commissionRate;
 		
 		dailyUseButton.setBounds(172, 150, 150, 35);
 		dailyUseButton.setFocusable(false);
@@ -39,10 +44,10 @@ public class ReservationChoices implements ActionListener {
 		overnightButton.addActionListener(this);
 		overnightButton.setOpaque(false);
 
-		exitButton.setBounds(190, 300, 115, 25);
-		exitButton.setFocusable(false);
-		exitButton.addActionListener(this);
-		exitButton.setOpaque(false);
+		backButton.setBounds(190, 300, 115, 25);
+		backButton.setFocusable(false);
+		backButton.addActionListener(this);
+		backButton.setOpaque(false);
 
 		ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -51,7 +56,7 @@ public class ReservationChoices implements ActionListener {
 		JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
 		backgroundLabel.setBounds(0, 0, 500, 500);
 
-		frame.add(exitButton);
+		frame.add(backButton);
 		frame.add(overnightButton);
 		frame.add(dailyUseButton);
 		frame.setIconImage(icon.getImage());
@@ -65,8 +70,8 @@ public class ReservationChoices implements ActionListener {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				if (!"dailyUseButton".equalsIgnoreCase(windowEventSource) && !"overnightButton".equalsIgnoreCase(windowEventSource)) {
-					parentFrame.setVisible(true);
+				if (!"dailyUseButton".equalsIgnoreCase(windowEventSource) && !"overnightButton".equalsIgnoreCase(windowEventSource) && !"backButton".equals(windowEventSource)) {
+					customerMenuFrame.setVisible(true);
 				}
 			}
 		});
@@ -77,13 +82,15 @@ public class ReservationChoices implements ActionListener {
 		if (e.getSource() == dailyUseButton) {
 			this.windowEventSource = "dailyUseButton";
 			frame.dispose();
-			new DisplayCottageResort(this.userId, this.resortDto);
+			new DisplayCottageResort(customerMenuFrame, userId, resortDto, commissionRate);
 		} else if (e.getSource() == overnightButton) {
 			this.windowEventSource = "overnightButton";
 			frame.dispose();
-			new DisplayRoomResort(this.userId, this.resortDto);
-		} else if (e.getSource() == exitButton) {
+			new DisplayRoomResort(customerMenuFrame, userId, resortDto, commissionRate);
+		} else if (e.getSource() == backButton) {
+			this.windowEventSource = "backButton";
 			frame.dispose();
+			parentFrame.setVisible(true);
 		}
 	}
 }
