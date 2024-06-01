@@ -1,14 +1,9 @@
 package project.ui;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.math.BigDecimal;
-import java.util.Optional;
+import project.dto.CreateReservationDto;
+import project.dto.CustomerDto;
+import project.dto.ResortDto;
+import project.service.CustomerService;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,18 +11,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
-
-import project.dao.entity.CommissionRate;
-import project.dto.CreateReservationDto;
-import project.dto.CustomerDto;
-import project.dto.ResortDto;
-import project.service.CustomerService;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Optional;
 
 public class CustomerInformation implements ActionListener {
 	private final long userId;
 	private final ResortDto resortDto;
 	private final CreateReservationDto createReservationDto;
-	private final BigDecimal computedAmount;
 	private final CustomerService customerService;
 	private final JFrame frame = new JFrame("Customer Information");
 	private final JLabel customerInfoLabel = new JLabel("CUSTOMER INFORMATION");
@@ -43,12 +39,11 @@ public class CustomerInformation implements ActionListener {
 	private final JFrame customerMenuFrame;
 	private String windowSourceEvent = "";
 
-	public CustomerInformation(JFrame customerMenuFrame, long userId, ResortDto resortDto, CreateReservationDto createReservationDto, BigDecimal computedAmount) {
+	public CustomerInformation(JFrame customerMenuFrame, long userId, ResortDto resortDto, CreateReservationDto createReservationDto) {
 		this.customerMenuFrame = customerMenuFrame;
 		this.userId = userId;
 		this.resortDto = resortDto;
 		this.createReservationDto = createReservationDto;
-        this.computedAmount = computedAmount;
         this.customerService = new CustomerService();
 
 		Optional<CustomerDto> customerDtoOptional = this.customerService.getCustomerById(this.userId);
@@ -130,7 +125,7 @@ public class CustomerInformation implements ActionListener {
 		if (e.getSource() == confirmButton) {
 			windowSourceEvent = "confirmButton";
 			frame.dispose();
-			new CustomerPayment(customerMenuFrame, frame, userId, resortDto, createReservationDto, computedAmount);
+			new CustomerPayment(customerMenuFrame, frame, userId, resortDto, createReservationDto);
 		} else {
 			frame.dispose();
 		}

@@ -27,8 +27,6 @@ public class CustomerPayment {
     private final long userId;
     private final ResortDto resortDto;
     private CreateReservationDto createReservationDto;
-    private final BigDecimal amount;
-    private final BigDecimal computedAmount;
     private final JFrame frame = new JFrame();
     private final JLabel lblEnterAmount = new JLabel();
     private final JFormattedTextField amountTextField = new JFormattedTextField();
@@ -39,18 +37,15 @@ public class CustomerPayment {
     private String windowEventSource = "";
     private final JFrame customerMenuFrame;
 
-    public CustomerPayment(JFrame customerMenuFrame, JFrame parentFrame, Long userId, ResortDto resortDto, CreateReservationDto createReservationDto, BigDecimal computedAmount) {
+    public CustomerPayment(JFrame customerMenuFrame, JFrame parentFrame, Long userId, ResortDto resortDto, CreateReservationDto createReservationDto) {
         this.customerMenuFrame = customerMenuFrame;
         this.parentFrame = parentFrame;
         this.reservationService = new ReservationService();
         this.userId = userId;
         this.resortDto = resortDto;
         this.createReservationDto = createReservationDto;
-        this.computedAmount = computedAmount;
 
-        amount = createReservationDto.amount();
-
-        frame.setTitle("Amount: PHP " + computedAmount.toString());
+        frame.setTitle("Amount: PHP " + createReservationDto.amount().toString());
 
         lblEnterAmount.setText("Enter exact amount: ");
         lblEnterAmount.setFont(new Font("Times New Roman", Font.BOLD, 12));
@@ -112,7 +107,7 @@ public class CustomerPayment {
                 amountText = amountText != null && !amountText.isBlank() ? amountText.replace(",", "") : "0.00";
                 amountInput = BigDecimal.valueOf(Double.parseDouble(amountText))
                         .setScale(2, RoundingMode.HALF_UP);
-                if (computedAmount.compareTo(amountInput) != 0) {
+                if (createReservationDto.amount().compareTo(amountInput) != 0) {
                     throw new NumberFormatException();
                 }
             } catch (NumberFormatException e2) {
