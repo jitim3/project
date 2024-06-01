@@ -12,6 +12,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import java.awt.Color;
 import java.awt.Font;
@@ -32,7 +33,8 @@ public class CustomerPayment {
     private final JFormattedTextField amountTextField = new JFormattedTextField();
     private final JButton confirmButton = new JButton("Confirm");
     private final JButton backButton = new JButton("Back");
-    private final JLabel displayTotal = new JLabel();
+    private final JLabel amountLabel;
+    private final JLabel amountValueLabel;
     private final JFrame parentFrame;
     private String windowEventSource = "";
     private final JFrame customerMenuFrame;
@@ -62,9 +64,18 @@ public class CustomerPayment {
         backButton.setBounds(101, 223, 89, 23);
         backButton.addActionListener(actionEvent -> frame.dispose());
 
-        displayTotal.setBounds(101, 25, 235, 82);
-        displayTotal.setOpaque(true);
-        displayTotal.setBackground(new Color(100, 255, 255, 64));
+        amountLabel = new JLabel("Amount:", SwingConstants.CENTER);
+        amountLabel.setBounds(101, 25, 235, 41);
+        amountLabel.setOpaque(true);
+        amountLabel.setBackground(new Color(100, 255, 255, 64));
+        amountLabel.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        amountLabel.setForeground(Color.WHITE);
+        amountValueLabel = new JLabel(createReservationDto.amount().toString(), SwingConstants.CENTER);
+        amountValueLabel.setBounds(101, 62, 235, 41);
+        amountValueLabel.setOpaque(true);
+        amountValueLabel.setBackground(new Color(100, 255, 255, 64));
+        amountValueLabel.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        amountValueLabel.setForeground(Color.WHITE);
 
         ImageIcon image = new ImageIcon("beach2.png");
         ImageIcon bg = new ImageIcon("figma.jpg");
@@ -80,7 +91,8 @@ public class CustomerPayment {
         frame.setFont(new Font("Times New Roman", Font.PLAIN, 12));
         frame.add(confirmButton);
         frame.add(backButton);
-        frame.add(displayTotal);
+        frame.add(amountLabel);
+        frame.add(amountValueLabel);
         frame.add(lblEnterAmount);
         frame.add(amountTextField);
         frame.add(backgroundLabel);
