@@ -1,12 +1,17 @@
 package project.ui;
 
+import project.dao.entity.Withdrawal;
+import project.dto.ReservationDto;
 import project.dto.UserDto;
+import project.service.ReservationService;
 import project.service.WalletService;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import java.awt.Font;
@@ -16,6 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SuperAdminWallet {
     private final WalletService walletService = new WalletService();
@@ -36,22 +43,36 @@ public class SuperAdminWallet {
 
         balance = walletService.getSuperAdminBalance(userDto.getId());
         moneyLabel.setText(balance.toString());
-        moneyLabel.setBounds(200, 150, 300, 30);
+        moneyLabel.setBounds(200, 50, 300, 30);
         moneyLabel.setFont(new Font("Times New Roman", Font.BOLD, 17));
 
-        balanceLabel.setBounds(100, 150, 300, 30);
+        balanceLabel.setBounds(100, 50, 300, 30);
         balanceLabel.setFont(new Font("Times New Roman", Font.BOLD, 17));
 
-        viewWalletLabel.setBounds(195, 80, 300, 30);
+        viewWalletLabel.setBounds(195, 20, 300, 30);
         viewWalletLabel.setFont(new Font("Times New Roman", Font.BOLD, 30));
 
-        withdrawButton.setBounds(270, 250, 150, 30);
+        List<Withdrawal> withdrawals = walletService.getWithdrawalsByUserId(userDto.getId());
+        AtomicInteger number = new AtomicInteger(1);
+        Object[][] data = withdrawals.stream()
+                .map(withdrawal -> new Object[]{
+                        number.getAndAdd(1),
+                        withdrawal.amount(),
+                        withdrawal.createdAt()
+                })
+                .toArray(size -> new Object[size][1]);
+        String[] columnNames = {"No.", "Amount", "Date"};
+        JTable transactionTable = new JTable(data, columnNames);
+        JScrollPane withdrawScrollPane = new JScrollPane(transactionTable);
+        withdrawScrollPane.setBounds(20, 90, 645, 260);
+
+        withdrawButton.setBounds(270, 370, 150, 30);
         withdrawButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
         withdrawButton.setFocusable(false);
         withdrawButton.setEnabled(balance.compareTo(BigDecimal.ZERO) > 0);
         withdrawButton.addActionListener(e -> withdrawButton());
 
-        exitButton.setBounds(270, 300, 150, 30);
+        exitButton.setBounds(270, 410, 150, 30);
         exitButton.setFont(new Font("Times New Roman", Font.BOLD, 15));
         exitButton.setFocusable(false);
         exitButton.addActionListener(e -> {
@@ -68,6 +89,7 @@ public class SuperAdminWallet {
         JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
         backgroundLabel.setBounds(0, 0, 700, 500);
 
+        frame.add(withdrawScrollPane);
         frame.add(balanceLabel);
         frame.add(moneyLabel);
         frame.add(withdrawButton);

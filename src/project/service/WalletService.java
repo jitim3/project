@@ -1,10 +1,12 @@
 package project.service;
 
 import project.dao.WalletDao;
+import project.dao.entity.Withdrawal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.List;
 
 public class WalletService {
     private final WalletDao walletDao;
@@ -37,5 +39,9 @@ public class WalletService {
 
     public boolean withdraw(long userId, BigDecimal amount, Instant createdAt) {
         return this.walletDao.withdraw(userId, amount, createdAt);
+    }
+
+    public List<Withdrawal> getWithdrawalsByUserId(long userId) {
+        return this.walletDao.getWithdrawalsByUserId(userId);
     }
 }
