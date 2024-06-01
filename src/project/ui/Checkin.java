@@ -112,9 +112,9 @@ public class Checkin extends JFrame implements ActionListener {
             BigDecimal amount = ratePerNight.multiply(BigDecimal.valueOf(numberOfStay));
             BigDecimal computedAmount = AppUtils.computeRateWithCommissionFee(amount, commissionRate.rate());
 
-            CreateReservationDto reservationDto = createReservationDto.updateRoomReservation(reservationDate, endDate, amount);
+            CreateReservationDto reservationDto = createReservationDto.updateRoomReservation(reservationDate, endDate, computedAmount);
             frame.dispose();
-            new CustomerInformation(customerMenuFrame, userId, resortDto, reservationDto, computedAmount);
+            new CustomerInformation(customerMenuFrame, userId, resortDto, reservationDto);
         }
 
     }

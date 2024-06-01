@@ -58,14 +58,12 @@ public class AdminTransaction implements ActionListener {
                     } else {
                         type = "Room: " + reservationDto.roomType() + " Room from " + reservationDto.roomResortName();
                     }
-                    CommissionRate commissionRate = reservationService.getCommissionRateById(reservationDto.commissionRateId());
-                    BigDecimal computedAmount = AppUtils.computeRateWithCommissionFee(reservationDto.amount(), commissionRate.rate());
                     return new Reservation(
                             reservationDto.id(),
                             type,
                             reservationDto.reservationDate(),
                             reservationDto.endDate(),
-                            computedAmount,
+                            reservationDto.amount(),
                             reservationDto.status(),
                             reservationDto.createdAt()
                     );

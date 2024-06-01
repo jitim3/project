@@ -30,7 +30,6 @@ public class DisplayCottageResort implements ActionListener {
     private final long userId;
     private final ResortDto resortDto;
     private final int commissionRateId;
-    private final BigDecimal amount;
     private final BigDecimal computedAmount;
     private final JFrame frame = new JFrame("Cottage Information");
     private final JLabel cottagesLabel = new JLabel("COTTAGES");
@@ -47,7 +46,7 @@ public class DisplayCottageResort implements ActionListener {
         this.resortDto = resortDto;
         this.commissionRateId = commissionRate.id();
 
-        amount = (this.resortDto.cottageFee() != null
+        BigDecimal amount = (this.resortDto.cottageFee() != null
                 ? this.resortDto.cottageFee()
                 : BigDecimal.ZERO
         ).setScale(2, RoundingMode.HALF_UP);
@@ -139,11 +138,11 @@ public class DisplayCottageResort implements ActionListener {
                     resortDto.id(),
                     reservationDate,
                     ReservationStatus.PENDING,
-                    amount,
+                    computedAmount,
                     commissionRateId
             );
             frame.dispose();
-            new CustomerInformation(customerMenuFrame, userId, resortDto, createCottageReservationDto, computedAmount);
+            new CustomerInformation(customerMenuFrame, userId, resortDto, createCottageReservationDto);
         } else {
             frame.dispose();
         }

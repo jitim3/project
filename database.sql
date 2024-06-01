@@ -162,24 +162,26 @@ CREATE TABLE IF NOT EXISTS payment (
 
 CREATE VIEW super_admin_total_sales AS
 SELECT
-	u.id AS super_admin_id, SUM(rsv.amount * (cr.rate / 100)) AS total
+	u.id AS super_admin_id, SUM(rsv.amount - (rsv.amount / (cr.rate / 100 + 1))) AS total
 FROM reservation rsv
 LEFT JOIN resort rst on rst.id = rsv.resort_id
 LEFT JOIN room rm on rm.id = rsv.room_id
 LEFT JOIN resort rst2 on rst2.id = rm.resort_id
 LEFT JOIN user u ON u.id = rst.user_id OR u.id = rst2.user_id
 LEFT JOIN commission_rate cr ON cr.id = rsv.commission_rate_id
+WHERE rsv.status = 'Confirmed'
 GROUP BY super_admin_id ORDER BY total;
 
 CREATE VIEW admin_total_sales AS
 SELECT
-	u.id AS admin_id, SUM((rsv.amount * ((100 - cr.rate) / 100))) AS total
+	u.id AS admin_id, SUM(rsv.amount / (cr.rate / 100 + 1)) AS total
 FROM reservation rsv
 LEFT JOIN resort rst on rst.id = rsv.resort_id
 LEFT JOIN room rm on rm.id = rsv.room_id
 LEFT JOIN resort rst2 on rst2.id = rm.resort_id
 LEFT JOIN user u ON u.id = rst.user_id OR u.id = rst2.user_id
 LEFT JOIN commission_rate cr ON cr.id = rsv.commission_rate_id
+WHERE rsv.status = 'Confirmed'
 GROUP BY admin_id ORDER BY total;
 
 CREATE TABLE IF NOT EXISTS withdrawal (
