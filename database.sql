@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS resort (
 	name VARCHAR(255) NOT NULL,
 	description TEXT,
 	location VARCHAR(255) NULL,
+	town_id INT NOT NULL,
 	how_to_get_there TEXT,
 	resort_fee DECIMAL(19,2) NULL,
 	cottage_fee DECIMAL(19,2) NULL,
@@ -83,20 +84,8 @@ CREATE TABLE IF NOT EXISTS resort (
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	CONSTRAINT uq_resort_name UNIQUE (name),
-	CONSTRAINT uq_resort_user_id UNIQUE (user_id),
+    CONSTRAINT fk_resort_town_id FOREIGN KEY (town_id) REFERENCES town (id),
     CONSTRAINT fk_resort_user_id FOREIGN KEY (user_id) REFERENCES user (id)
-);
-
-CREATE TABLE IF NOT EXISTS town_resort (
-    id BIGINT NOT NULL AUTO_INCREMENT,
-    town_id INT NOT NULL,
-    resort_id BIGINT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    CONSTRAINT uq_town_resort_town_id_resort_id UNIQUE (town_id, resort_id),
-    CONSTRAINT fk_town_resort_town_id FOREIGN KEY (town_id) REFERENCES town (id),
-    CONSTRAINT fk_town_resort_resort_id FOREIGN KEY (resort_id) REFERENCES resort (id)
 );
 
 CREATE TABLE IF NOT EXISTS room_availability_type (

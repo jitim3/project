@@ -19,10 +19,9 @@ import java.awt.event.WindowEvent;
 public class AdminRegisteredResortMenu implements ActionListener {
     private final JFrame launchPageFrame;
     private final UserDto userDto;
-    private final ResortDto resortDto;
     private final ResortService resortService;
     private final JFrame frame = new JFrame("MENU");
-    private final JButton btnEditInfo = new JButton("Edit Information");
+    private final JButton btnViewInfo = new JButton("View Information");
     private final JButton btnViewReviews = new JButton("View Reviews");
     private final JButton btnViewReservation = new JButton("View Reservation");
     private final JButton btnViewWallet = new JButton("View Wallet");
@@ -31,17 +30,16 @@ public class AdminRegisteredResortMenu implements ActionListener {
     private final JFrame adminMenu;
     private String windowEventSource = "";
 
-    public AdminRegisteredResortMenu(JFrame launchPageFrame, JFrame adminMenu, UserDto userDto, ResortDto resortDto, ResortService resortService) {
+    public AdminRegisteredResortMenu(JFrame launchPageFrame, JFrame adminMenu, UserDto userDto, ResortService resortService) {
         this.launchPageFrame = launchPageFrame;
         this.adminMenu = adminMenu;
         this.userDto = userDto;
-        this.resortDto = resortDto;
         this.resortService = resortService;
 
-        btnEditInfo.setFont(new Font("Times New Roman", Font.PLAIN, 10));
-        btnEditInfo.setBounds(251, 53, 199, 46);
-        btnEditInfo.setFocusable(false);
-        btnEditInfo.addActionListener(this);
+        btnViewInfo.setFont(new Font("Times New Roman", Font.PLAIN, 10));
+        btnViewInfo.setBounds(251, 53, 199, 46);
+        btnViewInfo.setFocusable(false);
+        btnViewInfo.addActionListener(this);
 
         btnViewReviews.setFont(new Font("Times New Roman", Font.PLAIN, 10));
         btnViewReviews.setBounds(251, 119, 199, 46);
@@ -79,7 +77,7 @@ public class AdminRegisteredResortMenu implements ActionListener {
         frame.setSize(700, 500);
         frame.setLayout(null);
         frame.setResizable(false);
-        frame.add(btnEditInfo);
+        frame.add(btnViewInfo);
         frame.add(btnViewReviews);
         frame.add(btnViewReservation);
         frame.add(btnViewWallet);
@@ -92,7 +90,7 @@ public class AdminRegisteredResortMenu implements ActionListener {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (!"btnEditInfo".equals(windowEventSource) && !"btnViewReviews".equals(windowEventSource)
+                if (!"btnViewInfo".equals(windowEventSource) && !"btnViewReviews".equals(windowEventSource)
                         && !"btnViewReservation".equals(windowEventSource) && !"btnViewWallet".equals(windowEventSource)
                         && !"btnViewTransaction".equals(windowEventSource)) {
                     adminMenu.setVisible(true);
@@ -103,14 +101,11 @@ public class AdminRegisteredResortMenu implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnEditInfo) {
-            this.windowEventSource = "btnEditInfo";
+        if (e.getSource() == btnViewInfo) {
+            this.windowEventSource = "btnViewInfo";
             frame.dispose();
-            new ResortInfoUpdate(frame, userDto, resortDto, this.resortService);
-        } else if (e.getSource() == btnViewReviews) {
-            this.windowEventSource = "btnViewReviews";
-            frame.dispose();
-            new Reviews(frame, userDto, resortDto.id());
+//            new ResortInfoUpdate(frame, userDto, resortDto, this.resortService);
+            new AdminRegisteredResortView(adminMenu, userDto);
         } else if (e.getSource() == btnViewReservation) {
             this.windowEventSource = "btnViewReservation";
             frame.dispose();

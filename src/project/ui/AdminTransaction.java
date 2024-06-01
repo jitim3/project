@@ -3,7 +3,6 @@ package project.ui;
 import project.dao.entity.CommissionRate;
 import project.dto.UserDto;
 import project.service.ReservationService;
-import project.ui.table.Reservation;
 import project.util.AppUtils;
 import project.util.ReservationStatus;
 
@@ -171,7 +170,6 @@ public class AdminTransaction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println(e.getSource());
         if (e.getSource() == exitButton) {
             frame.dispose();
         }

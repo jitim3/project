@@ -78,6 +78,7 @@ public class ResortService extends DtoMapper {
                 resort.name(),
                 resort.description(),
                 resort.location(),
+                resort.townId(),
                 resort.howToGetThere(),
                 resort.resortFee(),
                 resort.cottageFee(),
