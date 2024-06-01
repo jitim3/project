@@ -3,8 +3,9 @@ package project.util;
 public enum ReservationStatus {
 	PENDING("Pending"),
 	CONFIRMED("Confirmed"),
-	DECLINED("Decline"),
-	CANCELLED("Pending");
+	DECLINED("Declined"),
+	CANCELLED("Cancelled"),
+	UNKNOWN("Unknown");
 	
 	private final String value;
 	

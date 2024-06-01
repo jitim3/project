@@ -11,12 +11,16 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 public class ConfirmationMessage implements ActionListener {
     private final JFrame frame = new JFrame("Waiting Confirmation Message"); 
     private final JButton okButton = new JButton("OK");
+    private final JFrame customerMenuFrame;
 
-    public ConfirmationMessage() {
+    public ConfirmationMessage(JFrame customerMenuFrame) {
+        this.customerMenuFrame = customerMenuFrame;
+
 		okButton.setBounds(230, 350, 220, 40);
 		okButton.setFocusable(false);
 	    okButton.addActionListener(this);
@@ -45,13 +49,14 @@ public class ConfirmationMessage implements ActionListener {
         frame.add(backgroundLabel);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
     	if (e.getSource() == okButton) {
 			frame.dispose();
+            customerMenuFrame.setVisible(true);
     	}       
     }
 }

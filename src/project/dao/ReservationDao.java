@@ -1,5 +1,6 @@
 package project.dao;
 
+import project.dao.entity.CommissionRate;
 import project.dao.entity.Reservation;
 import project.dto.CreateReservationDto;
 import project.util.DatabaseConnectionFactory;
@@ -7,7 +8,6 @@ import project.util.ReservationStatus;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -26,7 +26,7 @@ public class ReservationDao {
             SELECT
                 rsv.id AS reservation_id, rsv.user_id, rst.id AS resort_id, rst.name AS resort_name,
                 rst2.id AS room_resort_id, rst2.name AS room_resort_name, rm.id as room_id, rm.room_type,
-                rsv.reservation_date, rsv.end_date, rsv.status, rsv.amount, rsv.created_at, rsv.updated_at
+                rsv.reservation_date, rsv.end_date, rsv.status, rsv.amount, rsv.commission_rate_id, rsv.created_at, rsv.updated_at
             FROM reservation rsv
             LEFT JOIN resort rst on rst.id = rsv.resort_id
             LEFT JOIN room rm on rm.id = rsv.room_id
@@ -36,7 +36,8 @@ public class ReservationDao {
     private static final String SQL_SELECT_RESERVATIONS_BY_CUSTOMER_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.user_id = ?";
     private static final String SQL_SELECT_RESERVATIONS_BY_USER_ID = SQL_SELECT_RESERVATIONS + " WHERE rst.user_id = ? OR rst2.user_id = ?";
     private static final String SQL_SELECT_RESERVATIONS_BY_RESORT_ID = SQL_SELECT_RESERVATIONS + " WHERE rsv.resort_id = ? OR rst2.id = ?";
-    private static final String SQL_SELECT_COMMISSION_RATE = "SELECT cr.id FROM commission_rate cr WHERE cr.created_at < ? ORDER BY cr.created_at DESC LIMIT 1";
+    private static final String SQL_SELECT_COMMISSION_RATE = "SELECT id, rate, created_at FROM commission_rate ORDER BY created_at DESC LIMIT 1";
+    private static final String SQL_SELECT_COMMISSION_RATE_BY_ID = "SELECT id, rate, created_at FROM commission_rate WHERE id = ?";
     private static final String SQL_INSERT_COTTAGE_RESERVATION = """
             INSERT INTO reservation (user_id, resort_id, reservation_date, status, amount, commission_rate_id, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -45,7 +46,7 @@ public class ReservationDao {
             INSERT INTO reservation (user_id, room_id, reservation_date, end_date, status, amount, commission_rate_id, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """;
-    private static final String SQL_UPDATE_RESERVATION_STATUS = "UPDATE reservation SET status = ? WHERE id = ?";
+    private static final String SQL_UPDATE_RESERVATION_STATUS = "UPDATE reservation SET status = ?, updated_at = ? WHERE id = ?";
     private final Connection connection;
 
 
@@ -169,7 +170,6 @@ public class ReservationDao {
         } else {
             throw new IllegalArgumentException("Invalid reservation; no resort ID or roomId");
         }
-        Optional<Integer> commissionRateId = this.getCommissionRate(createReservationDto.createdAt());
         try (PreparedStatement statement = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             int i = 1;
             statement.setLong(i++, createReservationDto.userId());
@@ -184,7 +184,7 @@ public class ReservationDao {
             }
             statement.setString(i++, createReservationDto.status().value());
             statement.setBigDecimal(i++, createReservationDto.amount());
-            statement.setInt(i++, commissionRateId.orElse(1));
+            statement.setInt(i++, createReservationDto.commissionRateId());
             statement.setTimestamp(i++, Timestamp.from(createReservationDto.createdAt()));
             if (statement.executeUpdate() == 0) {
                 throw new SQLException("Creating reservation failed, no rows affected.");
@@ -228,13 +228,16 @@ public class ReservationDao {
         return false;
     }
 
-    public Optional<Integer> getCommissionRate(Instant createdAt) {
+    public CommissionRate getCommissionRate() {
         try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_COMMISSION_RATE)) {
-            int i = 1;
-            statement.setTimestamp(i++, Timestamp.from(createdAt));
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                return Optional.of(rs.getInt("id"));
+                var createdAt = rs.getTimestamp("created_at");
+                return new CommissionRate(
+                        rs.getInt("id"),
+                        rs.getBigDecimal("rate"),
+                        createdAt != null ? createdAt.toInstant() : null
+                );
             } else {
                 LOGGER.log(Level.INFO, "No commission rate available");
             }
@@ -242,7 +245,29 @@ public class ReservationDao {
             LOGGER.log(Level.ERROR, e);
         }
 
-        return Optional.empty();
+        return null;
+    }
+
+    public CommissionRate getCommissionRateById(int id) {
+        try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_COMMISSION_RATE_BY_ID)) {
+            int i = 1;
+            statement.setInt(i++, id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                var createdAt = rs.getTimestamp("created_at");
+                return new CommissionRate(
+                        rs.getInt("id"),
+                        rs.getBigDecimal("rate"),
+                        createdAt != null ? createdAt.toInstant() : null
+                );
+            } else {
+                LOGGER.log(Level.INFO, "No commission rate available");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
+
+        return null;
     }
 
     private static Reservation mapToReservation(ResultSet rs) throws SQLException {
@@ -264,6 +289,7 @@ public class ReservationDao {
                 endDate != null ? endDate.toLocalDate() : null,
                 rs.getString("status"),
                 rs.getBigDecimal("amount"),
+                rs.getInt("commission_rate_id"),
                 createdAt != null ? createdAt.toInstant() : null,
                 updatedAt != null ? updatedAt.toInstant() : null
         );

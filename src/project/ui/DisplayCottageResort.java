@@ -1,6 +1,7 @@
 package project.ui;
 
 import org.jdatepicker.impl.JDatePickerImpl;
+import project.dao.entity.CommissionRate;
 import project.dto.CreateReservationDto;
 import project.dto.ResortDto;
 import project.util.AppUtils;
@@ -17,6 +18,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -26,17 +29,23 @@ import java.time.format.DateTimeParseException;
 public class DisplayCottageResort implements ActionListener {
     private final long userId;
     private final ResortDto resortDto;
+    private final int commissionRateId;
     private final BigDecimal amount;
+    private final BigDecimal computedAmount;
     private final JFrame frame = new JFrame("Cottage Information");
     private final JLabel cottagesLabel = new JLabel("COTTAGES");
     private final JLabel cottageFeeLabel = new JLabel("COTTAGE FEE");
     private final JDatePickerImpl reservationDatePicker;
     private final JButton reserveNowButton = new JButton("RESERVE NOW");
     private final JButton exitButton = new JButton("EXIT");
+    private final JFrame customerMenuFrame;
+    private String windowSourceEvent = "";
 
-    public DisplayCottageResort(long userId, ResortDto resortDto) {
+    public DisplayCottageResort(JFrame customerMenuFrame, long userId, ResortDto resortDto, CommissionRate commissionRate) {
+        this.customerMenuFrame = customerMenuFrame;
         this.userId = userId;
         this.resortDto = resortDto;
+        this.commissionRateId = commissionRate.id();
 
         amount = (this.resortDto.cottageFee() != null
                 ? this.resortDto.cottageFee()
@@ -60,7 +69,8 @@ public class DisplayCottageResort implements ActionListener {
         exitButton.addActionListener(this);
         exitButton.setOpaque(false);
 
-        JLabel displayLabel3 = new JLabel(amount.toString()); // COTTAGE FEE
+        computedAmount = AppUtils.computeRateWithCommissionFee(amount, commissionRate.rate());
+        JLabel displayLabel3 = new JLabel(computedAmount.toString()); // COTTAGE FEE
         displayLabel3.setBounds(300, 470, 250, 45);
         displayLabel3.setFont(new Font("Times New Roman", Font.BOLD, 23));
         displayLabel3.setForeground(Color.black);
@@ -105,11 +115,20 @@ public class DisplayCottageResort implements ActionListener {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (!"reserveNowButton".equals(windowSourceEvent)) {
+                    customerMenuFrame.setVisible(true);
+                }
+            }
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == reserveNowButton) {
+            windowSourceEvent = "reserveNowButton";
             LocalDate reservationDate = this.getReservationDate(reservationDatePicker.getJFormattedTextField().getText());
             if (reservationDate == null || reservationDate.isBefore(LocalDate.now())) {
                 JOptionPane.showMessageDialog(null, "Invalid reservation date. Please enter reservation date.", "Reservation Error", JOptionPane.ERROR_MESSAGE);
@@ -119,11 +138,14 @@ public class DisplayCottageResort implements ActionListener {
                     userId,
                     resortDto.id(),
                     reservationDate,
-                    ReservationStatus.CONFIRMED,
-                    amount
+                    ReservationStatus.PENDING,
+                    amount,
+                    commissionRateId
             );
             frame.dispose();
-            new CustomerInformation(userId, resortDto, createCottageReservationDto);
+            new CustomerInformation(customerMenuFrame, userId, resortDto, createCottageReservationDto, computedAmount);
+        } else {
+            frame.dispose();
         }
     }
 

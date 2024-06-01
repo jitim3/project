@@ -131,7 +131,7 @@ public class AdminResortRegistration implements ActionListener {
         carcarCheckBox.setFocusable(false);
         carcarCheckBox.addActionListener(this);
         carcarCheckBox.setOpaque(false);
-        BiFunction<UserDto, Long, Town> carcarTown = (user, resortId) -> new Carcar(user, frame, resortId);
+        BiFunction<UserDto, Long, Town> carcarTown = (user, resortId) -> new Carcar(adminMenuFrame, user, frame, resortId);
         TownHolder carcarTownHolder = new TownHolder(1, carcarCheckBox, carcarTown);
 
         JCheckBox bariliCheckBox = new JCheckBox(TownEnum.BARILI.value()); // id: 2
@@ -139,7 +139,7 @@ public class AdminResortRegistration implements ActionListener {
         bariliCheckBox.setFocusable(false);
         bariliCheckBox.addActionListener(this);
         bariliCheckBox.setOpaque(false);
-        BiFunction<UserDto, Long, Town> bariliTown = (user, resortId) -> new Barili(user, frame, resortId);
+        BiFunction<UserDto, Long, Town> bariliTown = (user, resortId) -> new Barili(adminMenuFrame, user, frame, resortId);
         TownHolder bariliTownHolder = new TownHolder(2, bariliCheckBox, bariliTown);
 
         JCheckBox moalboalCheckBox = new JCheckBox(TownEnum.MOALBOAL.value()); // id: 3
@@ -147,7 +147,7 @@ public class AdminResortRegistration implements ActionListener {
         moalboalCheckBox.setFocusable(false);
         moalboalCheckBox.addActionListener(this);
         moalboalCheckBox.setOpaque(false);
-        BiFunction<UserDto, Long, Town> moalboalTown = (user, resortId) -> new Moalboal(user, frame, resortId);
+        BiFunction<UserDto, Long, Town> moalboalTown = (user, resortId) -> new Moalboal(adminMenuFrame, user, frame, resortId);
         TownHolder moalboalTownHolder = new TownHolder(3, moalboalCheckBox, moalboalTown);
 
         JCheckBox alcoyCheckBox = new JCheckBox(TownEnum.ALCOY.value()); // id: 4
@@ -155,7 +155,7 @@ public class AdminResortRegistration implements ActionListener {
         alcoyCheckBox.setFocusable(false);
         alcoyCheckBox.addActionListener(this);
         alcoyCheckBox.setOpaque(false);
-        BiFunction<UserDto, Long, Town> alcoyTown = (user, resortId) -> new Alcoy(user, frame, resortId);
+        BiFunction<UserDto, Long, Town> alcoyTown = (user, resortId) -> new Alcoy(adminMenuFrame, user, frame, resortId);
         TownHolder alcoyTownHolder = new TownHolder(4, alcoyCheckBox, alcoyTown);
 
         JCheckBox sanTanderCheckBox = new JCheckBox(TownEnum.SANTANDER.value()); // id: 5
@@ -163,7 +163,7 @@ public class AdminResortRegistration implements ActionListener {
         sanTanderCheckBox.setFocusable(false);
         sanTanderCheckBox.addActionListener(this);
         sanTanderCheckBox.setOpaque(false);
-        BiFunction<UserDto, Long, Town> santanderTown = (user, resortId) -> new SanTander(user, frame, resortId);
+        BiFunction<UserDto, Long, Town> santanderTown = (user, resortId) -> new SanTander(adminMenuFrame, user, frame, resortId);
         TownHolder santanderTownHolder = new TownHolder(5, sanTanderCheckBox, santanderTown);
 
         JCheckBox oslobCheckBox = new JCheckBox(TownEnum.OSLOB.value()); // id: 6
@@ -171,7 +171,7 @@ public class AdminResortRegistration implements ActionListener {
         oslobCheckBox.setFocusable(false);
         oslobCheckBox.addActionListener(this);
         oslobCheckBox.setOpaque(false);
-        BiFunction<UserDto, Long, Town> oslobTown = (user, resortId) -> new Oslob(user, frame, resortId);
+        BiFunction<UserDto, Long, Town> oslobTown = (user, resortId) -> new Oslob(adminMenuFrame, user, frame, resortId);
         TownHolder oslobTownHolder = new TownHolder(6, oslobCheckBox, oslobTown);
 
         return List.of(

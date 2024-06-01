@@ -28,25 +28,28 @@ public class Alcoy implements Town {
     private final List<ResortDto> resortDtos;
     private final JFrame frame = new JFrame("Alcoy");
     private final JFrame parentFrame;
-    private final JButton back = new JButton("Back");
+    private final JButton backButton = new JButton("Back");
     private final List<String> windowEventSources = new ArrayList<>();
     private String windowEventSource = "";
+    private final JFrame userMenuFrame;
 
-    public Alcoy(UserDto userDto, JFrame parentFrame) {
-        this(userDto, parentFrame, null);
+    public Alcoy(JFrame userMenuFrame, UserDto userDto, JFrame parentFrame) {
+        this(userMenuFrame, userDto, parentFrame, null);
     }
 
-    public Alcoy(UserDto userDto, JFrame parentFrame, Long resortId) {
+    public Alcoy(JFrame userMenuFrame, UserDto userDto, JFrame parentFrame, Long resortId) {
+        this.userMenuFrame = userMenuFrame;
         this.userDto = userDto;
         this.resortService = new ResortService();
         this.parentFrame = parentFrame;
 
         this.resortDtos = this.getRegisteredResorts(resortId);
         this.generateButton();
+        windowEventSources.add("backButton");
 
-        back.setBounds(370, 420, 100, 25);
-        back.setFocusable(false);
-        back.addActionListener(this);
+        backButton.setBounds(370, 420, 100, 25);
+        backButton.setFocusable(false);
+        backButton.addActionListener(this);
 
         ImageIcon icon = new ImageIcon("beach2.png");
 
@@ -55,7 +58,7 @@ public class Alcoy implements Town {
         JLabel backgroundLabel = new JLabel(new ImageIcon(backgroundImage));
         backgroundLabel.setBounds(0, 0, 500, 600);
 
-        frame.add(back);
+        frame.add(backButton);
         frame.setIconImage(icon.getImage());
         frame.add(backgroundLabel);
         frame.setSize(500, 500);
@@ -69,7 +72,7 @@ public class Alcoy implements Town {
                         .filter(wes -> wes.equals(windowEventSource))
                         .findFirst();
                 if (windowEventSourceOptional.isEmpty()) {
-                    parentFrame.setVisible(true);
+                    userMenuFrame.setVisible(true);
                 }
             }
         });
@@ -77,7 +80,8 @@ public class Alcoy implements Town {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == back) {
+        if (e.getSource() == backButton) {
+            windowEventSource = "backButton";
             frame.dispose();
             this.parentFrame.setVisible(true);
         }
@@ -105,9 +109,9 @@ public class Alcoy implements Town {
                 frame.dispose();
                 int userTypeId = this.userDto.getUserType().id();
                 if (AppUtils.isUserTypeSuperAdmin(userTypeId)) {
-                    new ResortView(frame, ResortViewEvent.SUPER_ADMIN_VIEW, this.resortService, this.userDto, resortDto.id());
+                    new ResortView(userMenuFrame, frame, ResortViewEvent.SUPER_ADMIN_VIEW, this.resortService, this.userDto, resortDto.id());
                 } else if (AppUtils.isUserTypeCustomer(userTypeId)) {
-                    new ResortView(frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
+                    new ResortView(userMenuFrame, frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
                 }
             });
             frame.getContentPane().add(resortButton);

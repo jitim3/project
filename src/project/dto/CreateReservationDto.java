@@ -14,6 +14,7 @@ public record CreateReservationDto(
         LocalDate endDate,
         ReservationStatus status,
         BigDecimal amount,
+        int commissionRateId,
         Instant createdAt) {
 
     public static CreateReservationDto createCottageReservation(
@@ -21,19 +22,20 @@ public record CreateReservationDto(
             long resortId,
             LocalDate reservationDate,
             ReservationStatus status,
-            BigDecimal amount) {
-        return new CreateReservationDto(userId, resortId, null, reservationDate, null, status, amount, Instant.now());
+            BigDecimal amount,
+            int commissionRateId) {
+        return new CreateReservationDto(userId, resortId, null, reservationDate, null, status, amount, commissionRateId, Instant.now());
     }
 
-    public static CreateReservationDto createRoomReservation(long userId, long roomId,  ReservationStatus status) {
-        return new CreateReservationDto(userId, null, roomId, null, null, status, null, Instant.now());
+    public static CreateReservationDto createRoomReservation(long userId, long roomId,  ReservationStatus status, int commissionRateId) {
+        return new CreateReservationDto(userId, null, roomId, null, null, status, null, commissionRateId, Instant.now());
     }
 
     public CreateReservationDto updateRoomReservation(LocalDate reservationDate, LocalDate endDate, BigDecimal amount) {
-        return new CreateReservationDto(userId, null, roomId, reservationDate, endDate, status, amount, createdAt);
+        return new CreateReservationDto(userId, null, roomId, reservationDate, endDate, status, amount, commissionRateId, createdAt);
     }
 
     public CreateReservationDto createdAt(Instant createdAt) {
-        return new CreateReservationDto(userId, resortId, roomId, reservationDate, endDate, status, amount, createdAt);
+        return new CreateReservationDto(userId, resortId, roomId, reservationDate, endDate, status, amount, commissionRateId, createdAt);
     }
 }

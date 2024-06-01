@@ -1,6 +1,7 @@
 package project.ui;
 
 import org.jdatepicker.impl.JDatePickerImpl;
+import project.dao.entity.CommissionRate;
 import project.dto.CreateReservationDto;
 import project.dto.ResortDto;
 import project.util.AppUtils;
@@ -26,6 +27,7 @@ public class Checkin extends JFrame implements ActionListener {
     private final ResortDto resortDto;
     private final CreateReservationDto createReservationDto;
     private final BigDecimal ratePerNight;
+    private final CommissionRate commissionRate;
     private final JDatePickerImpl datePicker;
     private final JFrame frame = new JFrame("Check in");
     private final JLabel label = new JLabel("CHECK IN");
@@ -34,12 +36,15 @@ public class Checkin extends JFrame implements ActionListener {
     private final JTextField stayTextField = new JTextField("1");
     private final JButton exit = new JButton("EXIT");
     private final JButton next = new JButton("NEXT");
+    private final JFrame customerMenuFrame;
 
-    public Checkin(long userId, ResortDto resortDto, CreateReservationDto createReservationDto, BigDecimal ratePerNight) {
+    public Checkin(JFrame customerMenuFrame, long userId, ResortDto resortDto, CreateReservationDto createReservationDto, BigDecimal ratePerNight, CommissionRate commissionRate) {
+        this.customerMenuFrame = customerMenuFrame;
         this.userId = userId;
         this.resortDto = resortDto;
         this.createReservationDto = createReservationDto;
         this.ratePerNight = ratePerNight;
+        this.commissionRate = commissionRate;
 
         next.setBounds(250, 285, 75, 25);
         next.setFocusable(false);
@@ -105,10 +110,11 @@ public class Checkin extends JFrame implements ActionListener {
 
             LocalDate endDate = reservationDate.plusDays(numberOfStay - 1L);
             BigDecimal amount = ratePerNight.multiply(BigDecimal.valueOf(numberOfStay));
+            BigDecimal computedAmount = AppUtils.computeRateWithCommissionFee(amount, commissionRate.rate());
 
             CreateReservationDto reservationDto = createReservationDto.updateRoomReservation(reservationDate, endDate, amount);
             frame.dispose();
-            new CustomerInformation(userId, resortDto, reservationDto);
+            new CustomerInformation(customerMenuFrame, userId, resortDto, reservationDto, computedAmount);
         }
 
     }

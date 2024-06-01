@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SuperAdminTransaction implements ActionListener {
     private final JFrame frame = new JFrame("SUPER ADMIN TRANSACTION");
@@ -46,6 +47,7 @@ public class SuperAdminTransaction implements ActionListener {
         }  else {
             reservationDtos = reservationService.getReservationsByResortId(resortDto.id());
         }
+        AtomicInteger number = new AtomicInteger(1);
         Object[][] data = reservationDtos.stream()
                 .map(reservationDto -> {
                     String type;
@@ -55,15 +57,17 @@ public class SuperAdminTransaction implements ActionListener {
                         type = "Room: " + reservationDto.roomType() + " Room from " + reservationDto.roomResortName();
                     }
                     return new Object[] {
+                            number.getAndAdd(1),
                             type,
                             reservationDto.reservationDate(),
                             reservationDto.endDate(),
                             reservationDto.amount(),
+                            reservationDto.status(),
                             reservationDto.createdAt()
                     };
                 })
                 .toArray(size -> new Object[size][1]);
-        String[] columnNames = { "Type", "Reservation Date", "End Date", "Amount", "Created Date"};
+        String[] columnNames = {"No.", "Type", "Reservation Date", "End Date", "Amount", "Status", "Created Date"};
         JTable transactionTable = new JTable(data, columnNames);
         JScrollPane transactionScrollPane = new JScrollPane(transactionTable);
         transactionScrollPane.setBounds(20, 110, 645, 280);

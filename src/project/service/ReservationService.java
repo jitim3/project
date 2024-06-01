@@ -1,6 +1,7 @@
 package project.service;
 
 import project.dao.ReservationDao;
+import project.dao.entity.CommissionRate;
 import project.dao.entity.Reservation;
 import project.dto.CreateReservationDto;
 import project.dto.ReservationDto;
@@ -54,6 +55,14 @@ public class ReservationService {
         return this.reservationDao.updateReservationStatus(reservationId, status, updatedAt);
     }
 
+    public CommissionRate getCommissionRate() {
+        return this.reservationDao.getCommissionRate();
+    }
+
+    public CommissionRate getCommissionRateById(int id) {
+        return this.reservationDao.getCommissionRateById(id);
+    }
+
     private ReservationDto mapToReservationDto(Reservation reservation) {
         return new ReservationDto(
                 reservation.id(),
@@ -68,6 +77,7 @@ public class ReservationService {
                 reservation.endDate(),
                 reservation.status(),
                 reservation.amount(),
+                reservation.commissionRateId(),
                 reservation.createdAt(),
                 reservation.updatedAt()
         );

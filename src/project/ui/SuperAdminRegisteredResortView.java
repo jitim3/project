@@ -115,27 +115,27 @@ public class SuperAdminRegisteredResortView implements ActionListener {
         if (e.getSource() == carcarButton) {
             windowEventSource = "carcarButton";
             frame.dispose();
-            new Carcar(this.userDto, frame);
+            new Carcar(superAdminMenu, this.userDto, frame);
         } else if (e.getSource() == bariliButton) {
             windowEventSource = "bariliButton";
             frame.dispose();
-            new Barili(this.userDto, frame);
+            new Barili(superAdminMenu, this.userDto, frame);
         } else if (e.getSource() == moalBoalButton) {
             windowEventSource = "moalBoalButton";
             frame.dispose();
-            new Moalboal(this.userDto, frame);
+            new Moalboal(superAdminMenu, this.userDto, frame);
         } else if (e.getSource() == alcoyButton) {
             windowEventSource = "alcoyButton";
             frame.dispose();
-            new Alcoy(this.userDto, frame);
+            new Alcoy(superAdminMenu, this.userDto, frame);
         } else if (e.getSource() == sanTanderButton) {
             windowEventSource = "sanTanderButton";
             frame.dispose();
-            new SanTander(this.userDto, frame);
+            new SanTander(superAdminMenu, this.userDto, frame);
         } else if (e.getSource() == oslobButton) {
             windowEventSource = "oslobButton";
             frame.dispose();
-            new Oslob(this.userDto, frame);
+            new Oslob(superAdminMenu, this.userDto, frame);
         } else {
             frame.dispose();
             superAdminMenu.setVisible(true);
