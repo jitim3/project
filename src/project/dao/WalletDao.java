@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class WalletDao {
     private static final System.Logger LOGGER = System.getLogger(WalletDao.class.getName());
-    private static final String SQL_SELECT_SUPER_ADMIN_TOTAL_SALES = "SELECT total FROM super_admin_total_sales;";
+    private static final String SQL_SELECT_SUPER_ADMIN_TOTAL_SALES = "SELECT super_admin_id, total FROM super_admin_total_sales;";
     private static final String SQL_SELECT_ADMIN_TOTAL_SALES = "SELECT admin_id, total FROM admin_total_sales WHERE admin_id = ?";
     private static final String SQL_SELECT_TOTAL_WITHDRAWAL_BY_USER_ID = "SELECT user_id, SUM(amount) AS total FROM withdrawal WHERE user_id = ? GROUP BY user_id ORDER BY total";
     private static final String SQL_INSERT_WITHDRAWAL = "INSERT INTO withdrawal (user_id, amount, created_at) VALUES (?, ?, ?)";
@@ -25,7 +25,6 @@ public class WalletDao {
 
     public Optional<BigDecimal> getTotalSalesBySuperAdmin() {
         try (PreparedStatement statement = this.connection.prepareStatement(SQL_SELECT_SUPER_ADMIN_TOTAL_SALES)) {
-            int i = 1;
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 return Optional.of(rs.getBigDecimal("total"));

@@ -134,14 +134,14 @@ public class ResortInfoUpdate implements ActionListener {
     private File normalRoomImage2File;
     private File familyRoomImage1File;
     private File familyRoomImage2File;
-    private final JFrame parentFrame;
+    private final JFrame userMenuFrame;
     private String windowEventSource = "";
 
     private RoomDto normalRoomDto;
     private RoomDto familyRoomDto;
 
-    public ResortInfoUpdate(JFrame parentFrame, UserDto userDto, ResortDto resortDto, ResortService resortService) {
-        this.parentFrame = parentFrame;
+    public ResortInfoUpdate(JFrame userMenuFrame, UserDto userDto, ResortDto resortDto, ResortService resortService) {
+        this.userMenuFrame = userMenuFrame;
         this.userDto = userDto;
         this.resortDto = resortDto;
         this.resortService = resortService;
@@ -514,7 +514,7 @@ public class ResortInfoUpdate implements ActionListener {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (!"updateButton".equals(windowEventSource)) {
-                    parentFrame.setVisible(true);
+                    userMenuFrame.setVisible(true);
                 }
             }
         });
@@ -846,7 +846,7 @@ public class ResortInfoUpdate implements ActionListener {
                 this.roomService.updateRoom(familyRoom);
             }
 
-            new Verification(parentFrame, userDto, resortDto.id(), resortService);
+            new Verification(userMenuFrame, userDto, resortDto.id(), resortService);
         }
     }
 }

@@ -15,30 +15,24 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ResortDao {
     private static final Logger LOGGER = System.getLogger(ResortDao.class.getName());
     private static final String SQL_SELECT_RESORTS = """
-            SELECT r.id AS resort_id, r.name AS resort_name, r.description, r.location, r.how_to_get_there, r.resort_fee, r.cottage_fee, r.pool_fee,
+            SELECT r.id AS resort_id, r.name AS resort_name, r.description, r.location, r.town_id, r.how_to_get_there, r.resort_fee, r.cottage_fee, r.pool_fee,
             r.resort_image, r.pool_image, r.cottage_image, r.user_id, r.permit_image, r.created_at AS resort_created_at, r.updated_at AS resort_updated_at
             FROM resort r
             """;
     private static final String SQL_SELECT_RESORT_BY_NAME = "SELECT name FROM resort WHERE name = ?";
     private static final String SQL_SELECT_RESORT_BY_ID = SQL_SELECT_RESORTS + " WHERE r.id = ?";
     private static final String SQL_SELECT_RESORT_BY_USER_ID = SQL_SELECT_RESORTS + " WHERE r.user_id = ?";
-    private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORTS + " INNER JOIN town_resort tr ON tr.resort_id = r.id WHERE r.user_id = ? AND tr.town_id = ?";
-    private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " INNER JOIN town_resort tr ON tr.resort_id = r.id WHERE tr.town_id = ?";
+    private static final String SQL_SELECT_RESORT_BY_USER_ID_AND_TOWN_ID = SQL_SELECT_RESORTS + " WHERE r.user_id = ? AND r.town_id = ?";
+    private static final String SQL_SELECT_RESORTS_BY_TOWN_ID = SQL_SELECT_RESORTS + " WHERE tr.town_id = ?";
     private static final String SQL_INSERT_RESORT = """
-            INSERT INTO resort (name, user_id, created_at)
-            VALUES (?, ?, ?)
-            """;
-    private static final String SQL_INSERT_TWON_RESORT = """
-            INSERT INTO town_resort (town_id, resort_id, created_at)
-            VALUES (?, ?, ?)
+            INSERT INTO resort (name, town_id, user_id, created_at)
+            VALUES (?, ?, ?, ?)
             """;
     private static final String SQL_UPDATE_RESORT = """
             UPDATE resort SET description = ?, location = ?, how_to_get_there = ?, resort_fee = ?,
@@ -151,6 +145,7 @@ public class ResortDao {
         try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_RESORT, Statement.RETURN_GENERATED_KEYS)) {
             int i = 1;
             statement.setString(i++, createResortDto.name());
+            statement.setInt(i++, createResortDto.townId());
             statement.setLong(i++, createResortDto.userId());
             statement.setTimestamp(i++, Timestamp.from(createResortDto.createdAt()));
             if (statement.executeUpdate() == 0) {
@@ -161,7 +156,6 @@ public class ResortDao {
                 if (rs.next()) {
                     long resortId = rs.getLong(1);
                     LOGGER.log(Level.DEBUG, "Resort ID generated: " + resortId);
-                    this.saveTownResort(resortId, createResortDto);
                     return resortId;
                 } else {
                     LOGGER.log(Level.INFO, "No resort ID generated");
@@ -172,29 +166,6 @@ public class ResortDao {
         }
 
         return null;
-    }
-
-    private void saveTownResort(long resortId, CreateResortDto createResortDto) throws SQLException {
-        try (PreparedStatement statement = this.connection.prepareStatement(SQL_INSERT_TWON_RESORT)) {
-            for (int townId : createResortDto.townIds()) {
-                int i = 1;
-                statement.setInt(i++, townId);
-                statement.setLong(i++, resortId);
-                statement.setTimestamp(i++, Timestamp.from(createResortDto.createdAt()));
-                statement.addBatch();
-            }
-            int[] result = statement.executeBatch();
-            if (result == null || result.length == 0) {
-                throw new SQLException("Creating resort failed, no rows affected.");
-            } else {
-                String resultString = Arrays.stream(result)
-                        .mapToObj(String::valueOf)
-                        .collect(Collectors.joining(",", "[", "]"));
-                LOGGER.log(Level.INFO, resultString);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.ERROR, e);
-        }
     }
 
     public boolean updateResort(UpdateResortDto updateResortDto) {
@@ -244,6 +215,7 @@ public class ResortDao {
                 rs.getString("resort_name"),
                 rs.getString("description"),
                 rs.getString("location"),
+                rs.getInt("town_id"),
                 rs.getString("how_to_get_there"),
                 rs.getBigDecimal("resort_fee"),
                 rs.getBigDecimal("cottage_fee"),
@@ -257,5 +229,4 @@ public class ResortDao {
                 updatedAt != null ? updatedAt.toInstant() : null
         );
     }
-
 }

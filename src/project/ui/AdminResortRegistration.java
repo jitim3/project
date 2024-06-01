@@ -15,10 +15,10 @@ import project.util.TownEnum;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import java.awt.Color;
@@ -31,10 +31,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class AdminResortRegistration implements ActionListener {
-    private final JFrame launchPageFrame;
     private final UserDto userDto;
     private final ResortService resortService;
     private final JFrame frame = new JFrame("Select Town to Register");
@@ -47,8 +47,7 @@ public class AdminResortRegistration implements ActionListener {
     private final JFrame adminMenuFrame;
     private String windowEventSource = "unknown";
 
-    AdminResortRegistration(JFrame launchPageFrame, JFrame adminMenuFrame, UserDto userDto, ResortService resortService) {
-        this.launchPageFrame = launchPageFrame;
+    AdminResortRegistration(JFrame adminMenuFrame, UserDto userDto, ResortService resortService) {
         this.adminMenuFrame = adminMenuFrame;
         this.userDto = userDto;
         this.resortService = resortService;
@@ -85,7 +84,7 @@ public class AdminResortRegistration implements ActionListener {
         frame.add(field);
         frame.add(display);
         AppUtils.reverse(this.townHolders)
-                .forEach(townHolder -> frame.add(townHolder.townCheckBox()));
+                .forEach(townHolder -> frame.add(townHolder.townRadioButton()));
         frame.add(label2);
         frame.add(label);
         frame.add(label1);
@@ -111,68 +110,68 @@ public class AdminResortRegistration implements ActionListener {
         if (e.getSource() == display) {
             windowEventSource = "display";
             String resortName = field.getText();
-            List<Integer> selectedTownIds = this.townHolders.stream()
-                    .filter(townHolder -> townHolder.townCheckBox().isSelected())
+            Optional<Integer> selectedTownId = this.townHolders.stream()
+                    .filter(townHolder -> townHolder.townRadioButton().isSelected())
                     .map(TownHolder::townId)
-                    .toList();
-            if (!selectedTownIds.isEmpty()) {
-                long resortId = this.resortService.createResort(new CreateResortDto(resortName, this.userDto.getId(), selectedTownIds, Instant.now()));
+                    .findFirst();
+            if (selectedTownId.isPresent()) {
+                long resortId = this.resortService.createResort(new CreateResortDto(resortName, this.userDto.getId(), selectedTownId.get(), Instant.now()));
                 JOptionPane.showMessageDialog(null, "Information successfully added.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 frame.dispose();
                 field.setText(null);
-                new ResortInfo(launchPageFrame, userDto, resortId, resortName, this.resortService);
+                new ResortInfo(adminMenuFrame, userDto, resortId, resortName, this.resortService);
             }
         }
     }
 
     private List<TownHolder> townHolders() {
-        JCheckBox carcarCheckBox = new JCheckBox(TownEnum.CARCAR.value()); // id: 1
-        carcarCheckBox.setBounds(75, 120, 200, 70);
-        carcarCheckBox.setFocusable(false);
-        carcarCheckBox.addActionListener(this);
-        carcarCheckBox.setOpaque(false);
+        JRadioButton carcarRadioButton = new JRadioButton(TownEnum.CARCAR.value()); // id: 1
+        carcarRadioButton.setBounds(75, 120, 200, 70);
+        carcarRadioButton.setFocusable(false);
+        carcarRadioButton.addActionListener(this);
+        carcarRadioButton.setOpaque(false);
         BiFunction<UserDto, Long, Town> carcarTown = (user, resortId) -> new Carcar(adminMenuFrame, user, frame, resortId);
-        TownHolder carcarTownHolder = new TownHolder(1, carcarCheckBox, carcarTown);
+        TownHolder carcarTownHolder = new TownHolder(1, carcarRadioButton, carcarTown);
 
-        JCheckBox bariliCheckBox = new JCheckBox(TownEnum.BARILI.value()); // id: 2
-        bariliCheckBox.setBounds(135, 120, 200, 70);
-        bariliCheckBox.setFocusable(false);
-        bariliCheckBox.addActionListener(this);
-        bariliCheckBox.setOpaque(false);
+        JRadioButton bariliRadioButton = new JRadioButton(TownEnum.BARILI.value()); // id: 2
+        bariliRadioButton.setBounds(135, 120, 200, 70);
+        bariliRadioButton.setFocusable(false);
+        bariliRadioButton.addActionListener(this);
+        bariliRadioButton.setOpaque(false);
         BiFunction<UserDto, Long, Town> bariliTown = (user, resortId) -> new Barili(adminMenuFrame, user, frame, resortId);
-        TownHolder bariliTownHolder = new TownHolder(2, bariliCheckBox, bariliTown);
+        TownHolder bariliTownHolder = new TownHolder(2, bariliRadioButton, bariliTown);
 
-        JCheckBox moalboalCheckBox = new JCheckBox(TownEnum.MOALBOAL.value()); // id: 3
-        moalboalCheckBox.setBounds(190, 120, 200, 70);
-        moalboalCheckBox.setFocusable(false);
-        moalboalCheckBox.addActionListener(this);
-        moalboalCheckBox.setOpaque(false);
+        JRadioButton moalboalRadioButton = new JRadioButton(TownEnum.MOALBOAL.value()); // id: 3
+        moalboalRadioButton.setBounds(190, 120, 200, 70);
+        moalboalRadioButton.setFocusable(false);
+        moalboalRadioButton.addActionListener(this);
+        moalboalRadioButton.setOpaque(false);
         BiFunction<UserDto, Long, Town> moalboalTown = (user, resortId) -> new Moalboal(adminMenuFrame, user, frame, resortId);
-        TownHolder moalboalTownHolder = new TownHolder(3, moalboalCheckBox, moalboalTown);
+        TownHolder moalboalTownHolder = new TownHolder(3, moalboalRadioButton, moalboalTown);
 
-        JCheckBox alcoyCheckBox = new JCheckBox(TownEnum.ALCOY.value()); // id: 4
-        alcoyCheckBox.setBounds(265, 120, 200, 70);
-        alcoyCheckBox.setFocusable(false);
-        alcoyCheckBox.addActionListener(this);
-        alcoyCheckBox.setOpaque(false);
+        JRadioButton alcoyRadioButton = new JRadioButton(TownEnum.ALCOY.value()); // id: 4
+        alcoyRadioButton.setBounds(265, 120, 200, 70);
+        alcoyRadioButton.setFocusable(false);
+        alcoyRadioButton.addActionListener(this);
+        alcoyRadioButton.setOpaque(false);
         BiFunction<UserDto, Long, Town> alcoyTown = (user, resortId) -> new Alcoy(adminMenuFrame, user, frame, resortId);
-        TownHolder alcoyTownHolder = new TownHolder(4, alcoyCheckBox, alcoyTown);
+        TownHolder alcoyTownHolder = new TownHolder(4, alcoyRadioButton, alcoyTown);
 
-        JCheckBox sanTanderCheckBox = new JCheckBox(TownEnum.SANTANDER.value()); // id: 5
-        sanTanderCheckBox.setBounds(320, 120, 200, 70);
-        sanTanderCheckBox.setFocusable(false);
-        sanTanderCheckBox.addActionListener(this);
-        sanTanderCheckBox.setOpaque(false);
+        JRadioButton sanTanderRadioButton = new JRadioButton(TownEnum.SANTANDER.value()); // id: 5
+        sanTanderRadioButton.setBounds(320, 120, 200, 70);
+        sanTanderRadioButton.setFocusable(false);
+        sanTanderRadioButton.addActionListener(this);
+        sanTanderRadioButton.setOpaque(false);
         BiFunction<UserDto, Long, Town> santanderTown = (user, resortId) -> new SanTander(adminMenuFrame, user, frame, resortId);
-        TownHolder santanderTownHolder = new TownHolder(5, sanTanderCheckBox, santanderTown);
+        TownHolder santanderTownHolder = new TownHolder(5, sanTanderRadioButton, santanderTown);
 
-        JCheckBox oslobCheckBox = new JCheckBox(TownEnum.OSLOB.value()); // id: 6
-        oslobCheckBox.setBounds(200, 160, 150, 30);
-        oslobCheckBox.setFocusable(false);
-        oslobCheckBox.addActionListener(this);
-        oslobCheckBox.setOpaque(false);
+        JRadioButton oslobRadioButton = new JRadioButton(TownEnum.OSLOB.value()); // id: 6
+        oslobRadioButton.setBounds(200, 160, 150, 30);
+        oslobRadioButton.setFocusable(false);
+        oslobRadioButton.addActionListener(this);
+        oslobRadioButton.setOpaque(false);
         BiFunction<UserDto, Long, Town> oslobTown = (user, resortId) -> new Oslob(adminMenuFrame, user, frame, resortId);
-        TownHolder oslobTownHolder = new TownHolder(6, oslobCheckBox, oslobTown);
+        TownHolder oslobTownHolder = new TownHolder(6, oslobRadioButton, oslobTown);
 
         return List.of(
                 carcarTownHolder,

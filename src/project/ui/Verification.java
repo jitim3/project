@@ -29,7 +29,7 @@ import project.util.AppUtils;
 
 public class Verification extends JFrame implements ActionListener {
 	private static final Logger LOGGER = System.getLogger(Verification.class.getName());
-	private final JFrame launchPageFrame;
+	private final JFrame userMenuFrame;
 	private final UserDto userDto;
 	private final long resortId;
 	private final ResortService resortService;
@@ -43,8 +43,8 @@ public class Verification extends JFrame implements ActionListener {
 	private final JButton exit = new JButton("EXIT");
 	private String windowEventSource = "";
 
-	public Verification(JFrame launchPageFrame, UserDto userDto, long resortId, ResortService resortService) {
-		this.launchPageFrame = launchPageFrame;
+	public Verification(JFrame userMenuFrame, UserDto userDto, long resortId, ResortService resortService) {
+		this.userMenuFrame = userMenuFrame;
 		this.userDto = userDto;
 		this.resortId = resortId;
 		this.resortService = resortService;
@@ -97,7 +97,7 @@ public class Verification extends JFrame implements ActionListener {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				new AdminMenu(launchPageFrame, userDto);
+				userMenuFrame.setVisible(true);
 			}
 		});
 	}

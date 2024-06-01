@@ -3,6 +3,7 @@ package project.ui.town;
 import project.dto.ResortDto;
 import project.dto.UserDto;
 import project.service.ResortService;
+import project.ui.ResortInfoUpdate;
 import project.ui.ResortView;
 import project.util.AppUtils;
 import project.util.ResortViewEvent;
@@ -110,6 +111,9 @@ public class Alcoy implements Town {
                 int userTypeId = this.userDto.getUserType().id();
                 if (AppUtils.isUserTypeSuperAdmin(userTypeId)) {
                     new ResortView(userMenuFrame, frame, ResortViewEvent.SUPER_ADMIN_VIEW, this.resortService, this.userDto, resortDto.id());
+                } else if (AppUtils.isUserTypeAdmin(userTypeId)) {
+                    new ResortView(userMenuFrame, frame, ResortViewEvent.SUPER_ADMIN_VIEW, this.resortService, this.userDto, resortDto.id());
+                    new ResortInfoUpdate(userMenuFrame, userDto, resortDto, this.resortService);
                 } else if (AppUtils.isUserTypeCustomer(userTypeId)) {
                     new ResortView(userMenuFrame, frame, ResortViewEvent.CUSTOMER_VIEW, this.resortService, this.userDto, resortDto.id());
                 }
